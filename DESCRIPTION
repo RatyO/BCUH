@@ -1,0 +1,34 @@
+Package: BCUH
+Version: 0.0-1
+Date: 2018-01-03
+Title: University of Helsinki bias adjustment tools
+Author: Olle Räty [aut, cre],
+  Jouni Räisänen [aut],
+Maintainer: Olle Räty <olle.raty@helsinki.fi>
+Depends: R (>= 3.1.0)
+Imports: moments, 
+         MASS,
+         fitdistrplus,
+         kdecopula,
+         copula,
+         methods
+Description: A set of delta change and bias correction methods designed for bias adjusting absolute and ratio variables and a 2D method to adjust the intervariable structure of two variables. The implemented methods are described in more detail in "Räisänen and Räty (2013)", "Räty et al. (2014)" and "Li et al. (2014)". 
+Encoding: UTF-8
+License: GPL (>= 3)
+URL: https://github.com/ratyO/BCUH
+Collate:
+    'GenericMethods.R'
+    'Auxfunctions.R'
+    'DataFormat-class.R'
+    'TimeSeries-class.R'
+    'TimeSeriesTP-class.R'
+    'BiascoTimeSeries-class.R'
+    'BiascoTimeSeriesTP-class.R'
+    'AbsCorrectionObject-class.R'
+    'RatioCorrectionObject-class.R'
+    'JointCorrectionObject-class.R'
+    'biasco.R'
+    'data.R'
+RoxygenNote: 6.0.1
+Suggests: testthat
+LazyData: true
