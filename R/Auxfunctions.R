@@ -7,6 +7,8 @@
 #' @param a.lim limits for the exponent used to adjust the skewness
 #' @param iter.max max. number of iterations
 #'
+#' @importFrom moments skewness
+#'
 #' @return adjusted time series
 #' @keywords internal
 #'
@@ -14,7 +16,7 @@
 
   if(length(a.lim)<2)stop("Missing one or both limits for the skewness scaling factor")
 
-  skew.data <- skewness(data)
+  skew.data <- moments::skewness(data)
 
   if(skew.data<skew.target){
     b <- min(data)
@@ -289,6 +291,7 @@
 #'
 #' @return A list containing the number of dry days both in the reference and calibration data sets.
 #'
+#' @importFrom MASS fitdistr
 #' @keywords internal
 #'
 .ppRain <- function(ref, adj, ref.threshold = 0.1){
@@ -306,7 +309,7 @@
       if(!any(adj.sort > ref.threshold)){ # All values are smaller than the reference threshold
         ind.adj <- length(adj.sort)
         ind.ref <- length(ref)
-      }else{ #Need to add only some rainy days to adj
+      }else{ #Need to add some rainy days to adj
         ind.adj <- min(which(adj.sort > ref.threshold))
         ind.ref <- ceiling(length(ref.sort)*ind.adj/length(adj.sort))
       }
@@ -315,7 +318,7 @@
         adj.sort[(n.adj0 + 1):ind.ref] <- sort(runif(ind.adj - n.adj0, min = ref.sort[(n.ref0 + 1)], max = ref.sort[ind.ref]))
       }else{
         ref.fit <- ref.sort[(n.ref0 + 1):ind.ref]
-        gamma.fit <- fitdistr(ref.fit, "gamma")
+        gamma.fit <- MASS::fitdistr(ref.fit, "gamma")
         adj.sort[(n.adj0 + 1):ind.ref] <- sort(rgamma(ind.adj - n.adj0, gamma.fit$estimate[1], rate = gamma.fit$estimate[2]))
       }
 
@@ -395,9 +398,9 @@
 .fitMarginal <- function(data,type){
 #  require("fitdistrplus")
   if(type=="gamma"){
-    params <- fitdist(data, type)
+    params <- fitdistrplus::fitdist(data, type)
   } else {
-    params <- fitdist(data, type)
+    params <- fitdistrplus::fitdist(data, type)
   }
   return(params)
 }

@@ -4,7 +4,7 @@
 \alias{biasco}
 \title{A wrapper function for univariate bias correction and delta changes methods.}
 \usage{
-biasco(obs.in, ctrl.in, scen.in, type = "abs", method, ...)
+biasco(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...)
 }
 \arguments{
 \item{obs.in}{A vector containing the reference data}
@@ -13,21 +13,52 @@ biasco(obs.in, ctrl.in, scen.in, type = "abs", method, ...)
 
 \item{scen.in}{A vector of data to be adjusted}
 
-\item{type}{String defining the type of the input. If the variable in on absolute scale, the}
+\item{type}{String defining the type of adjustment. Currently \code{type} recognizes two values:
+\itemize{
+  \item{"abs"}{Absolute scale is used. This approach is typically applied measured in the absolute scale (e.g temperature)}
+  \item{"ratio"}{The adjustment is made in ratio format. This approach is typically applied to non-continuous variables such as precipitation.}
+}}
 
-\item{method}{Method to be used to adjust the}
+\item{method}{Method to be used to bias adjust \code{scen.in}. The following options are available:}
 
-\item{...}{Additional parameters to used in bias correction methods}
+\item{...}{Additional parameters used to handle the behavior of specific bias correction methods.}
 }
 \value{
 An object of type \code{BiascoTimeSeries},
-  which contains the adjusted data and parameter values related to a particular method
+  which contains the adjusted data and parameter values related to a particular method.
 }
 \description{
 \code{biasco} returns bias corrected data as and object of type \code{BiascoTimeSeries}
 }
+\details{
+The following univariate methods are available:
+ \itemize{
+ \item{M1: Simple delta change scaling of time mean}
+ \item{M2: Delta change scaling on mean and standard deviation. If \code{type} = ratio, then Engen-Skaugen algorithm is used.}{}
+ \item{M3: Delta change scaling on mean, standard deviation and skewness.  If \code{type} = ratio, M3 corresponds to delta change scaling of mean and standard deviation using.}
+ \item{M4: Parametric quantile mapping applied in the delta change mode}
+ \item{M5: Non-parametric quantile mapping applied in the delta change mode}
+ \item{M6: As M1 but applied in the bias correction mode}
+ \item{M7: As M2 but applied in the bias correction mode}
+ \item{M8: As M3 but applied in the bias correction mode}
+ \item{M9: As M4 but applied in the bias correction mode}
+ \item{M10: As M5 but applied in the bias correction mode}
+ }
+}
 \examples{
-TODO
+\dontrun{
+library(BCUH)
+library(lubridate)
+data(station_Jyvaskyla)
+data("ALADIN_Jyvaskyla")
+#Extract data only for December
+obs <- station_Jyvaskyla[!is.na(match(year(station_Jyvaskyla$date),seq(ctrl[1],ctrl[2]))), -1]$tas
+ctrl <- ALADIN_Jyvaskyla[!is.na(match(year(ALADIN_Jyvaskyla$date),seq(ctrl[1],ctrl[2]))), -1]$tas
+scen <- ALADIN_Jyvaskyla[!is.na(match(year(ALADIN_Jyvaskyla$date),seq(scen[1],scen[2]))), -1]$tas
+TS <- biasco(obs.ctrl[,1],ctrl[,1],scen[,1],type="abs",method="M1")
+
+}
+
 }
 \seealso{
 \code{\link{biasco2d}} for two-dimensional bias correction of temperature and precipitation

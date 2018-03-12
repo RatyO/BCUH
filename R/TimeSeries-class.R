@@ -1,13 +1,15 @@
+#' @include GenericMethods.R DataFormat-class.R
+
 #' export TS
 TS <- setClass("TimeSeries",
          slots = list(data = "numeric"),
-         prototype = prototype(data = NA_real_),
+#         prototype = prototype(data = NA_real_),
          contains = "DataFormat"
 )
 
 setMethod(f = "initialize",
           signature = "TimeSeries",
-          function(.Object, data="ANY", nvar = NA_integer_, ...){
+          function(.Object, data = NA_real_, nvar = 1, ...){
             .Object@data <- as.numeric(data)
 
             if(length(.Object@data) == 1 && is.na(.Object@data)){
@@ -24,13 +26,13 @@ setMethod(f = "initialize",
 
 #DataFormat methods and generics
 
-setMethod(f = "data",
+setMethod(f = "dat",
           signature = "TimeSeries",
           definition = function(object){
             return(object@data)
           })
 
-setMethod(f = "data<-",
+setMethod(f = "dat<-",
           signature = "TimeSeries",
           definition = function(object,value){
             object@data <- value
@@ -39,7 +41,7 @@ setMethod(f = "data<-",
             return(object)
           })
 
-setMethod(f = "data[",
+setMethod(f = "dat[",
           signature = "TimeSeries",
           definition = function(object,i,value){
             object@data[i] <- value
@@ -52,6 +54,16 @@ setMethod(f = "dim",
           signature(x = "TimeSeries"),
           definition = function(x) x@Dim, valueClass = "integer")
 
+setMethod(f = "is.TS",
+          signature( "ANY"),
+          definition = function(object){
+            if(is.object(object) == T){
+              if(class(object) == "TimeSeries")return(T)
+              return(F)
+            }else{
+              return(F)
+            }
+          })
 
 # setMethod(f = "dim<-",
 #           signature(x = "TimeSeries", value = "integer"),

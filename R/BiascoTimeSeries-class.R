@@ -1,11 +1,13 @@
+#' @include GenericMethods.R TimeSeries-class.R
+
 #' export BC
-BCTS <- setClass("BiascoTimeSeries",
+BC <- setClass("BiascoTimeSeries",
          slots = c(adj = "TimeSeries", method = "character", bc.attributes = "list")
 )
 
 setMethod(f = "initialize",
           signature = "BiascoTimeSeries",
-          function(.Object, adj = new("TimeSeriesTP"), method = NA_character_){
+          function(.Object, adj = TS(), method = NA_character_){
             .Object@adj <- adj
             .Object@method <- method
             .Object@bc.attributes <- list()
@@ -44,6 +46,12 @@ setMethod(f = "method<-",
             validObject(object)
             return(object)
           })
+
+# setMethod(f = "as",
+#           signature = "BiascoTimeSeries",
+#           definition = function(from,to){
+#
+#           })
 
 #Show
 setMethod(f = "show",

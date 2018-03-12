@@ -1,6 +1,10 @@
+#' @include GenericMethods.R
+
+setClassUnion("missingOrNULL", c("missing", "NULL"))
+
 setClass("DataFormat",
          slots = list(nvar = "integer", Dim = "integer"),
-         prototype = prototype(nvar = NA_integer_, Dim = NA_integer_),
+#         prototype = prototype(nvar = NA_integer_, Dim = NA_integer_),
          contains = "VIRTUAL"
 )
 

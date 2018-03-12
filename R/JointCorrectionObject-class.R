@@ -1,4 +1,4 @@
-
+#' @include TimeSeriesTP-class.R BiascoTimeSeriesTP-class.R
 .BC.joint <- setClass("JointCorrection",
                     contains = "BiascoTimeSeriesTP",
                     slots = c(obs = "TimeSeriesTP", ctrl = "TimeSeriesTP", scen = "TimeSeriesTP"),
@@ -99,9 +99,7 @@ setMethod(f = "show",
 
 setMethod(f = ".JBC",
           signature = "JointCorrection",
-          definition = function(.Object, cond="P", threshold=0.1){
-
-#          JBC <- function(varsO,varsC,varsF,cond,threshold=0.1){
+          definition = function(.Object, cond="P", threshold = 0.1){
 
             #Create data frames for the data. Update these data frames whenever necessary.
             obs <- list(T=.Object@obs@data[,1],P=.Object@obs@data[,2],
@@ -117,11 +115,11 @@ setMethod(f = ".JBC",
                         P=array(NA,dim=c(length(.Object@scen@data[,2]))),
                         margT=NA,margP=NA,pwet=NA,
                         wet=NA,dry=NA,cpar1=NA,cpar2=NA)
-
-            tmp <- ppRain(ref = obs$P, adj = ctrl$P, ref.threshold = threshold)
+print(threshold)
+            tmp <- .ppRain(ref = obs$P, adj = ctrl$P, ref.threshold = threshold)
             ctrl$P <- tmp$adj
 
-            tmp <- ppRain(ref = obs$P, adj = scen$P, ref.threshold = threshold)
+            tmp <- .ppRain(ref = obs$P, adj = scen$P, ref.threshold = threshold)
             scen$P <- tmp$adj
 
             if(tmp$nDry[2]==length(scen$P)){
@@ -144,25 +142,25 @@ setMethod(f = ".JBC",
             ctrl$pwet <- length(ctrl$P[which(ctrl$P>0)])/length(ctrl$P)
             scen$pwet <- length(scen$P[which(scen$P>0)])/length(scen$P)
 
-            obs$margP <- FitMarginal(obs$P[obs$wet],type="gamma")
-            obs$margTW <- FitMarginal(obs$T[obs$wet],type="norm")
-            obs$margTD <- FitMarginal(obs$T[obs$dry],type="norm")
+            obs$margP <- .fitMarginal(obs$P[obs$wet],type="gamma")
+            obs$margTW <- .fitMarginal(obs$T[obs$wet],type="norm")
+            obs$margTD <- .fitMarginal(obs$T[obs$dry],type="norm")
 
-            ctrl$margP <- FitMarginal(ctrl$P[ctrl$wet],type="gamma")
-            ctrl$margTW <- FitMarginal(ctrl$T[ctrl$wet],type="norm")
-            ctrl$margTD <- FitMarginal(ctrl$T[ctrl$dry],type="norm")
+            ctrl$margP <- .fitMarginal(ctrl$P[ctrl$wet],type="gamma")
+            ctrl$margTW <- .fitMarginal(ctrl$T[ctrl$wet],type="norm")
+            ctrl$margTD <- .fitMarginal(ctrl$T[ctrl$dry],type="norm")
 
-            fit.normO <- fitCopula(normalCopula(dim=2),pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
+            fit.normO <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             obs$cpar1 <- fit.normO@copula@parameters
 
-            fit.normC <- fitCopula(normalCopula(dim=2),pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
+            fit.normC <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             ctrl$cpar1 <- fit.normC@copula@parameters
 
-            fit.normF <- fitCopula(normalCopula(dim=2),pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
+            fit.normF <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
 
@@ -170,13 +168,13 @@ setMethod(f = ".JBC",
 
             if(cond=="P"){
               print(cond)
-              adj <- AdjPT(obs,ctrl,scen)
+              adj <- .adjPT(obs,ctrl,scen)
             } else {
               print(cond)
-              adj <- AdjTP(obs,ctrl,scen)
+              adj <- .adjTP(obs,ctrl,scen)
             }
 
-            fit.normCor <- fitCopula(normalCopula(dim=2),matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2),
+            fit.normCor <- copula::fitCopula(normalCopula(dim=2),matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2),
                                      method="itau",start=NULL,lower=NULL,upper=NULL,
                                      optim.method="BFGS",optim.control=list(maxit=1000))
 

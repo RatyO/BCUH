@@ -1,4 +1,7 @@
-.TS_2D <- setClass("TimeSeriesTP",
+#' @include GenericMethods.R DataFormat-class.R
+
+#' export TS_2D
+TS_2D <- setClass("TimeSeriesTP",
                 slots = list(data = "matrix"),
 #                prototype = prototype(data = matrix(c(NA,NA), ncol = 2)),
                 contains = "DataFormat"
@@ -25,13 +28,13 @@ setMethod(f = "initialize",
           })
 
 #DataFormat methods and generics
-setMethod(f = "data",
+setMethod(f = "dat",
           signature = "TimeSeriesTP",
           definition = function(object){
-            return(object@data)
+            return(object@dat)
           })
 
-setMethod(f = "data<-",
+setMethod(f = "dat<-",
           signature = "TimeSeriesTP",
           definition = function(object,value){
             object@data <- value
@@ -40,7 +43,7 @@ setMethod(f = "data<-",
             return(object)
           })
 
-setMethod(f = "data[",
+setMethod(f = "dat[",
           signature = "TimeSeriesTP",
           definition = function(object,i,j,value){
             object@data[i,j] <- value

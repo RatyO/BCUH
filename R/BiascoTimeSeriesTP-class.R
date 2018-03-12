@@ -1,4 +1,7 @@
-.BC_2D <- setClass("BiascoTimeSeriesTP",
+#' @include GenericMethods.R TimeSeriesTP-class.R
+
+#' export BC_2D
+BC_2D <- setClass("BiascoTimeSeriesTP",
                 slots = c(adj = "TimeSeriesTP", method = "character", bc.attributes = "list")
 )
 

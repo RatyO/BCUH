@@ -1,3 +1,22 @@
+# BCUH provides tools to bias adjust simulated time series with a number of uni- and multivariate methods.
+# Copyright (C) 2018 Olle Räty
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundataion, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#' @include GenericMethods.R Auxfunctions.R TimeSeries-class.R BiascoTimeSeries-class.R
+
 #' export BC.abs
 BC.abs <- setClass("AbsCorrection",
           contains = "BiascoTimeSeries",
@@ -95,7 +114,7 @@ setMethod(f = "show",
             cat("******* End Show (AbsCorrectionObject) ******* \n")
           })
 
-setMethod(".DcMean","ANY",function(x) print("Missing or wrong input"))
+setMethod(".DcMean","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".DcMean",
           signature = "AbsCorrection",
           definition = function(.Object){
@@ -104,11 +123,12 @@ setMethod(".DcMean",
 
             .Object@adj@data <- .Object@obs@data + a
             .Object@bc.attributes <- list()
+            .Object@adj@Dim <- length(.Object@adj@data)
             validObject(.Object)
             return(.Object)
           })
 
-setMethod(".DcMeanSd","ANY",function() print("Missing or wrong input"))
+setMethod(".DcMeanSd","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".DcMeanSd",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -127,10 +147,11 @@ setMethod(".DcMeanSd",
             .Object@adj@data <- m.obs + a + (.Object@obs@data-m.obs)*b
             .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("nseq"=nseq)
+            .Object@adj@Dim <- length(.Object@adj@data)
             return(.Object)
           })
 
-setMethod(".DcMeanSdSkew","ANY",function() print("Missing or wrong input"))
+setMethod(".DcMeanSdSkew","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".DcMeanSdSkew",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -143,9 +164,9 @@ setMethod(".DcMeanSdSkew",
             sd.ctrl <- sd(.Object@ctrl@data, na.rm = T)
             sd.scen <- sd(.Object@scen@data, na.rm = T)
 
-            skew.obs <- skewness(.Object@obs@data, na.rm = T)
-            skew.ctrl <- skewness(.Object@ctrl@data, na.rm = T)
-            skew.scen <- skewness(.Object@scen@data, na.rm = T)
+            skew.obs <- moments::skewness(.Object@obs@data, na.rm = T)
+            skew.ctrl <- moments::skewness(.Object@ctrl@data, na.rm = T)
+            skew.scen <- moments::skewness(.Object@scen@data, na.rm = T)
 
             m.target <- m.obs + (m.scen - m.ctrl)
             sd.target <- sd.obs*(sd.scen/sd.ctrl)
@@ -159,12 +180,12 @@ setMethod(".DcMeanSdSkew",
             .Object@adj@data <- m.target + (.Object@adj@data-m.adj)*(sd.target/sd.adj)
             .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("nseq"=nseq)
+            .Object@adj@Dim <- length(.Object@adj@data)
             validObject(.Object)
             return(.Object)
           })
 
-
-setMethod(".DcQmParam","ANY",function() print("Missing or wrong input"))
+setMethod(".DcQmParam","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".DcQmParam",
           signature = "AbsCorrection",
           definition = function(.Object, fit.type = "linear", eps = 1e-5){
@@ -190,20 +211,21 @@ setMethod(".DcQmParam",
               tmp[other] <- a0 + a1*.Object@obs@data[other]
               .Object@adj@data <- as.numeric(tmp)
             }else if(fit.type == "normal"){ #Parametric fit
-              ctrl.param <- fitdistr(ctrl.rand,"normal")
-              scen.param <- fitdistr(scen.rand,"normal")
+              ctrl.param <- MASS::fitdistr(ctrl.rand,"normal")
+              scen.param <- MASS::fitdistr(scen.rand,"normal")
               .Object@adj@data <- qnorm(pnorm(.Object@obs@data,ctrl.param$estimate[1],ctrl.param$estimate[2]),scen.param$estimate[1],scen.param$estimate[2])
             }else{
               stop("Wrong parametric fit")
             }
             .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("fit.type"=fit.type)
+            .Object@adj@Dim <- length(.Object@adj@data)
             validObject(.Object)
             return(.Object)
           }
 )
 
-setMethod(".DcQmEmpir","ANY",function() print("Missing or wrong input"))
+setMethod(".DcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".DcQmEmpir",
           signature = "AbsCorrection",
           definition = function(.Object, smooth = 0.05, pre.adj = F, post.adj = F, eps = 1e-5){
@@ -262,7 +284,7 @@ setMethod(".DcQmEmpir",
             #   table pmodjs. Below the lowest and above the highest value
             #   scenario value is extrapolated assuming constant relative change
 
-            .Object@adj@data <- as.numeric(QuantMapT(TObs2,TCtrlSmooth,TScenSmooth))
+            .Object@adj@data <- as.numeric(.quantMapT(TObs2,TCtrlSmooth,TScenSmooth))
 
             #  6. Scale the scenario distrubution, so that the change in
             #  the time mean temperature will be 'right', ie. corresponding
@@ -290,7 +312,7 @@ setMethod(".DcQmEmpir",
 #BC
 #-----------------------------------------
 
-setMethod(".BcMean","ANY",function() print("Missing or wrong input"))
+setMethod(".BcMean","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".BcMean",
           signature = "AbsCorrection",
           definition = function(.Object){
@@ -304,7 +326,7 @@ setMethod(".BcMean",
             return(.Object)
           })
 
-setMethod(".BcMeanSd","ANY",function() print("Missing or wrong input"))
+setMethod(".BcMeanSd","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".BcMeanSd",
           signature = "AbsCorrection",
           definition = function(.Object,nseq=1){
@@ -326,7 +348,7 @@ setMethod(".BcMeanSd",
             return(.Object)
           })
 
-setMethod(".BcMeanSdSkew","ANY",function() print("Missing or wrong input"))
+setMethod(".BcMeanSdSkew","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".BcMeanSdSkew",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -339,9 +361,9 @@ setMethod(".BcMeanSdSkew",
             sd.ctrl <- sd(.Object@ctrl@data, na.rm = T)
             sd.scen <- sd(.Object@scen@data, na.rm = T)
 
-            skew.obs <- skewness(.Object@obs@data, na.rm = T)
-            skew.ctrl <- skewness(.Object@ctrl@data, na.rm = T)
-            skew.scen <- skewness(.Object@scen@data, na.rm = T)
+            skew.obs <- moments::skewness(.Object@obs@data, na.rm = T)
+            skew.ctrl <- moments::skewness(.Object@ctrl@data, na.rm = T)
+            skew.scen <- moments::skewness(.Object@scen@data, na.rm = T)
 
             m.target <- m.scen + (m.obs - m.ctrl)
             sd.target <- sd.scen*(sd.obs/sd.ctrl)
@@ -359,7 +381,7 @@ setMethod(".BcMeanSdSkew",
             return(.Object)
           })
 
-setMethod(".BcQmParam","ANY",function() print("Missing or wrong input"))
+setMethod(".BcQmParam","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".BcQmParam",
           signature = "AbsCorrection",
           definition = function(.Object, fit.type = "linear", eps = 1e-5){
@@ -384,8 +406,8 @@ setMethod(".BcQmParam",
               tmp[other] <- a0 + a1*.Object@scen@data[other]
               .Object@adj@data <- as.numeric(tmp)
             }else if(fit.type == "normal"){#Parametric fit
-              ctrl.param <- fitdistr(ctrl.rand,"normal")
-              obs.param <- fitdistr(obs.rand,"normal")
+              ctrl.param <- MASS::fitdistr(ctrl.rand,"normal")
+              obs.param <- MASS::fitdistr(obs.rand,"normal")
               .Object@adj@data <- qnorm(pnorm(.Object@scen@data,ctrl.param$estimate[1],ctrl.param$estimate[2]),obs.param$estimate[1],obs.param$estimate[2])
             }else{
               stop("Wrong parametric fit")
@@ -397,7 +419,7 @@ setMethod(".BcQmParam",
           }
 )
 
-setMethod(".BcQmEmpir","ANY",function() print("Missing or wrong input"))
+setMethod(".BcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
 setMethod(".BcQmEmpir",
           signature = "AbsCorrection",
           definition = function(.Object, smooth = 0.05, pre.adj = F, post.adj = F, eps = 1e-5){
@@ -436,7 +458,7 @@ setMethod(".BcQmEmpir",
               TObsSmooth[i-1] <- (ObsSum[j2]-ObsSum[j1])/(j2-j1)
             }
 
-            .Object@adj@data <- as.numeric(QuantMapT(TScen2,TCtrlSmooth,TObsSmooth))
+            .Object@adj@data <- as.numeric(.quantMapT(TScen2,TCtrlSmooth,TObsSmooth))
 
             if(post.adj){
               MObs <- mean(.Object@obs@data)
