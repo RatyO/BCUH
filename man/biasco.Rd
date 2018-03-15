@@ -47,8 +47,9 @@ The following univariate methods have curretnly been implemented in this package
  }
 }
 \examples{
-\dontrun{
+
 library(lubridate)
+library(copula)
 library(BCUH)
 
 data("station_Jyvaskyla")
@@ -57,6 +58,7 @@ data("ALADIN_Jyvaskyla")
 ctrl <- c(1971,2000)
 scen <- c(2071,2100)
 
+#Extract data for December
 ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
                   year(station_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
 ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
@@ -68,9 +70,13 @@ obs.ctrl <- station_Jyvaskyla[ind.obs,]
 rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,]
 rcm.scen <- ALADIN_Jyvaskyla[ind.scen,]
 
+#Create objects which contain the bias corrected data
 dc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M1")
 bc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M6")
 
+dc.object
+
+#Visualise the results
 plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = "l",
     main="Quantile plot", xlab = "\%", ylab = "Celcius", ylim = c(-30,10))
 lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
@@ -79,7 +85,7 @@ lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
 lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
 legend("topleft", c("M1","M6","Obs","Ctrl","Scen"),
       col = c("black","black","red","blue","blue"), lty = c(1,2,1,1,2))
-}
+
 
 }
 \seealso{

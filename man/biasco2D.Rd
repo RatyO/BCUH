@@ -28,3 +28,35 @@ additional information on the used parameter values
 \description{
 A wrapper function for a copula-based bias correction method of temperature and precipitation
 }
+\examples{
+
+library(lubridate)
+library(BCUH)
+#Load data
+data("station_Jyvaskyla")
+data("ALADIN_Jyvaskyla")
+
+ctrl <- c(1971,2000)
+scen <- c(2071,2100)
+ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
+                  year(station_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
+ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+                   year(ALADIN_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
+ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+                   year(ALADIN_Jyvaskyla$date) \%in\% seq(scen[1],scen[2]))
+obs.ctrl <- station_Jyvaskyla[ind.obs,2:3]
+rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,2:3]
+rcm.scen <- ALADIN_Jyvaskyla[ind.scen,2:3]
+biasco2d.object <- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c("tas", "pr"))
+
+#Visualise the results:
+
+par(mfrow=c(1,2))
+plot(obs.ctrl)
+points(rcm.ctrl,col="red")
+legend("topleft",c("Obs","Ctrl"),col=c("black","red"),pch=c(1,1))
+plot(dat(adj(biasco2d.object)))
+points(rcm.scen,col="red")
+legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
+
+}

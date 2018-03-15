@@ -51,11 +51,12 @@
 #' @return An object of type \code{BiascoTimeSeries},
 #'   which contains the adjusted data and parameter values related to a particular method.
 #' @seealso \code{\link{biasco2d}} for two-dimensional bias correction of temperature and precipitation
-#' @importFrom Rdpack reprompt
+#' @import lubridate copula
 #' @export
 #' @examples
-#' \dontrun{
+#' 
 #'library(lubridate)
+#'library(copula)
 #'library(BCUH)
 #'
 #'data("station_Jyvaskyla")
@@ -64,6 +65,7 @@
 #'ctrl <- c(1971,2000)
 #'scen <- c(2071,2100)
 #'
+#'#Extract data for December
 #'ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
 #'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
 #'ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
@@ -75,9 +77,13 @@
 #'rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,]
 #'rcm.scen <- ALADIN_Jyvaskyla[ind.scen,]
 #'
+#'#Create objects which contain the bias corrected data
 #'dc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M1")
 #'bc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M6")
 #'
+#'dc.object
+#'
+#'#Visualise the results
 #'plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = "l",
 #'     main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(-30,10))
 #'lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
@@ -86,7 +92,7 @@
 #'lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
 #'legend("topleft", c("M1","M6","Obs","Ctrl","Scen"),
 #'       col = c("black","black","red","blue","blue"), lty = c(1,2,1,1,2))
-#' }
+#'
 #'
 biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 
@@ -197,36 +203,34 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #'
 #' @return An object of type BiascoTimeSeriesPT which contains a matrix of bias adjusted temperature and precipitation and also
 #' additional information on the used parameter values 
+#' @import lubridate
 #' @export
 #'
 #' @examples
-#' #' \dontrun{
+#'
 #' library(lubridate)
-#' library(copula)
 #' library(BCUH)
 
+#' #Load data
 #' data("station_Jyvaskyla")
 #' data("ALADIN_Jyvaskyla")
-
+#' 
 #' ctrl <- c(1971,2000)
 #' scen <- c(2071,2100)
-
 #' ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
 #'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
 #' ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
 #' ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
-
 #' obs.ctrl <- station_Jyvaskyla[ind.obs,2:3]
 #' rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,2:3]
 #' rcm.scen <- ALADIN_Jyvaskyla[ind.scen,2:3]
-
 #' biasco2d.object <- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c("tas", "pr"))
 #' 
-#' Visualise the results
+#' #Visualise the results:
+#' 
 #' par(mfrow=c(1,2))
-
 #' plot(obs.ctrl)
 #' points(rcm.ctrl,col="red")
 #' legend("topleft",c("Obs","Ctrl"),col=c("black","red"),pch=c(1,1))
@@ -234,7 +238,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' plot(dat(adj(biasco2d.object)))
 #' points(rcm.scen,col="red")
 #' legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
-#' }
+#' 
 biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", threshold = 0.1, ...){
 
   if(is.null(names)) names <- colnames(obs.in)
