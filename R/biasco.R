@@ -52,6 +52,7 @@
 #'   which contains the adjusted data and parameter values related to a particular method.
 #' @seealso \code{\link{biasco2d}} for two-dimensional bias correction of temperature and precipitation
 #' @import lubridate copula
+#' @importFrom Rdpack reprompt
 #' @export
 #' @examples
 #' 

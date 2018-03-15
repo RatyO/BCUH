@@ -1,5 +1,5 @@
 ---
-title: "BCUH Documentation"
+title: "BCUH"
 subtitle: "University of Helsinki bias adjustment tools"
 author: "Olle Räty"
 copyright: "Olle Räty"
@@ -25,24 +25,34 @@ knitr::opts_chunk$set(comment = NA)
 rdl <- function(x) packagedocs::rd_link(deparse(substitute(x)))
 ```
 
-# Header 1
+# BCUH
 
-Welcome to the BCUH Documentation documentation page.
+BCUH is a collection of simple univariate bi-variate methods for combining information obtained from reference data with (typically) climate simulations.
 
-# Example
+# Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented based on Räisänen and Räty (2013), Räty et al. (2014). In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on Li et al (2014), Gennaretti et al. (2015) and have been applied in the study by Räty el et. (submitted).
 
-You can embed an R code chunk like this:
+#Structure
 
-```{r}
-summary(cars)
-```
+All the statistical methods implemented in BCUH have been coded as S4 methods belonging to a set of classes. The most important ones are. 
 
-You can also embed plots, for example:
+#Univariate method
 
-```{r, echo=FALSE}
-plot(cars)
-```
+In the current format the package consists of 20 methods, which range from simple time mean scaling to more sophisticated quantile mapping methods, which have become popular in climate studies due to their relatively simple use. 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+#Multivariate methods
+
+In the current version only the method originally developed by Li et al. (2014) with some improvements from
+
+#Examples
+
+We now demonstrate the use of BCUH with several examples.
+
+#Limitations
+
+As with all statistical methods there are several limitations for cases where BCUH can be used and when it is not feasible.
+
+#Conclusions
+
+#References

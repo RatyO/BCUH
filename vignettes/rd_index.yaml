@@ -22,14 +22,5 @@ sections:
 -
   section_name: Package Functions
   topics:
-    - adj
     - biasco
     - biasco2D
-    - ctrl
-    - dat
-    - method
-    - nvar
-    - obs
-    - scen
-    - type-set
-    - type
