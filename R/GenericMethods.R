@@ -174,6 +174,11 @@ setGeneric(name = "is.TS",
              standardGeneric("is.TS")
            })
 
+setGeneric(name = "is.TS2D",
+           def = function(object){
+             standardGeneric("is.TS2D")
+           })
+
 #DC
 
 #' Mean delta change

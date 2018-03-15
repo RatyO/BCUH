@@ -9,7 +9,7 @@
 #'
 #' @importFrom moments skewness
 #'
-#' @return adjusted time series
+#' @return Bias adjusted time series
 #' @keywords internal
 #'
 .iterSkewness <- function(data, skew.target, nseq = 1, tol = 1e-3, a.lim = c(1,9), iter.max = 100){
@@ -68,7 +68,7 @@
 #' @param Ctrl control period time series
 #' @param Obs control period observations
 #'
-#' @return Adjusted time series for the Scenario period
+#' @return Bias adjusted time series
 #'
 #' @keywords internal
 #'

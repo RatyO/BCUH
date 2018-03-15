@@ -1,5 +1,5 @@
 #' @include TimeSeriesTP-class.R BiascoTimeSeriesTP-class.R
-.BC.joint <- setClass("JointCorrection",
+BC.joint <- setClass("JointCorrection",
                     contains = "BiascoTimeSeriesTP",
                     slots = c(obs = "TimeSeriesTP", ctrl = "TimeSeriesTP", scen = "TimeSeriesTP"),
                     prototype = prototype(obs = new("TimeSeriesTP"), ctrl = new("TimeSeriesTP"), scen = new("TimeSeriesTP"))
@@ -187,5 +187,6 @@ print(threshold)
             .Object@adj@data[,2] <- adj$P
             .Object@bc.attributes[["threshold"]] <- threshold
             .Object@bc.attributes[["cond"]] <- cond
+            .Object@method <- "J1"
             return(.Object)
           })

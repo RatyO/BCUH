@@ -47,14 +47,14 @@ setMethod(f = "method<-",
 setMethod(f = "show",
           signature = "BiascoTimeSeriesTP",
           definition = function(object){
-            cat("*** Class BiascoTimeSeriesTP, method show *** \n")
+            cat("*** Class BiascoTimeSeriesTP *** \n")
             cat("* method = "); print (object@method)
             cat("* bc.attributes = "); print (object@bc.attributes)
             cat("* adj@nvar = "); print (object@adj@nvar)
             cat("* adj@Dim = "); print (object@adj@Dim)
             cat("* adj@data (limited to first 100 values) = \n")
             if(nrow(object@adj@data)!=0){
-              print(format(object@adj@data[1:min(nrow(object@adj@data),100),2]),quote=FALSE)
+              print(format(object@adj@data[1:min(nrow(object@adj@data),100),]),quote=FALSE)
             }else{}
-            cat("******* End Show (BiascoTimeSeriesTP) ******* \n")
+            cat("******* Class BiascoTimeSeriesTP ******* \n")
           })

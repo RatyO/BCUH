@@ -2,17 +2,20 @@
 
 #' export TS_2D
 TS_2D <- setClass("TimeSeriesTP",
-                slots = list(data = "matrix"),
+                slots = list(data = "ANY"),
 #                prototype = prototype(data = matrix(c(NA,NA), ncol = 2)),
                 contains = "DataFormat"
 )
 
 setMethod(f = "initialize",
           signature = "TimeSeriesTP",
-          function(.Object, data = matrix(c(NA,NA),ncol=2,dimnames = list(c(1), c("tas", "pr"))),
+          function(.Object, data = matrix(c(NA,NA),ncol=2,dimnames = list(c(1), c("NA", "NA"))),
           nvar = NA_integer_, names = NA_character_, ...){
+            
             d <- dim(data)
-            if(length(d) != 2)warning("Testing")
+            if(length(d) != 2) stop("Data not a 2-dimensional table!")
+            if(d[2] != 2) stop("Only two columns allowed!")
+            
             .Object@data <- as.matrix(data)
 
             if(is.na(nvar))nvar <- ncol(.Object@data)
@@ -31,7 +34,7 @@ setMethod(f = "initialize",
 setMethod(f = "dat",
           signature = "TimeSeriesTP",
           definition = function(object){
-            return(object@dat)
+            return(object@data)
           })
 
 setMethod(f = "dat<-",
@@ -56,6 +59,17 @@ setMethod(f = "dim",
           signature(x = "TimeSeriesTP"),
           definition = function(x) x@Dim, valueClass = "integer")
 
+
+setMethod(f = "is.TS2D",
+          signature( "ANY"),
+          definition = function(object){
+            if(is.object(object) == T){
+              if(class(object) == "TimeSeriesTP") return(TRUE)
+              return(FALSE)
+            }else{
+              return(FALSE)
+            }
+          })
 
 setMethod(f = "show",
           signature = "TimeSeriesTP",

@@ -7,16 +7,16 @@
 biasco(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...)
 }
 \arguments{
-\item{obs.in}{A vector containing the reference data}
+\item{obs.in}{A vector containing the reference data.}
 
-\item{ctrl.in}{A vector of simulated data used for calibration}
+\item{ctrl.in}{A vector of simulated data used to calibrate the method}
 
-\item{scen.in}{A vector of data to be adjusted}
+\item{scen.in}{A vector of data for the scenario period simulation}
 
 \item{type}{String defining the type of adjustment. Currently \code{type} recognizes two values:
 \itemize{
-  \item{"abs"}{Absolute scale is used. This approach is typically applied measured in the absolute scale (e.g temperature)}
-  \item{"ratio"}{The adjustment is made in ratio format. This approach is typically applied to non-continuous variables such as precipitation.}
+  \item{abs: Absolute scale is used. This approach is typically applied measured in the absolute scale (e.g temperature)}
+  \item{ratio: The adjustment is made in ratio format. This approach is typically applied to non-continuous variables such as precipitation.}
 }}
 
 \item{method}{Method to be used to bias adjust \code{scen.in}. The following options are available:}
@@ -28,10 +28,11 @@ An object of type \code{BiascoTimeSeries},
   which contains the adjusted data and parameter values related to a particular method.
 }
 \description{
-\code{biasco} returns bias corrected data as and object of type \code{BiascoTimeSeries}
+\code{biasco} returns bias corrected data as an object of type \code{BiascoTimeSeries}. 
+Several methods of different complexity are available in the package (see details).
 }
 \details{
-The following univariate methods are available:
+The following univariate methods have curretnly been implemented in this package:
  \itemize{
  \item{M1: Simple delta change scaling of time mean}
  \item{M2: Delta change scaling on mean and standard deviation. If \code{type} = ratio, then Engen-Skaugen algorithm is used.}{}
@@ -47,16 +48,37 @@ The following univariate methods are available:
 }
 \examples{
 \dontrun{
-library(BCUH)
 library(lubridate)
-data(station_Jyvaskyla)
-data("ALADIN_Jyvaskyla")
-#Extract data only for December
-obs <- station_Jyvaskyla[!is.na(match(year(station_Jyvaskyla$date),seq(ctrl[1],ctrl[2]))), -1]$tas
-ctrl <- ALADIN_Jyvaskyla[!is.na(match(year(ALADIN_Jyvaskyla$date),seq(ctrl[1],ctrl[2]))), -1]$tas
-scen <- ALADIN_Jyvaskyla[!is.na(match(year(ALADIN_Jyvaskyla$date),seq(scen[1],scen[2]))), -1]$tas
-TS <- biasco(obs.ctrl[,1],ctrl[,1],scen[,1],type="abs",method="M1")
+library(BCUH)
 
+data("station_Jyvaskyla")
+data("ALADIN_Jyvaskyla")
+
+ctrl <- c(1971,2000)
+scen <- c(2071,2100)
+
+ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
+                  year(station_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
+ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+                   year(ALADIN_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
+ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+                   year(ALADIN_Jyvaskyla$date) \%in\% seq(scen[1],scen[2]))
+
+obs.ctrl <- station_Jyvaskyla[ind.obs,]
+rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,]
+rcm.scen <- ALADIN_Jyvaskyla[ind.scen,]
+
+dc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M1")
+bc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M6")
+
+plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = "l",
+    main="Quantile plot", xlab = "\%", ylab = "Celcius", ylim = c(-30,10))
+lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
+lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = "red")
+lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
+lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
+legend("topleft", c("M1","M6","Obs","Ctrl","Scen"),
+      col = c("black","black","red","blue","blue"), lty = c(1,2,1,1,2))
 }
 
 }
