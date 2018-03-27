@@ -18,13 +18,13 @@ devtools:install_github("Ratyo/BCUH")
 
 There are two main wrapper functions. 
 
-To apply univariate bias correction:
+To apply univariate bias correction use
 
 ```r
   BCUH::biasco()
 ```
 
-For using the joint bias correction method:
+For using the joint bias correction method use
 
 ```r
   BCUH::biasco2D()

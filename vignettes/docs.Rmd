@@ -27,15 +27,15 @@ rdl <- function(x) packagedocs::rd_link(deparse(substitute(x)))
 
 # BCUH
 
-BCUH is a collection of simple univariate bi-variate methods for combining information obtained from reference data with (typically) climate simulations.
+BCUH is a collection of simple univariate bi-variate methods for combining information obtained from reference data with (typically) climate simulations. These methods have become de facto standard in climate research due to the need to take biases in climate model simulations with respect to the observed climate into account. 
 
 # Introduction
 
-This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented based on Räisänen and Räty (2013), Räty et al. (2014). In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on Li et al (2014), Gennaretti et al. (2015) and have been applied in the study by Räty el et. (submitted).
+This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented based on Räisänen and Räty (2013), Räty et al. (2014). In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on Li et al (2014) and Gennaretti et al. (2015) and has further been applied by Räty el et. (submitted).
 
 #Structure
 
-All the statistical methods implemented in BCUH have been coded as S4 methods belonging to a set of classes. The most important ones are. 
+All the statistical methods implemented in BCUH have been coded as S4 methods belonging to a set of classes. The most important ones are the 
 
 #Univariate method
 
@@ -51,7 +51,11 @@ We now demonstrate the use of BCUH with several examples.
 
 #Limitations
 
-As with all statistical methods there are several limitations for cases where BCUH can be used and when it is not feasible.
+As with all statistical methods, there are several limitations for cases where BCUH can be used and when it is not feasible. First and most importantly, the implemented methods have not been designed to downscale climate model simulations, although this has commonly been a part of the procedure. This limitation is more severe for variables, whose spatial variability . Another . For non-parametric quantile mapping, an option is available to adjust changes in monthly means to the simulated ones. Higher monents have not been considered. This is not an issue in delta change method, which by definition add simulated changes to the observed time series based on . There are also more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability
+
+#Other R packages
+
+\code{BCUH} is just one of the possible R packages, which can be used to statistically adjust model simulations to biases in climate model simulations. In this section, a brief overview is given on the existing packages, which the reader might find useful. Another comprehensive package has been developed in Santander, which consists of a set of bias correction and statistical downscaling methods \url{https://github.com/SantanderMetGroup/downscaleR}. The package includes a set of tools for tailoring  climate model data for the implemented methods.
 
 #Conclusions
 

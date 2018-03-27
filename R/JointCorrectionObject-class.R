@@ -166,6 +166,34 @@ print(threshold)
 
             scen$cpar1 <- fit.normF@copula@parameters
 
+            mvd.o <- mvdc(copula = ellipCopula(family = "normal", param = 0),
+                          margins = c("norm", "gamma"), 
+                          paramMargins = list(list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2]),
+                                              list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])))
+            start <- as.vector(c(obs$margTW$estimate[1],obs$margTW$estimate[2],obs$margP$estimate[1],obs$margP$estimate[2],fit.normO@copula@parameters))
+            fit.mvdO <- suppressWarnings(fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "Nelder",
+                                                 start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=1000)))
+            
+            obs$cpar1 <- coef(fit.mvdO)[5]
+            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
+            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
+            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
+            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
+            
+            mvd.c <- mvdc(copula = ellipCopula(family = "normal", param = 0),
+                          margins = c("norm", "gamma"), 
+                          paramMargins = list(list(mean = ctrl$margTW[1], sd = ctrl$margTW[2]),
+                                              list(shape = ctrl$margP[1], rate = ctrl$margP[2])))
+            start <- c(ctrl$margTW$estimate[1],ctrl$margTW$estimate[2],ctrl$margP$estimate[1],ctrl$margP$estimate[2],fit.normC@copula@parameters)
+            fit.mvdC <- suppressWarnings(fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "Nelder",
+                                                 start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=100)))
+            
+            ctrl$cpar1 <- coef(fit.mvdC)[5]
+            ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
+            ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
+            ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
+            ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
+            
             if(cond=="P"){
               print(cond)
               adj <- .adjPT(obs,ctrl,scen)
