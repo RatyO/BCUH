@@ -1,0 +1,99 @@
+@article{cannon2015,
+  abstract = "AbstractQuantile mapping bias correction algorithms are commonly used to correct systematic distributional biases in precipitation outputs from climate models. Although they are effective at removing historical biases relative to observations, it has been found that quantile mapping can artificially corrupt future model-projected trends. Previous studies on the modification of precipitation trends by quantile mapping have focused on mean quantities, with less attention paid to extremes. This article investigates the extent to which quantile mapping algorithms modify global climate model (GCM) trends in mean precipitation and precipitation extremes indices. First, a bias correction algorithm, quantile delta mapping (QDM), that explicitly preserves relative changes in precipitation quantiles is presented. QDM is compared on synthetic data with detrended quantile mapping (DQM), which is designed to preserve trends in the mean, and with standard quantile mapping (QM). Next, methods are applied to phase 5 of the Coupled Model Intercomparison Project (CMIP5) daily precipitation projections over Canada. Performance is assessed based on precipitation extremes indices and results from a generalized extreme value analysis applied to annual precipitation maxima. QM can inflate the magnitude of relative trends in precipitation extremes with respect to the raw GCM, often substantially, as compared to DQM and especially QDM. The degree of corruption in the GCM trends by QM is particularly large for changes in long period return values. By the 2080s, relative changes in excess of +500\% with respect to historical conditions are noted at some locations for 20-yr return values, with maximum changes by DQM and QDM nearing +240\% and +140\%, respectively, whereas raw GCM changes are never projected to exceed +120\%. AbstractQuantile mapping bias correction algorithms are commonly used to correct systematic distributional biases in precipitation outputs from climate models. Although they are effective at removing historical biases relative to observations, it has been found that quantile mapping can artificially corrupt future model-projected trends. Previous studies on the modification of precipitation trends by quantile mapping have focused on mean quantities, with less attention paid to extremes. This article investigates the extent to which quantile mapping algorithms modify global climate model (GCM) trends in mean precipitation and precipitation extremes indices. First, a bias correction algorithm, quantile delta mapping (QDM), that explicitly preserves relative changes in precipitation quantiles is presented. QDM is compared on synthetic data with detrended quantile mapping (DQM), which is designed to preserve trends in the mean, and with standard quantile mapping (QM). Next, methods are applied to phase 5 of the Coupled Model Intercomparison Project (CMIP5) daily precipitation projections over Canada. Performance is assessed based on precipitation extremes indices and results from a generalized extreme value analysis applied to annual precipitation maxima. QM can inflate the magnitude of relative trends in precipitation extremes with respect to the raw GCM, often substantially, as compared to DQM and especially QDM. The degree of corruption in the GCM trends by QM is particularly large for changes in long period return values. By the 2080s, relative changes in excess of +500\% with respect to historical conditions are noted at some locations for 20-yr return values, with maximum changes by DQM and QDM nearing +240\% and +140\%, respectively, whereas raw GCM changes are never projected to exceed +120\%.",
+  author = "Cannon, Alex J. and Sobie, Stephen R. and Murdock, Trevor Q.",
+  doi = "https://doi.org/10.1175/JCLI-D-14-00754.1",
+  issn = "0894-8755",
+  journal = {J. Clim.},
+  doi = {10.1175/JCLI-D-14-00754.1},
+  url = {https://doi.org/10.1175/JCLI-D-14-00754.1},
+  number = "17",
+  pages = "6938--6959",
+  publisher = "American Meteorological Society",
+  title = "{Bias correction of GCM precipitation by quantile mapping: how well do methods preserve changes in quantiles and extremes?}",
+  volume = "28",
+  year = "2015"
+}
+
+@article{cannon2016,
+  abstract = "Univariate bias correction algorithms, such as quantile mapping, are used to address systematic biases in climate model output. Intervariable dependence structure (e.g., between different quantities like temperature and precipitation or between sites) is typically ignored, which can have an impact on subsequent calculations that depend on multiple climate variables. A novel multivariate bias correction (MBC) algorithm is introduced as a multidimensional analog of univariate quantile mapping. Two variants are presented. MBCp and MBCr respectively correct Pearson correlation and Spearman rank correlation dependence structure, with marginal distributions in both constrained to match observed distributions via quantile mapping. MBC is demonstrated on two case studies: 1) bivariate bias correction of monthly temperature and precipitation output from a large ensemble of climate models and 2) multivariate correction of vertical humidity and wind profiles, including subsequent calculation of vertically integrated water vapor transport and detection of atmospheric rivers. The energy distance is recommended as an omnibus measure of performance for model selection. As expected, substantial improvements in performance relative to quantile mapping are found in each case. For reference, characteristics of the MBC algorithm are compared against existing bivariate and multivariate bias correction techniques. MBC performs competitively and fills a role as a flexible, general purpose multivariate bias correction algorithm.",
+  author = "Cannon, Alex J.",
+  doi = "10.1175/JCLI-D-15-0679.1",
+  url = {https://doi.org/10.1175/JCLI-D-15-0679.1},
+  journal = {J. Clim.},
+  number = "19",
+  pages = "7045--7064",
+  title = "{Multivariate bias correction of climate model output: matching marginal distributions and intervariable dependence structure}",
+  volume = "29",
+  year = "2016"
+}
+
+@article{cannon2017,
+  abstract = "Most bias correction algorithms used in climatology, for example quantile mapping, are applied to univariate time series. They neglect the dependence between different variables. Those that are multivariate often correct only limited measures of joint dependence, such as Pearson or Spearman rank correlation. Here, an image processing technique designed to transfer colour information from one image to another---the N-dimensional probability density function transform---is adapted for use as a multivariate bias correction algorithm (MBCn) for climate model projections/predictions of multiple climate variables. MBCn is a multivariate generalization of quantile mapping that transfers all aspects of an observed continuous multivariate distribution to the corresponding multivariate distribution of variables from a climate model. When applied to climate model projections, changes in quantiles of each variable between the historical and projection period are also preserved. The MBCn algorithm is demonstrated on three case studies. First, the method is applied to an image processing example with characteristics that mimic a climate projection problem. Second, MBCn is used to correct a suite of 3-hourly surface meteorological variables from the Canadian Centre for Climate Modelling and Analysis Regional Climate Model (CanRCM4) across a North American domain. Components of the Canadian Forest Fire Weather Index (FWI) System, a complicated set of multivariate indices that characterizes the risk of wildfire, are then calculated and verified against observed values. Third, MBCn is used to correct biases in the spatial dependence structure of CanRCM4 precipitation fields. Results are compared against a univariate quantile mapping algorithm, which neglects the dependence between variables, and two multivariate bias correction algorithms, each of which corrects a different form of inter-variable correlation structure. MBCn outperforms these alternatives, often by a large margin, particularly for annual maxima of the FWI distribution and spatiotemporal autocorrelation of precipitation fields.",
+  author = "Cannon, Alex J.",
+  doi = {10.1007/s00382-017-3580-6},
+  url = {https://doi.org/10.1007/s00382-017-3580-6},
+  issn = "1432-0894",
+  journal = {Clim. Dyn.},
+  pages = "1--19",
+  title = "{Multivariate quantile mapping bias correction: an N-dimensional probability density function transform for climate model simulations of multiple variables}",
+  year = "2017"
+}
+
+@article {gennaretti2015,
+author = {Gennaretti, Fabio and Sangelantoni, Lorenzo and Grenier, Patrick},
+title = {Toward daily climate scenarios for Canadian Arctic coastal zones with more realistic temperature-precipitation interdependence},
+journal = {J. Geophys. Res.-Atmos.},
+volume = {120},
+number = {23},
+issn = {2169-8996},
+doi = {10.1002/2015JD023890},
+URL = {https://doi.org/10.1002/2015JD023890},
+pages = {11,862--11,877},
+keywords = {Global climate models, Atmosphere, Climate variability, Regional climate change, climate scenario, Arctic, intervariable dependence, statistical adjustment, quantile mapping, copula},
+year = {2015},
+}
+
+@article {li2014,
+author = {Li, Chao and Sinha, Eva and Horton, Daniel E. and Diffenbaugh, Noah S. and Michalak, Anna M.},
+title = {Joint bias correction of temperature and precipitation in climate model simulations},
+journal = {J. Geophys. Res.-Atmos.},
+volume = {119},
+number = {23},
+issn = {2169-8996},
+doi = {10.1002/2014JD022514},
+URL = {https://doi.org/10.1002/2014JD022514},
+pages = {13,153--13,162},
+keywords = {Data analysis: algorithms and implementation, Global climate models, Impacts of global change, Precipitation, joint bias correction, temperature, precipitation, climate simulations},
+year = {2014},
+}
+
+@Article{raisanen2013,
+author="R{\"a}is{\"a}nen, Jouni
+and R{\"a}ty, Olle",
+title="Projections of daily mean temperature variability in the future: cross-validation tests with ENSEMBLES regional climate simulations",
+journal={Clim. Dyn.},
+year="2013",
+volume="41",
+number="5",
+pages="1553--1568",
+abstract="Because of model biases, projections of future climate need to combine model simulations of recent and future climate with information on observed climate. Here, 10 methods for projecting the distribution of daily mean temperatures are compared, using six regional climate change simulations for Europe. Cross validation between the models is used to assess the potential performance of the methods in projecting future climate. Delta change and bias correction type methods show similar cross-validation performance, with methods based on the quantile mapping approach doing best in both groups due to their apparent ability to reduce the errors in the projected time mean temperature change. However, as no single method performs best under all circumstances, the optimal approach might be to use several well-behaving methods in parallel. When applying the various methods to real-world temperature projection for the late 21st century, the largest intermethod differences are found in the tails of the temperature distribution. Although the intermethod variation of the projections is generally smaller than their intermodel variation, it is not negligible. Therefore, it should be preferably included in uncertainty analysis of temperature projections, particularly in applications where the extremes of the distribution are important.",
+issn="1432-0894",
+doi="10.1007/s00382-012-1515-9",
+URL = {https://doi.org/10.1007/s00382-012-1515-9},
+}
+
+@Article{raty2014,
+author="R{\"a}ty, Olle
+and R{\"a}is{\"a}nen, Jouni
+and Ylh{\"a}isi, Jussi S.",
+title="Evaluation of delta change and bias correction methods for future daily precipitation: intermodel cross-validation using ENSEMBLES simulations",
+journal={Clim. Dyn.},
+year="2014",
+volume="42",
+number="9",
+pages="2287--2303",
+abstract="Due to inherent limitations in climate models, their output is biased in relation to observed climate and as such does not provide reliable climate projections. In this study, nine methods used to account for biases in daily precipitation are tested. First, cross-validation tests were made using a set of ENSEMBLES regional model simulations to gain insights in the potential performance of the methods in the future climate. The results show that quantile mapping type methods, being able to modify the shape of the precipitation distribution, often outperform other types of methods. Yet, as the performance depends on time of the year, location and part of the distribution considered, it is not possible to distinguish one universally best performing method. In addition, the improvement relative to the projections that would have been obtained assuming unchanged climate is relatively modest, particularly in the early twentyfirst century conditions. Further tests with different method combinations show that the projections could be potentially improved by using several well performing methods in parallel. In the second part of the study, contributions of method and model differences to the overall variation of precipitation projections are assessed. It is shown that although intermodel differences play an important role, uncertainties related to intermethod differences are substantial, particularly in the tails of the distribution. This suggests that method uncertainty should be taken into account when constructing daily precipitation projections, possibly by using several methods in parallel.",
+issn="1432-0894",
+doi="10.1007/s00382-014-2130-8",
+URL = {https://doi.org/10.1007/s00382-014-2130-8},
+}
