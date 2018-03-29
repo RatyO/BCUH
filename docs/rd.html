@@ -1,0 +1,611 @@
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc" />
+
+    <meta name="author" content="Olle Räty" />
+  
+  
+  <title>BCUH Documentation</title>
+
+    <script src="rd_files/jquery-1.11.3/jquery.min.js"></script>
+  <link href="rd_files/bootstrap-3.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="rd_files/bootstrap-3.3.2/js/bootstrap.min.js"></script>
+  <script src="rd_files/bootstrap-3.3.2/shim/html5shiv.min.js"></script>
+  <script src="rd_files/bootstrap-3.3.2/shim/respond.min.js"></script>
+  <link href="rd_files/highlight-8.4/tomorrow.css" rel="stylesheet" />
+  <script src="rd_files/highlight-8.4/highlight.pack.js"></script>
+  <link href="rd_files/fontawesome-4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+  <script src="rd_files/stickykit-1.1.1/sticky-kit.min.js"></script>
+  <script src="rd_files/jqueryeasing-1.3/jquery.easing.min.js"></script>
+  <link href="rd_files/recliner-0.2.2/recliner.css" rel="stylesheet" />
+  <script src="rd_files/recliner-0.2.2/recliner.min.js"></script>
+  <script src="rd_files/recliner-0.2.2/onload.js"></script>
+  <link href="rd_files/packagedocs-0.0.1/pd.css" rel="stylesheet" />
+  <script src="rd_files/packagedocs-0.0.1/pd.js"></script>
+  <script src="rd_files/packagedocs-0.0.1/pd-sticky-toc.js"></script>
+  
+  
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+
+<body>
+
+  
+  <header class="navbar navbar-white navbar-fixed-top" role="banner" id="header">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+                <a href="index.html" class="navbar-brand page-scroll">
+        BCUH Documentation - University of Helsinki bias adjustment tools
+        </a>
+      </div>
+            <nav class="collapse navbar-collapse" role="navigation">
+        <ul class="nav nav-pills pull-right">
+<li>
+<a href='docs.html'>Docs</a>
+</li>
+<li class="active">
+<a href='rd.html'>Package Ref</a>
+</li>
+<li>
+<a href='https://github.com/ratyO/BCUH'>Github <i class='fa fa-github'></i></a>
+</li>
+        </ul>
+      </nav>
+          </div>
+  </header>
+
+  <!-- Begin Body -->
+  <div class="container">
+    <div class="row">
+            <div class="col-md-3" id="sidebar-col">
+        <div id="toc">
+          <ul>
+          <li><a href="#datasets-available-by-data">Datasets available by data()</a><ul>
+          <li><a href="#aladin_jyvaskyla">ALADIN_Jyvaskyla</a></li>
+          <li><a href="#station_jyvaskyla">station_Jyvaskyla</a></li>
+          </ul></li>
+          <li><a href="#package-functions">Package Functions</a><ul>
+          <li><a href="#biasco">biasco</a></li>
+          <li><a href="#biasco2d">biasco2D</a></li>
+          </ul></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9" id="content-col">
+      
+<div id="content-top"></div>
+<h1>
+University of Helsinki bias adjustment tools
+</h1>
+<p>
+<strong>Authors:</strong>
+</p>
+<p>
+<strong>Version:</strong> 0.0-1
+</p>
+<p>
+<strong>License:</strong> GPL (&gt;= 3)
+</p>
+<h4>
+Description
+</h4>
+<p>
+A set of delta change and bias correction methods designed for bias adjusting absolute and ratio variables and a 2D method to adjust the intervariable structure of two variables. The implemented methods are described in more detail in “Räisänen and Räty (2013)”, “Räty et al. (2014)” and “Li et al. (2014)”.
+</p>
+<h4>
+Depends
+</h4>
+<p>
+R (&gt;= 3.1.0)
+</p>
+<h4>
+Imports
+</h4>
+<p>
+moments, MASS, fitdistrplus, copula, methods, Rdpack
+</p>
+<h4>
+Suggests
+</h4>
+<p>
+testthat, knitr, rmarkdown, packagedocs
+</p>
+<div id="datasets-available-by-data" class="section level1">
+<h1>Datasets available by data()</h1>
+<div id="aladin_jyvaskyla" class="section level2">
+<h2>ALADIN_Jyvaskyla</h2>
+<a id="ALADIN_Jyvaskyla_alias"></a>
+<h3>
+ALADIN5.3 EURO-CORDEX 0.11 deg resolution.
+</h3>
+<p class="rd-p">
+A dataset containing the time series of 2m daily mean temperature and daily precipitation simulated with CNRM-ALADIN5.3 at 0.11 degree resolution using RCP4.5 emission scenario forcings in a grid box nearest to Jyväskylä airport (25.68 E, 62.40 N).
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>ALADIN_Jyvaskyla</div></code></pre>
+<h4>
+Format
+</h4>
+<p class="rd-p">
+A data frame with 54819 rows and 3 variables:
+<dl>
+</p>
+<p class="rd-p">
+<dt>
+date
+</dt>
+<dd>
+time stamps for each day
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+tas
+</dt>
+<dd>
+daily mean temperature in Celcius
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+pr
+</dt>
+<dd>
+daily precipitation in mm/d
+</dd>
+</p>
+<p class="rd-p">
+…
+</dl>
+</p>
+<h4>
+Source
+</h4>
+<p class="rd-p">
+<a href = https://esgf.llnl.gov/>https://esgf.llnl.gov/</a>
+</p>
+</div>
+<div id="station_jyvaskyla" class="section level2">
+<h2>station_Jyvaskyla</h2>
+<a id="station_Jyvaskyla_alias"></a>
+<h3>
+Temperature and precipitation in Jyväskylä between 1951-2017.
+</h3>
+<p class="rd-p">
+A data.frame containing the daily time series of daily mean temperature and daily precipitation measures in the Jyväskylä airport (25.68 E, 62.40 N) between 1951-2017. Missing values have been replaced with previous day’s values.
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>station_Jyvaskyla</div></code></pre>
+<h4>
+Format
+</h4>
+<p class="rd-p">
+A data frame with 24139 rows and 3 variables:
+<dl>
+</p>
+<p class="rd-p">
+<dt>
+date
+</dt>
+<dd>
+time stamps for each day
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+tas
+</dt>
+<dd>
+daily mean temperature in Celcius
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+pr
+</dt>
+<dd>
+daily precipitation in mm/d
+</dd>
+</p>
+<p class="rd-p">
+…
+</dl>
+</p>
+<h4>
+Source
+</h4>
+<p class="rd-p">
+<a href = https://climexp.knmi.nl/>https://climexp.knmi.nl/</a>
+</p>
+</div>
+</div>
+<div id="package-functions" class="section level1">
+<h1>Package Functions</h1>
+<div id="biasco" class="section level2">
+<h2>biasco</h2>
+<a id="biasco_alias"></a>
+<h3>
+A wrapper function for univariate bias correction and delta changes methods.
+</h3>
+<p class="rd-p">
+<code>biasco</code> returns bias corrected data as an object of type <code>BiascoTimeSeries</code>. Several methods of different complexity are available in the package (see details).
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>biasco(obs.in, ctrl.in, scen.in, type&nbsp;=&nbsp;"abs", method&nbsp;=&nbsp;"M1", ...)</div></code></pre>
+<h4>
+Arguments
+</h4>
+<dl class="rd-dl">
+<dt>
+obs.in
+</dt>
+<dd class="rd-dd">
+A vector containing the reference data.
+</dd>
+<dt>
+ctrl.in
+</dt>
+<dd class="rd-dd">
+A vector of simulated data used to calibrate the method
+</dd>
+<dt>
+scen.in
+</dt>
+<dd class="rd-dd">
+A vector of data for the scenario period simulation
+</dd>
+<dt>
+type
+</dt>
+<dd class="rd-dd">
+String defining the type of adjustment. Currently <code>type</code> recognizes two values:
+<ul>
+<li>
+abs: Absolute scale is used. This approach is typically applied measured in the absolute scale (e.g temperature)
+</li>
+<li>
+ratio: The adjustment is made in ratio format. This approach is typically applied to non-continuous variables such as precipitation.
+</li>
+</ul>
+</dd>
+<dt>
+method
+</dt>
+<dd class="rd-dd">
+Method to be used to bias adjust <code>scen.in</code>. The following options are available:
+</dd>
+<dt>
+…
+</dt>
+<dd class="rd-dd">
+Additional parameters used to handle the behavior of specific bias correction methods.
+</dd>
+</dl>
+<h4>
+Value
+</h4>
+<p class="rd-p">
+<dl>
+An object of type <code>BiascoTimeSeries</code>, which contains the adjusted data and parameter values related to a particular method.
+</dl>
+</p>
+<h4>
+Details
+</h4>
+<p class="rd-p">
+The following univariate methods have curretnly been implemented in this package:
+<ul>
+<li>
+M1: Simple delta change scaling of time mean
+</li>
+<li>
+M2: Delta change scaling on mean and standard deviation. If <code>type</code> = ratio, then Engen-Skaugen algorithm is used.
+</li>
+<li>
+M3: Delta change scaling on mean, standard deviation and skewness. If <code>type</code> = ratio, M3 corresponds to delta change scaling of mean and standard deviation using.
+</li>
+<li>
+M4: Parametric quantile mapping applied in the delta change mode
+</li>
+<li>
+M5: Non-parametric quantile mapping applied in the delta change mode
+</li>
+<li>
+M6: As M1 but applied in the bias correction mode
+</li>
+<li>
+M7: As M2 but applied in the bias correction mode
+</li>
+<li>
+M8: As M3 but applied in the bias correction mode
+</li>
+<li>
+M9: As M4 but applied in the bias correction mode
+</li>
+<li>
+M10: As M5 but applied in the bias correction mode
+</li>
+</ul>
+</p>
+<p class="rd-p">
+</p>
+<h4>
+Examples
+</h4>
+<pre class="r"><code>library(lubridate)
+library(copula)
+library(BCUH)
+
+data(&quot;station_Jyvaskyla&quot;)
+data(&quot;ALADIN_Jyvaskyla&quot;)
+
+ctrl &lt;- c(1971,2000)
+scen &lt;- c(2071,2100)
+
+#Extract data for December
+ind.obs &lt;- which(month(station_Jyvaskyla$date) == 12 &amp;
+                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.ctrl &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.scen &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
+
+obs.ctrl &lt;- station_Jyvaskyla[ind.obs,]
+rcm.ctrl &lt;- ALADIN_Jyvaskyla[ind.ctrl,]
+rcm.scen &lt;- ALADIN_Jyvaskyla[ind.scen,]
+
+#Create objects which contain the bias corrected data
+dc.object &lt;- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M1&quot;)
+bc.object &lt;- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M6&quot;)
+
+dc.object</code></pre>
+<pre><code>## *** Class BiascoTimeSeries, method show *** 
+## * method = [1] &quot;M1&quot;
+## * bc.attributes = list()
+## * adj@nvar = [1] 1
+## * adj@Dim = [1] 930
+## * adj@data (limited to first 100 values) = 
+##   [1] 3.089    2.489    0.6891   2.289    3.189    1.089    2.789   
+##   [8] -2.011   -15.81   -11.21   -0.8109  -4.411   -8.111   -3.211  
+##  [15] 0.6891   2.689    2.089    -1.611   -2.511   -14.61   -9.511  
+##  [22] -5.111   -8.911   -6.011   -12.51   -2.911   0.6891   -2.711  
+##  [29] -9.011   -0.9109  1.689    2.789    5.789    7.289    6.289   
+##  [36] 5.689    6.589    7.889    5.289    1.989    3.189    2.789   
+##  [43] 2.489    5.189    7.289    3.589    3.889    1.489    -3.111  
+##  [50] -1.611   3.389    1.389    3.489    4.189    3.389    -0.9109 
+##  [57] -4.711   -0.01087 -0.3109  2.489    3.289    5.089    -12.41  
+##  [64] -19.21   -6.211   -8.411   -16.01   -24.71   -22.71   -22.81  
+##  [71] -24.71   -11.71   4.289    -2.811   -4.311   -4.811   -14.51  
+##  [78] -16.41   -4.111   -6.511   -8.111   -7.111   -7.611   -5.811  
+##  [85] -2.811   -5.511   -3.311   -0.01087 0.2891   4.289    2.089   
+##  [92] 5.689    2.589    0.4891   0.3891   2.589    1.189    3.289   
+##  [99] 2.689    0.2891  
+## ******* End Show (BiascoTimeSeries) *******</code></pre>
+<pre class="r"><code>#Visualise the results
+plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = &quot;l&quot;,
+    main=&quot;Quantile plot&quot;, xlab = &quot;%&quot;, ylab = &quot;Celcius&quot;, ylim = c(-30,10))
+lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
+lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = &quot;red&quot;)
+lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = &quot;blue&quot;)
+lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = &quot;blue&quot;, lty = 2)
+legend(&quot;topleft&quot;, c(&quot;M1&quot;,&quot;M6&quot;,&quot;Obs&quot;,&quot;Ctrl&quot;,&quot;Scen&quot;),
+      col = c(&quot;black&quot;,&quot;black&quot;,&quot;red&quot;,&quot;blue&quot;,&quot;blue&quot;), lty = c(1,2,1,1,2))</code></pre>
+<p><img src="rd_files/figure-html/biasco_id_3-1.png" width="624" /></p>
+<h4>
+See also
+</h4>
+<p><code>biasco2d</code> for two-dimensional bias correction of temperature and precipitation</p>
+</div>
+<div id="biasco2d" class="section level2">
+<h2>biasco2D</h2>
+<a id="biasco2D_alias"></a>
+<h3>
+Joint bias correction of temperature and precipitation.
+</h3>
+<p class="rd-p">
+A wrapper function for a copula-based bias correction method of temperature and precipitation
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>biasco2D(obs.in, ctrl.in, scen.in, names&nbsp;=&nbsp;NULL, cond&nbsp;=&nbsp;"P", threshold&nbsp;=&nbsp;0.1, ...)</div></code></pre>
+<h4>
+Arguments
+</h4>
+<dl class="rd-dl">
+<dt>
+obs.in
+</dt>
+<dd class="rd-dd">
+Either a 2-column array, matrix or data.frame. of observed temperature and precipitation
+</dd>
+<dt>
+ctrl.in
+</dt>
+<dd class="rd-dd">
+Data used to calibrate the method given in the format as <code>obs.in</code>
+</dd>
+<dt>
+scen.in
+</dt>
+<dd class="rd-dd">
+Data for the scenario period simulation given in the format as <code>obs.in</code>
+</dd>
+<dt>
+cond
+</dt>
+<dd class="rd-dd">
+The conditioning order of temperature and precipitation. If <code>cond</code> = “P” then the precipitation marginal is adjusted first, while the adjustment of temperature is made conditionally on precipitation
+</dd>
+<dt>
+threshold
+</dt>
+<dd class="rd-dd">
+Threshold for wet day precipitation. Everything below <code>threshold</code> is handled as zero precipitation
+</dd>
+<dt>
+…
+</dt>
+<dd class="rd-dd">
+Method-specific parameters to be implemented
+</dd>
+</dl>
+<h4>
+Value
+</h4>
+<p class="rd-p">
+<dl>
+An object of type BiascoTimeSeriesPT which contains a matrix of bias adjusted temperature and precipitation and also additional information on the used parameter values
+</dl>
+</p>
+<h4>
+Examples
+</h4>
+<pre class="r"><code>library(lubridate)
+library(BCUH)
+#Load data
+data(&quot;station_Jyvaskyla&quot;)
+data(&quot;ALADIN_Jyvaskyla&quot;)
+
+ctrl &lt;- c(1971,2000)
+scen &lt;- c(2071,2100)
+ind.obs &lt;- which(month(station_Jyvaskyla$date) == 12 &amp;
+                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.ctrl &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.scen &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
+obs.ctrl &lt;- station_Jyvaskyla[ind.obs,2:3]
+rcm.ctrl &lt;- ALADIN_Jyvaskyla[ind.ctrl,2:3]
+rcm.scen &lt;- ALADIN_Jyvaskyla[ind.scen,2:3]
+biasco2d.object &lt;- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c(&quot;tas&quot;, &quot;pr&quot;))</code></pre>
+<pre><code>## Warning in .local(.Object, ...): Overwriting original colnames
+
+## Warning in .local(.Object, ...): Overwriting original colnames
+
+## Warning in .local(.Object, ...): Overwriting original colnames</code></pre>
+<pre><code>## [1] 0.1
+##   Nelder-Mead direct search function minimizer
+## function value for initial parameters = 2915.356332
+##   Scaled convergence tolerance is 0.291536
+## Stepsize computed as 0.604059
+## BUILD              6 3434.950361 2915.356332
+## LO-REDUCTION       8 3262.478630 2915.356332
+## HI-REDUCTION      10 3072.855035 2915.356332
+## HI-REDUCTION      12 3015.054549 2915.356332
+## HI-REDUCTION      14 2964.534659 2915.356332
+## LO-REDUCTION      16 2947.070471 2915.356332
+## HI-REDUCTION      18 2946.325091 2915.356332
+## HI-REDUCTION      20 2924.411558 2915.356332
+## HI-REDUCTION      22 2923.512153 2915.356332
+## HI-REDUCTION      24 2923.231135 2915.356332
+## HI-REDUCTION      26 2920.264986 2915.356332
+## HI-REDUCTION      28 2918.406023 2915.356332
+## LO-REDUCTION      30 2918.099123 2915.356332
+## HI-REDUCTION      32 2918.003337 2915.356332
+## LO-REDUCTION      34 2917.702059 2915.356332
+## LO-REDUCTION      36 2917.233252 2915.356332
+## LO-REDUCTION      38 2916.590207 2915.356332
+## LO-REDUCTION      40 2916.487972 2915.356332
+## LO-REDUCTION      42 2916.222301 2915.356332
+## LO-REDUCTION      44 2916.078794 2915.356332
+## LO-REDUCTION      46 2915.991243 2915.356332
+## Exiting from Nelder Mead minimizer
+##     48 function evaluations used
+##   Nelder-Mead direct search function minimizer
+## function value for initial parameters = 2915.356332
+##   Scaled convergence tolerance is 0.291536
+## Stepsize computed as 0.604059
+## BUILD              6 3434.950361 2915.356332
+## Exiting from Nelder Mead minimizer
+##     8 function evaluations used
+##   Nelder-Mead direct search function minimizer
+## function value for initial parameters = 2478.774491
+##   Scaled convergence tolerance is 0.247877
+## Stepsize computed as 0.666375
+## BUILD              6 99999999999999996863366107917975552.000000 2478.774491
+## LO-REDUCTION       8 2791.945609 2478.774491
+## HI-REDUCTION      10 2689.809286 2478.774491
+## HI-REDUCTION      12 2561.239258 2478.774491
+## HI-REDUCTION      14 2525.572886 2478.774491
+## HI-REDUCTION      16 2521.964075 2478.774491
+## HI-REDUCTION      18 2504.097516 2478.774491
+## HI-REDUCTION      20 2494.902382 2478.774491
+## LO-REDUCTION      22 2492.423642 2478.774491
+## HI-REDUCTION      24 2490.062527 2478.774491
+## HI-REDUCTION      26 2488.543090 2478.774491
+## HI-REDUCTION      28 2488.515595 2478.774491
+## HI-REDUCTION      30 2484.163499 2478.774491
+## LO-REDUCTION      32 2482.859931 2478.774491
+## LO-REDUCTION      34 2482.722964 2478.774491
+## HI-REDUCTION      36 2482.658035 2478.774491
+## LO-REDUCTION      38 2482.182880 2478.774491
+## LO-REDUCTION      40 2480.676299 2478.774491
+## LO-REDUCTION      42 2480.639981 2478.774491
+## LO-REDUCTION      44 2480.501920 2478.774491
+## LO-REDUCTION      46 2479.631339 2478.774491
+## LO-REDUCTION      48 2479.620924 2478.774491
+## LO-REDUCTION      50 2479.363071 2478.774491
+## REFLECTION        52 2479.128106 2478.746828
+## Exiting from Nelder Mead minimizer
+##     54 function evaluations used
+##   Nelder-Mead direct search function minimizer
+## function value for initial parameters = 2478.727368
+##   Scaled convergence tolerance is 0.247873
+## Stepsize computed as 0.668231
+## BUILD              6 99999999999999996863366107917975552.000000 2478.727368
+## Exiting from Nelder Mead minimizer
+##     8 function evaluations used
+## [1] &quot;P&quot;
+##     rho.1     rho.1                     
+## 0.2049090 0.4006687 0.4545798 0.2429787</code></pre>
+<pre class="r"><code>#Visualise the results:
+
+par(mfrow=c(1,2))
+plot(obs.ctrl)
+points(rcm.ctrl,col=&quot;red&quot;)
+legend(&quot;topleft&quot;,c(&quot;Obs&quot;,&quot;Ctrl&quot;),col=c(&quot;black&quot;,&quot;red&quot;),pch=c(1,1))
+plot(dat(adj(biasco2d.object)))
+points(rcm.scen,col=&quot;red&quot;)
+legend(&quot;topleft&quot;,c(&quot;Adj&quot;,&quot;Scen&quot;),col=c(&quot;black&quot;,&quot;red&quot;),pch=c(1,1))</code></pre>
+<p><img src="rd_files/figure-html/biasco2D_id_4-1.png" width="624" /></p>
+</div>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div class="container">
+      <div class="col-md-6">
+                <p>&copy; Olle Räty, 2018</p>
+              </div>
+      <div class="col-md-6">
+        <p class="pull-right">created with <a href="https://github.com/hafen/packagedocs">packagedocs</a>
+                  </p>
+      </div>
+    </div>
+  </div>
+
+  
+</body>
+</html>
