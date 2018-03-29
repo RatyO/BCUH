@@ -14,9 +14,12 @@ BCUH provides statistical methods to post-process climate model simulations for 
 devtools:install_github("Ratyo/BCUH")
 ```
 
+The package depends on the following R packages:
+
+
 ## Usage
 
-There are two main wrapper functions. 
+There are two main wrapper functions available. 
 
 To apply univariate bias correction use
 
@@ -24,12 +27,12 @@ To apply univariate bias correction use
   BCUH::biasco()
 ```
 
-For using the joint bias correction method use
+For copula-based joint bias correction method, use
 
 ```r
   BCUH::biasco2D()
 ```
 
 
-A more detailed is given in the package's [documentation](http://ratyo.github.io/BCUH)
+A more detailed description is availbale the package's [documentation](http://ratyo.github.io/BCUH)
 

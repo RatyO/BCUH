@@ -15,6 +15,7 @@ navpills: |
   <li class="active"><a href='docs.html'>Docs</a></li>
   <li><a href='rd.html'>Package Ref</a></li>
   <li><a href='https://github.com/ratyO/BCUH'>Github <i class='fa fa-github'></i></a></li>
+bibliography: bibliography.bib
 ---
 
 ```{r global_options, include=FALSE}
@@ -31,11 +32,11 @@ BCUH is a collection of simple univariate bi-variate methods for combining infor
 
 # Introduction
 
-This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented based on Räisänen and Räty (2013), Räty et al. (2014). In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on Li et al (2014) and Gennaretti et al. (2015) and has further been applied by Räty el et. (submitted).
+This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following [raisanen2013] and [raty2014]. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on [li2014] with modifications from [gennaretti2015].
 
 #Structure
 
-All the statistical methods implemented in BCUH have been coded as S4 methods belonging to a set of classes. The most important ones are the 
+All the statistical methods implemented in BCUH have been encapsulated as S4 methods belonging to a set of classes. To allow a simple access to these methods, they have been encapsulated mostly as
 
 #Univariate method
 
@@ -43,11 +44,11 @@ In the current format the package consists of 20 methods, which range from simpl
 
 #Multivariate methods
 
-In the current version only the method originally developed by Li et al. (2014) with some improvements from
+In the current version only the method originally developed by Li et al. (2014) with some improvements from. This method has been designed for joint bias correcting temperature and precipitation at different temporal scales. 
 
 #Examples
 
-We now demonstrate the use of BCUH with several examples.
+In this section we give a set of examples, which demonstrate the use of BCUH. These examples are based on 
 
 #Limitations
 
@@ -60,3 +61,5 @@ As with all statistical methods, there are several limitations for cases where B
 #Conclusions
 
 #References
+
+

@@ -115,7 +115,7 @@ setMethod(f = ".JBC",
                         P=array(NA,dim=c(length(.Object@scen@data[,2]))),
                         margT=NA,margP=NA,pwet=NA,
                         wet=NA,dry=NA,cpar1=NA,cpar2=NA)
-print(threshold)
+            print(threshold)
             tmp <- .ppRain(ref = obs$P, adj = ctrl$P, ref.threshold = threshold)
             ctrl$P <- tmp$adj
 
