@@ -1,0 +1,4 @@
+language: R
+sudo: no
+cache: packages
+after_success: Rscript -e "packagedocs::deploy_travis()"
