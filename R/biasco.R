@@ -200,7 +200,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' @param cond The conditioning order of temperature and precipitation. If \code{cond} = "P" then the precipitation marginal
 #' is adjusted first, while the adjustment of temperature is made conditionally on precipitation
 #' @param threshold Threshold for wet day precipitation. Everything below \code{threshold} is handled as zero precipitation
-#' @param ... No additional parameter available yet
+#' @param ... Method-specific parameters to be implemented
 #'
 #' @return An object of type BiascoTimeSeriesPT which contains a matrix of bias adjusted temperature and precipitation and also
 #' additional information on the used parameter values 

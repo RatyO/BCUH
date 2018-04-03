@@ -99,23 +99,35 @@ setMethod(f = "show",
 
 setMethod(f = ".JBC",
           signature = "JointCorrection",
-          definition = function(.Object, cond="P", threshold = 0.1){
+          definition = function(.Object, cond="P", threshold = 0.1, jittering = T, jitter.amount = 1e-5){
 
             #Create data frames for the data. Update these data frames whenever necessary.
-            obs <- list(T=.Object@obs@data[,1],P=.Object@obs@data[,2],
+            obs <- list(T=.Object@obs@data[,1],
+                        P=.Object@obs@data[,2],
                         margT=NA,margP=NA,pwet=NA,
                         wet=NA,dry=NA,cpar1=NA,cpar2=NA)
-            ctrl <- list(T=.Object@ctrl@data[,1],P=.Object@ctrl@data[,2],
+            ctrl <- list(T=.Object@ctrl@data[,1],
+                         P=.Object@ctrl@data[,2],
                          margT=NA,margP=NA,pwet=NA,
-                         wet=NA,dry=NA,cpar1=NA,cpar2=NA)
-            scen <- list(T=.Object@scen@data[,1],P=.Object@scen@data[,2],
+                         wet=NA,dry=NA,cpar1=NA)
+            scen <- list(T=.Object@scen@data[,1],
+                         P=.Object@scen@data[,2],
                          margT=NA,margP=NA,pwet=NA,
-                         wet=NA,dry=NA,cpar1=NA,cpar2=NA)
+                         wet=NA,dry=NA,cpar1=NA)
             adj <- list(T=array(NA,dim=c(length(.Object@scen@data[,1]))),
                         P=array(NA,dim=c(length(.Object@scen@data[,2]))),
                         margT=NA,margP=NA,pwet=NA,
-                        wet=NA,dry=NA,cpar1=NA,cpar2=NA)
-            print(threshold)
+                        wet=NA,dry=NA,cpar1=NA)
+            
+            if(jittering){
+              obs$T <- jitter(obs$T, amount = jitter.amount)
+              obs$P <- jitter(obs$P, amount = jitter.amount)
+              ctrl$T <- jitter(ctrl$T, amount = jitter.amount)
+              ctrl$P <- jitter(ctrl$P, amount = jitter.amount)
+              scen$T <- jitter(scen$T, amount = jitter.amount)
+              scen$P <- jitter(scen$P, amount = jitter.amount)
+            }
+            
             tmp <- .ppRain(ref = obs$P, adj = ctrl$P, ref.threshold = threshold)
             ctrl$P <- tmp$adj
 
@@ -141,7 +153,7 @@ setMethod(f = ".JBC",
 
             ctrl$pwet <- length(ctrl$P[which(ctrl$P>0)])/length(ctrl$P)
             scen$pwet <- length(scen$P[which(scen$P>0)])/length(scen$P)
-
+            
             obs$margP <- .fitMarginal(obs$P[obs$wet],type="gamma")
             obs$margTW <- .fitMarginal(obs$T[obs$wet],type="norm")
             obs$margTD <- .fitMarginal(obs$T[obs$dry],type="norm")
@@ -171,7 +183,7 @@ setMethod(f = ".JBC",
                           paramMargins = list(list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2]),
                                               list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])))
             start <- as.vector(c(obs$margTW$estimate[1],obs$margTW$estimate[2],obs$margP$estimate[1],obs$margP$estimate[2],fit.normO@copula@parameters))
-            fit.mvdO <- suppressWarnings(fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "Nelder",
+            fit.mvdO <- suppressWarnings(fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "BFGS",
                                                  start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=1000)))
             
             obs$cpar1 <- coef(fit.mvdO)[5]
@@ -185,7 +197,7 @@ setMethod(f = ".JBC",
                           paramMargins = list(list(mean = ctrl$margTW[1], sd = ctrl$margTW[2]),
                                               list(shape = ctrl$margP[1], rate = ctrl$margP[2])))
             start <- c(ctrl$margTW$estimate[1],ctrl$margTW$estimate[2],ctrl$margP$estimate[1],ctrl$margP$estimate[2],fit.normC@copula@parameters)
-            fit.mvdC <- suppressWarnings(fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "Nelder",
+            fit.mvdC <- suppressWarnings(fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "BFGS",
                                                  start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=100)))
             
             ctrl$cpar1 <- coef(fit.mvdC)[5]
@@ -205,16 +217,13 @@ setMethod(f = ".JBC",
             fit.normCor <- copula::fitCopula(normalCopula(dim=2),matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2),
                                      method="itau",start=NULL,lower=NULL,upper=NULL,
                                      optim.method="BFGS",optim.control=list(maxit=1000))
-
-
-#            adj$threshold <- sort(adj$P)[floor(length(adj$P)*(1-obs$pwet))]
-#            adj$pwet <- length(adj$P[which(adj$P>adj$threshold)])/length(adj$P)
+            
             adj$cpar1 <- fit.normCor@copula@parameters
-            print(c(obs$cpar1,ctrl$cpar1,scen$cpar1,adj$cpar1))
             .Object@adj@data[,1] <- adj$T
             .Object@adj@data[,2] <- adj$P
             .Object@bc.attributes[["threshold"]] <- threshold
             .Object@bc.attributes[["cond"]] <- cond
+            .Object@bc.attributes[["copula.param"]] <- adj$cpar1
             .Object@method <- "J1"
             return(.Object)
           })

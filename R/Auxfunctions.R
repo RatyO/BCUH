@@ -416,7 +416,49 @@
 #'
 #' @keywords internal
 #'
-.adjPT <- function(obs,ctrl,scen,eps=1e-10){
+# .adjPT <- function(obs,ctrl,scen,eps=1e-5){
+# 
+#   adj <- list(T=array(NA,dim=c(length(scen$T))),
+#               P=array(NA,dim=c(length(scen$P))))
+# 
+#   p2 <- p1 <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
+#   p2[which(p2==1)] <- p2[which(p2==1)]-eps
+#   adj$P[scen$wet] <- qgamma(p2,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
+#   adj$P[scen$dry] <- 0.0
+# 
+#   # Calculate conditional probability of temperature given precipitation
+#   # for future simulations with parameters from historical simulation
+# 
+#   Fp <- array(NA,dim=c(length(scen$P)))
+#   Ft <- array(NA,dim=c(length(scen$T)))
+# 
+#   p3 <- Ft
+# 
+#   Fp[scen$wet] <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
+#   Fp[scen$dry] <- scen$P[scen$dry]
+# 
+#   Ft[scen$wet] <- pnorm(scen$stdTW,mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2])
+#   Ft[scen$dry] <- pnorm(scen$stdTD,mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2])
+# 
+#   h <- pmax(pmin(pnorm((qnorm(Ft[scen$wet])-ctrl$cpar1*qnorm(Fp[scen$wet]))/sqrt(1-ctrl$cpar1^2)),1-eps),eps)
+#   p3[scen$wet] <- unlist(h)
+#   p3[scen$dry] <- Ft[scen$dry]
+# 
+#   #Finally, calculate the bias corrected temperature, conditioned on precipitation
+#   #with the observed dependence structure
+#   u1 <- pgamma(adj$P[scen$wet],shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
+#   u1[which(u1==1)] <- 1-eps
+#   u2 <- p3[scen$wet]
+# 
+#   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
+#   #  tmp[which(tmp==1)] <- tmp[which(tmp==1)]-1e-5
+#   adj$T[scen$wet] <- qnorm(tmp,mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
+#   adj$T[scen$dry] <- qnorm(p3[scen$dry],mean=obs$margTD$estimate[1],sd=obs$margTD$estimate[2])
+# 
+#   return(adj)
+# }
+
+.adjPT <- function(obs,ctrl,scen,eps=1e-5){
 
   adj <- list(T=array(NA,dim=c(length(scen$T))),
               P=array(NA,dim=c(length(scen$P))))
@@ -469,7 +511,42 @@
 #'
 #' @keywords internal
 #'
-.adjTP <- function(obs,ctrl,scen,eps=1e-10){
+# .adjTP <- function(obs,ctrl,scen,eps=1e-5){
+# 
+#   adj <- list(T=array(NA,dim=c(length(scen$T))),
+#               P=array(NA,dim=c(length(scen$P))),
+#               pwet=NA,
+#               wet=NA,
+#               dry=NA,
+#               cpar1=NA)
+# 
+#   pw <- pmax(pmin(pnorm(scen$stdTW,mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2]),1-eps),eps)
+#   pd <- pmax(pmin(pnorm(scen$stdTD,mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2]),1-eps),eps)
+# 
+#   adj$T[scen$wet] <- qnorm(pw,mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
+#   adj$T[scen$dry] <- qnorm(pd,mean=obs$margTD$estimate[1],sd=obs$margTD$estimate[2])
+# 
+#   Fp <- pmin(pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2]),1-eps)
+#   Ft <- pmax(pmin(pnorm(scen$T[scen$wet],mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2]),1-eps),eps)
+#   p3 <- u2 <- h <- pnorm((qnorm(Fp)-ctrl$cpar1*qnorm(Ft))/sqrt(1-ctrl$cpar1^2))
+# 
+#   adj$wet <- scen$wet
+#   adj$dry <- scen$dry
+# 
+#   #Finally, calculate the bias corrected precipitation, conditioned on temperature
+#   #with the observed depence structure.
+#   #  u2 <- p3[adj$wet]
+#   u1 <- pnorm(adj$T[adj$wet],mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
+# 
+#   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
+#   adj$P[adj$wet] <- qgamma(tmp,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
+#   adj$P[adj$dry] <- 0.0
+# 
+#   return(adj)
+# }
+
+
+.adjTP <- function(obs,ctrl,scen,eps=1e-5){
 
   adj <- list(T=array(NA,dim=c(length(scen$T))),
               P=array(NA,dim=c(length(scen$P))),
