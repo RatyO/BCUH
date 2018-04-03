@@ -73,10 +73,8 @@
           <ul>
           <li><a href="#bcuh">BCUH</a></li>
           <li><a href="#introduction">Introduction</a></li>
-          <li><a href="#structure">Structure</a></li>
           <li><a href="#univariate-method">Univariate method</a></li>
           <li><a href="#multivariate-methods">Multivariate methods</a></li>
-          <li><a href="#examples">Examples</a></li>
           <li><a href="#limitations">Limitations</a></li>
           <li><a href="#other-r-packages">Other R packages</a></li>
           <li><a href="#conclusions">Conclusions</a></li>
@@ -89,35 +87,33 @@
 <div id="content-top"></div>
 <div id="bcuh" class="section level1">
 <h1>BCUH</h1>
-<p>BCUH is a collection of simple univariate bi-variate methods for combining information obtained from reference data with (typically) climate simulations. These methods have become de facto standard in climate research due to the need to take biases in climate model simulations with respect to the observed climate into account.</p>
+<p>Documentation under construction!!!</p>
+<p>BCUH is a collection of simple univariate and bi-variate methods, which have been developed to combine information obtained from observation together with climate model simulations when constructing future temperature and precipitation projections.</p>
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following [raisanen2013] and [raty2014]. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on [li2014] with modifications from [gennaretti2015].</p>
-</div>
-<div id="structure" class="section level1">
-<h1>Structure</h1>
-<p>All the statistical methods implemented in BCUH have been encapsulated as S4 methods belonging to a set of classes. To allow a simple access to these methods, they have been encapsulated mostly as</p>
+<p>This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following [raisanen2013] and [raty2014]. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on [li2014] with modifications from [gennaretti2015]. These methods have become de facto standard in climate impact studies due to the need to take biases in climate model simulations with respect to the observed climate into account. An overview of the package structure is given together with a set of examples, which illustrate the use of the package. Also, the limitations of the implemented methods are discussed. Finally, we give a brief overview of other existing R tools, which have been built for similar purposes as BCUH.</p>
 </div>
 <div id="univariate-method" class="section level1">
 <h1>Univariate method</h1>
-<p>In the current format the package consists of 20 methods, which range from simple time mean scaling to more sophisticated quantile mapping methods, which have become popular in climate studies due to their relatively simple use.</p>
+<p>The current version of BCUH contains 20 univariate methods in total. Ten of these methods have originally been designed for daily mean temperature, while the rest ten ten methods wre originally applied to daily precipitation. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes and handle the input data and parameters as an S4 object. However, to make the application to these methods easier, the package also contains a wrapper function , which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a  object. The different elements of this object can be accessed using the class methods provided in the package.</p>
+<p>We will next give a simple example how to use the wrapper function to obtain adjusted time series for both temperature and precipitation. The example is based on observed time series for Jyväskylä station downloaded from Climate Explorer () and the grid-box time series for a regional climate model obtained from ESGF nodes ().</p>
+<p>data() data()</p>
+<p>We use data for January from both data sets to construct temperature and precipitation projections for years 2061-2100.</p>
 </div>
 <div id="multivariate-methods" class="section level1">
 <h1>Multivariate methods</h1>
-<p>In the current version only the method originally developed by Li et al. (2014) with some improvements from. This method has been designed for joint bias correcting temperature and precipitation at different temporal scales.</p>
-</div>
-<div id="examples" class="section level1">
-<h1>Examples</h1>
-<p>In this section we give a set of examples, which demonstrate the use of BCUH. These examples are based on</p>
+<p>In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by Li et al. (2014) and further developed in Gennaretti et al. (2015). In this method the joint distribution of temperature and precipitation by first decomposing the joint distribution into separate marginal distributions.</p>
 </div>
 <div id="limitations" class="section level1">
 <h1>Limitations</h1>
-<p>As with all statistical methods, there are several limitations for cases where BCUH can be used and when it is not feasible. First and most importantly, the implemented methods have not been designed to downscale climate model simulations, although this has commonly been a part of the procedure. This limitation is more severe for variables, whose spatial variability . Another . For non-parametric quantile mapping, an option is available to adjust changes in monthly means to the simulated ones. Higher monents have not been considered. This is not an issue in delta change method, which by definition add simulated changes to the observed time series based on . There are also more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability</p>
+<p>As with all statistical methods, care should be taken, when applying BCUH methods in actual work. First, the implemented methods have not been designed for directly downscaling climate model simulations to higher resolutions. Maraun (2013) discussed some of the potential issues with such approach, which are particularly severe for precipitation. The main. Furthermore, spatial averages of data downscaled this way tend to exhibit overestimation of precipitation extremes and the fraction of wet days is also overestimated due to overcorrection of the drizzle effect. For temperature, these issues are less severe, as its values change more smoothly in space.</p>
+<p>Another issue, which is currently under devate is whether the statistical bias correction methods should preserve the simulated trends. In the traditional form, quantile mapping can alter the simulated changes, which . While this issue has not fully been taken into account in the package, an option to force changes in the mean of the adjusted time series to the simulated change has been included (see the example above). Alternatively delta change methods could be applied, since these methods does not suffer the aforementioned issues, as they adjust the observed time series based on model simulated changes. However, a major limitation of delta change approach is that different correlation structures follow directly the observed ones in the constructed projections. Other more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability</p>
 </div>
 <div id="other-r-packages" class="section level1">
 <h1>Other R packages</h1>
-<p> is just one of the possible R packages, which can be used to statistically adjust model simulations to biases in climate model simulations. In this section, a brief overview is given on the existing packages, which the reader might find useful. Another comprehensive package has been developed in Santander, which consists of a set of bias correction and statistical downscaling methods . The package includes a set of tools for tailoring climate model data for the implemented methods.</p>
+<p> is just one of the possible R packages available to statistically adjust model simulations to biases in climate model simulationswith respect to the observed climate. For the sake of completeness, we give a brief overview of other existing packages, which the reader might find useful. One of the most comprehensive packages written in  has been developed in Santander (). The package contains a set of bias correction methods partly similar to the ones available in  and also methods designed for downscaling coarse resolution model simulations for impact study purposes.  is a part of  bundle, which has additional tools for downloading, pre-processing and visualising the bias corrected / downscaled climate data. Several other packages are also available.  contains implementations of different types of quantile mapping methods as described in Gudmunsson et al. (2012). Another method used to downscale the cumulative distribution function of a coarse resolution model simulation with respect to a local scale cumulative distribution function has been implemented in  package.</p>
+<p> is one of the few packages, which contains implementations of three multivariate bias correction methods based on Cannon (2016) and Cannon(2018). These methods adjust different intervariable correlations. A more detailed description of the methods is available in the package documentation and in Cannon (2016) and Cannon(2018). In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in Cannon et al. (2015).</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
