@@ -21,7 +21,8 @@ MASS,
 fitdistrplus,
 copula,
 methods,
-Rdpack
+Rdpack,
+lubridate
 
 ## Usage
 

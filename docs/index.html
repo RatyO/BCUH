@@ -73,6 +73,7 @@
           <ul>
           <li><a href="#bcuh">BCUH</a></li>
           <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#installation">Installation</a></li>
           <li><a href="#univariate-method">Univariate method</a></li>
           <li><a href="#multivariate-methods">Multivariate methods</a></li>
           <li><a href="#limitations">Limitations</a></li>
@@ -87,23 +88,60 @@
 <div id="content-top"></div>
 <div id="bcuh" class="section level1">
 <h1>BCUH</h1>
-<p>Documentation under construction!!!</p>
 <p>BCUH is a collection of simple univariate and bi-variate methods, which have been developed to combine information obtained from observation together with climate model simulations when constructing future temperature and precipitation projections.</p>
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following [raisanen2013] and [raty2014]. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on [li2014] with modifications from [gennaretti2015]. These methods have become de facto standard in climate impact studies due to the need to take biases in climate model simulations with respect to the observed climate into account. An overview of the package structure is given together with a set of examples, which illustrate the use of the package. Also, the limitations of the implemented methods are discussed. Finally, we give a brief overview of other existing R tools, which have been built for similar purposes as BCUH.</p>
+<p>This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span>. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on <span class="citation">Li et al. (2014)</span> with modifications from <span class="citation">Gennaretti, Sangelantoni, and Grenier (2015)</span>. These methods have become de facto standard in climate impact studies due to the need to take biases in climate model simulations with respect to the observed climate into account. An overview of the package structure is given together with a set of examples, which illustrate the use of the package. Also, the limitations of the implemented methods are discussed. Finally, we give a brief overview of other existing R tools, which have been built for similar purposes as BCUH.</p>
+</div>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>To install BCUH, the R package  needs to be installed on your operating system:</p>
+<pre><code>install.packages(&quot;devtools&quot;)</code></pre>
+<p>With  the installation of  should be straightforward:</p>
+<pre><code>devtools::install_github(RatyO/BCUH)</code></pre>
+<p>code{BCUH} depends on several other packages, most notably , which is used in the copula-based bias correction method. These packages should be automatically installed along .</p>
 </div>
 <div id="univariate-method" class="section level1">
 <h1>Univariate method</h1>
-<p>The current version of BCUH contains 20 univariate methods in total. Ten of these methods have originally been designed for daily mean temperature, while the rest ten ten methods wre originally applied to daily precipitation. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes and handle the input data and parameters as an S4 object. However, to make the application to these methods easier, the package also contains a wrapper function , which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a  object. The different elements of this object can be accessed using the class methods provided in the package.</p>
+<p>The current version of  contains a total of 20 univariate methods. Ten of these methods have originally been designed for daily mean temperature, while the rest ten ten methods were designed to construct future projections of daily precipitation. Furthermore, these methods can be divided into two groups based on the projection strategy. Five methods for both variables are so-called delta change methods, which add simulated changes to the reference time series in different ways. The rest of the methods directly bias correct the scenario period data based on biases between the reference and control data in the calibration period. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes, which return the input data and parameters as a customised S4 object. However, to make the application to these methods easier, the package also contains a wrapper function , which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a  object. The different elements of this object can be accessed using the class methods provided in the package.</p>
 <p>We will next give a simple example how to use the wrapper function to obtain adjusted time series for both temperature and precipitation. The example is based on observed time series for Jyväskylä station downloaded from Climate Explorer () and the grid-box time series for a regional climate model obtained from ESGF nodes ().</p>
-<p>data() data()</p>
-<p>We use data for January from both data sets to construct temperature and precipitation projections for years 2061-2100.</p>
+<pre><code>library(BCUH)
+
+data(&quot;station_Jyvaskyla&quot;)
+data(&quot;ALADIN_Jyvaskyla&quot;)</code></pre>
+<p>We use data for December from both data sets to construct temperature and precipitation projections for years 2061-2100 using years 1971-2000 for calibration.</p>
+<pre><code>ctrl &lt;- c(1971,2000)
+scen &lt;- c(2071,2100)
+
+ind.obs &lt;- which(month(station_Jyvaskyla$date) == 12 &amp;
+                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.ctrl &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.scen &lt;- which(month(ALADIN_Jyvaskyla$date) == 12 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
+
+obs.ctrl &lt;- station_Jyvaskyla[ind.obs,]
+rcm.ctrl &lt;- ALADIN_Jyvaskyla[ind.ctrl,]
+rcm.scen &lt;- ALADIN_Jyvaskyla[ind.scen,]
+</code></pre>
+<p>In the first example, We illustrate how to use the package to construct projections of temperature. First, let us apply simple time mean delta change and bias correction:</p>
+<pre><code>dc.object &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M1&quot;)
+bc.object &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M6&quot;)</code></pre>
+<p>Note that  has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field  is used to select the method (M1-M10). Biasco creates an object of type , which contains the adjusted data and also some additional information related to the used data and projection method. For example,  looks something like:</p>
+<pre><code>dc.object</code></pre>
+<p>In the second example, we construct future projections for precipitation. To access proper methods, the  has to be selected.</p>
+<pre><code>dc1 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M1&quot;)
+bc6 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M6&quot;)</code></pre>
+<p>Methods M4-M5 and M9-M10 are the delta change and bias correction forms of parametric and non-parametric quantile mapping, which aim to adjust the full marginal distribution.</p>
+<pre><code>dc5 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M5&quot;, smooth)
+bc10 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M10&quot;)</code></pre>
+<p>Some parameters available for M5 and M10 require special attention. The most important one is , which defines the strength of smoothing of quantile distributions of  and  for bias correction methods and  and  for delta change methods. The default values have been chose according to <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span> (0.05  and 0.02 for ). In addition, methods M5 and M10 do not preserve changes in the mean values between  and . However, this can be done by selecting .</p>
+<p>For precipitation an option to pre-adjust  and  based on the mean squared error (MSE) between  and  is available. To switch this on set  When this option is selected, both  and  are shifted “closer” to  before applying quantile mapping.</p>
 </div>
 <div id="multivariate-methods" class="section level1">
 <h1>Multivariate methods</h1>
-<p>In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by Li et al. (2014) and further developed in Gennaretti et al. (2015). In this method the joint distribution of temperature and precipitation by first decomposing the joint distribution into separate marginal distributions.</p>
+<p>In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by Li et al. (2014) and further developed in <span class="citation">Gennaretti, Sangelantoni, and Grenier (2015)</span>. In this method the joint distribution of temperature and precipitation by first decomposing the joint distribution into separate marginal distributions.</p>
 </div>
 <div id="limitations" class="section level1">
 <h1>Limitations</h1>
@@ -113,13 +151,34 @@
 <div id="other-r-packages" class="section level1">
 <h1>Other R packages</h1>
 <p> is just one of the possible R packages available to statistically adjust model simulations to biases in climate model simulationswith respect to the observed climate. For the sake of completeness, we give a brief overview of other existing packages, which the reader might find useful. One of the most comprehensive packages written in  has been developed in Santander (). The package contains a set of bias correction methods partly similar to the ones available in  and also methods designed for downscaling coarse resolution model simulations for impact study purposes.  is a part of  bundle, which has additional tools for downloading, pre-processing and visualising the bias corrected / downscaled climate data. Several other packages are also available.  contains implementations of different types of quantile mapping methods as described in Gudmunsson et al. (2012). Another method used to downscale the cumulative distribution function of a coarse resolution model simulation with respect to a local scale cumulative distribution function has been implemented in  package.</p>
-<p> is one of the few packages, which contains implementations of three multivariate bias correction methods based on Cannon (2016) and Cannon(2018). These methods adjust different intervariable correlations. A more detailed description of the methods is available in the package documentation and in Cannon (2016) and Cannon(2018). In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in Cannon et al. (2015).</p>
+<p> is one of the few packages, which contains implementations of three multivariate bias correction methods as described in <span class="citation">Cannon (2016)</span> and <span class="citation">(<span class="citeproc-not-found" data-reference-id="cannon2018"><strong>???</strong></span>)</span>. These methods adjust different intervariable correlations. A more detailed description of the methods is available in the package documentation and in Cannon (2016) and Cannon(2018). In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in <span class="citation">Cannon, Sobie, and Murdock (2015)</span>. In principle, the package allows to use also other methods to adjust the marginal distributions, as a posterior adjustment is made to them in order to retain correct marginals.</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
+<p>This tutorial gives a brief overview of BCUH-package, which contains. It is hoped that researchers find this package useful in their studies.</p>
 </div>
-<div id="references" class="section level1">
+<div id="references" class="section level1 unnumbered">
 <h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-cannon2016">
+<p>Cannon, Alex J. 2016. “Multivariate bias correction of climate model output: matching marginal distributions and intervariable dependence structure.” <em>J. Clim.</em> 29 (19): 7045–64. doi:<a href="https://doi.org/10.1175/JCLI-D-15-0679.1">10.1175/JCLI-D-15-0679.1</a>.</p>
+</div>
+<div id="ref-cannon2015">
+<p>Cannon, Alex J., Stephen R. Sobie, and Trevor Q. Murdock. 2015. “Bias correction of GCM precipitation by quantile mapping: how well do methods preserve changes in quantiles and extremes?” <em>J. Clim.</em> 28 (17). American Meteorological Society: 6938–59. doi:<a href="https://doi.org/https://doi.org/10.1175/JCLI-D-14-00754.1">https://doi.org/10.1175/JCLI-D-14-00754.1</a>.</p>
+</div>
+<div id="ref-gennaretti2015">
+<p>Gennaretti, Fabio, Lorenzo Sangelantoni, and Patrick Grenier. 2015. “Toward Daily Climate Scenarios for Canadian Arctic Coastal Zones with More Realistic Temperature-Precipitation Interdependence.” <em>J. Geophys. Res.-Atmos.</em> 120 (23): 11, 862–11, 877. doi:<a href="https://doi.org/10.1002/2015JD023890">10.1002/2015JD023890</a>.</p>
+</div>
+<div id="ref-li2014">
+<p>Li, Chao, Eva Sinha, Daniel E. Horton, Noah S. Diffenbaugh, and Anna M. Michalak. 2014. “Joint Bias Correction of Temperature and Precipitation in Climate Model Simulations.” <em>J. Geophys. Res.-Atmos.</em> 119 (23): 13, 153–13, 162. doi:<a href="https://doi.org/10.1002/2014JD022514">10.1002/2014JD022514</a>.</p>
+</div>
+<div id="ref-raisanen2013">
+<p>Räisänen, Jouni, and Olle Räty. 2013. “Projections of Daily Mean Temperature Variability in the Future: Cross-Validation Tests with Ensembles Regional Climate Simulations.” <em>Clim. Dyn.</em> 41 (5): 1553–68. doi:<a href="https://doi.org/10.1007/s00382-012-1515-9">10.1007/s00382-012-1515-9</a>.</p>
+</div>
+<div id="ref-raty2014">
+<p>Räty, Olle, Jouni Räisänen, and Jussi S. Ylhäisi. 2014. “Evaluation of Delta Change and Bias Correction Methods for Future Daily Precipitation: Intermodel Cross-Validation Using Ensembles Simulations.” <em>Clim. Dyn.</em> 42 (9): 2287–2303. doi:<a href="https://doi.org/10.1007/s00382-014-2130-8">10.1007/s00382-014-2130-8</a>.</p>
+</div>
+</div>
 </div>
 
 

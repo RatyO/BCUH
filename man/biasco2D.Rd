@@ -19,7 +19,7 @@ is adjusted first, while the adjustment of temperature is made conditionally on 
 
 \item{threshold}{Threshold for wet day precipitation. Everything below \code{threshold} is handled as zero precipitation}
 
-\item{...}{No additional parameter available yet}
+\item{...}{Method-specific parameters to be implemented}
 }
 \value{
 An object of type BiascoTimeSeriesPT which contains a matrix of bias adjusted temperature and precipitation and also
