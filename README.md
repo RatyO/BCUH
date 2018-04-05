@@ -11,11 +11,17 @@ BCUH provides statistical methods to post-process climate model simulations for 
 ## Installation
 
 ```s
-devtools:install_github("Ratyo/BCUH")
+devtools::install_github("Ratyo/BCUH")
 ```
 
 The package depends on the following R packages:
 
+moments,
+MASS,
+fitdistrplus,
+copula,
+methods,
+Rdpack
 
 ## Usage
 
