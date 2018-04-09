@@ -58,12 +58,12 @@ data("ALADIN_Jyvaskyla")
 ctrl <- c(1971,2000)
 scen <- c(2071,2100)
 
-#Extract data for December
-ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
+#Extract data for January
+ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
                   year(station_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
-ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
                    year(ALADIN_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
-ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
                    year(ALADIN_Jyvaskyla$date) \%in\% seq(scen[1],scen[2]))
 
 obs.ctrl <- station_Jyvaskyla[ind.obs,]

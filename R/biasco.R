@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-##' @include TimeSeries-class.R TimeSeriesTP-class.R BiascoTimeSeries-class.R BiascoTimeSeriesTP-class.R
+#' @include TimeSeries-class.R TimeSeriesTP-class.R BiascoTimeSeries-class.R BiascoTimeSeriesTP-class.R
 
 #' @title A wrapper function for univariate bias correction and delta changes methods.
 #'
@@ -51,7 +51,7 @@
 #' @return An object of type \code{BiascoTimeSeries},
 #'   which contains the adjusted data and parameter values related to a particular method.
 #' @seealso \code{\link{biasco2d}} for two-dimensional bias correction of temperature and precipitation
-#' @import lubridate copula
+#' @import lubridate
 #' @importFrom Rdpack reprompt
 #' @export
 #' @examples
@@ -66,12 +66,12 @@
 #'ctrl <- c(1971,2000)
 #'scen <- c(2071,2100)
 #'
-#'#Extract data for December
-#'ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
+#'#Extract data for January
+#'ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
 #'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#'ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+#'ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#'ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+#'ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
 #'
 #'obs.ctrl <- station_Jyvaskyla[ind.obs,]
@@ -216,7 +216,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' data("station_Jyvaskyla")
 #' data("ALADIN_Jyvaskyla")
 #' 
-#' Adjust data for January using this method
+#' #Extract data for January
 #' ctrl <- c(1971,2000)
 #' scen <- c(2071,2100)
 #' ind.obs <- which(month(station_Jyvaskyla$date) == 1 &

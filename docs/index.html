@@ -136,6 +136,17 @@ bc6 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, t
 <p>Methods M4-M5 and M9-M10 are the delta change and bias correction forms of parametric and non-parametric quantile mapping, which aim to adjust the full marginal distribution.</p>
 <pre><code>dc5 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M5&quot;, smooth)
 bc10 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = &quot;ratio&quot;, method = &quot;M10&quot;)</code></pre>
+<p>Quantile distributions of the adjusted time series look like something like this:</p>
+<pre><code>plot(quantile(dat(adj(dc1)), seq(0,1,0.01)), type = &quot;l&quot;,
+    main=&quot;Quantile plot&quot;, xlab = &quot;%&quot;, ylab = &quot;Celcius&quot;, ylim = c(-30,10))
+lines(quantile(dat(adj(bc1)), seq(0,1,0.01)), lty = 2)
+lines(quantile(dat(adj(dc5)), seq(0,1,0.01)), lty = 1, col=&quot;orange&quot;)
+lines(quantile(dat(adj(bc10)), seq(0,1,0.01)), lty = 2, col=&quot;orange&quot;)
+lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = &quot;red&quot;)
+lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = &quot;blue&quot;)
+lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = &quot;blue&quot;, lty = 2)
+legend(&quot;topleft&quot;, c(&quot;M1&quot;,&quot;M6&quot;,&quot;M5&quot;,&quot;M10&quot;,&quot;Obs&quot;,&quot;Ctrl&quot;,&quot;Scen&quot;),
+      col = c(&quot;black&quot;,&quot;black&quot;,&quot;orange&quot;,&quot;orange&quot;,&quot;red&quot;,&quot;blue&quot;,&quot;blue&quot;), lty = c(1,2,1,1,2))</code></pre>
 <p>Some parameters available for M5 and M10 require special attention. The most important one is , which defines the strength of smoothing of quantile distributions of  and  for bias correction methods and  and  for delta change methods. The default values have been chose according to <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span> (0.05  and 0.02 for ). In addition, methods M5 and M10 do not preserve changes in the mean values between  and . However, this can be done by selecting .</p>
 <p>For precipitation an option to pre-adjust  and  based on the mean squared error (MSE) between  and  is available. To switch this on set  When this option is selected, both  and  are shifted “closer” to  before applying quantile mapping.</p>
 </div>
@@ -145,13 +156,13 @@ bc10 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, 
 </div>
 <div id="limitations" class="section level1">
 <h1>Limitations</h1>
-<p>As with all statistical methods, care should be taken, when applying BCUH methods in actual work. First, the implemented methods have not been designed for directly downscaling climate model simulations to higher resolutions. Maraun (2013) discussed some of the potential issues with such approach, which are particularly severe for precipitation. The main. Furthermore, spatial averages of data downscaled this way tend to exhibit overestimation of precipitation extremes and the fraction of wet days is also overestimated due to overcorrection of the drizzle effect. For temperature, these issues are less severe, as its values change more smoothly in space.</p>
+<p>As with all statistical methods, care should be taken, when applying BCUH methods in actual work. First, the implemented methods have not been designed for directly downscaling climate model simulations to higher resolutions <span class="citation">(<span class="citeproc-not-found" data-reference-id="maraun2013"><strong>???</strong></span>)</span> discussed some of the potential issues with such approach, which are particularly severe for precipitation. The main. Furthermore, spatial averages of data downscaled this way tend to exhibit overestimation of precipitation extremes and the fraction of wet days is also overestimated due to overcorrection of the drizzle effect. For temperature, these issues are less severe, as its values change more smoothly in space.</p>
 <p>Another issue, which is currently under devate is whether the statistical bias correction methods should preserve the simulated trends. In the traditional form, quantile mapping can alter the simulated changes, which . While this issue has not fully been taken into account in the package, an option to force changes in the mean of the adjusted time series to the simulated change has been included (see the example above). Alternatively delta change methods could be applied, since these methods does not suffer the aforementioned issues, as they adjust the observed time series based on model simulated changes. However, a major limitation of delta change approach is that different correlation structures follow directly the observed ones in the constructed projections. Other more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability</p>
 </div>
 <div id="other-r-packages" class="section level1">
 <h1>Other R packages</h1>
 <p> is just one of the possible R packages available to statistically adjust model simulations to biases in climate model simulationswith respect to the observed climate. For the sake of completeness, we give a brief overview of other existing packages, which the reader might find useful. One of the most comprehensive packages written in  has been developed in Santander (). The package contains a set of bias correction methods partly similar to the ones available in  and also methods designed for downscaling coarse resolution model simulations for impact study purposes.  is a part of  bundle, which has additional tools for downloading, pre-processing and visualising the bias corrected / downscaled climate data. Several other packages are also available.  contains implementations of different types of quantile mapping methods as described in Gudmunsson et al. (2012). Another method used to downscale the cumulative distribution function of a coarse resolution model simulation with respect to a local scale cumulative distribution function has been implemented in  package.</p>
-<p> is one of the few packages, which contains implementations of three multivariate bias correction methods as described in <span class="citation">Cannon (2016)</span> and <span class="citation">(<span class="citeproc-not-found" data-reference-id="cannon2018"><strong>???</strong></span>)</span>. These methods adjust different intervariable correlations. A more detailed description of the methods is available in the package documentation and in Cannon (2016) and Cannon(2018). In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in <span class="citation">Cannon, Sobie, and Murdock (2015)</span>. In principle, the package allows to use also other methods to adjust the marginal distributions, as a posterior adjustment is made to them in order to retain correct marginals.</p>
+<p> is one of the few packages, which contains implementations of three multivariate bias correction methods as described in <span class="citation">Cannon (2016)</span> and <span class="citation">Cannon (2017)</span>. These methods adjust different intervariable correlations. In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in <span class="citation">Cannon, Sobie, and Murdock (2015)</span>. In principle, the package allows to use also other methods to adjust the marginal distributions, as a posterior adjustment is made to them in order to retain correct marginals. A more detailed description of the methods is available in the package documentation .</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
@@ -163,6 +174,9 @@ bc10 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, 
 <div id="ref-cannon2016">
 <p>Cannon, Alex J. 2016. “Multivariate bias correction of climate model output: matching marginal distributions and intervariable dependence structure.” <em>J. Clim.</em> 29 (19): 7045–64. doi:<a href="https://doi.org/10.1175/JCLI-D-15-0679.1">10.1175/JCLI-D-15-0679.1</a>.</p>
 </div>
+<div id="ref-cannon2017">
+<p>———. 2017. “Multivariate quantile mapping bias correction: an N-dimensional probability density function transform for climate model simulations of multiple variables.” <em>Clim. Dyn.</em>, 1–19. doi:<a href="https://doi.org/10.1007/s00382-017-3580-6">10.1007/s00382-017-3580-6</a>.</p>
+</div>
 <div id="ref-cannon2015">
 <p>Cannon, Alex J., Stephen R. Sobie, and Trevor Q. Murdock. 2015. “Bias correction of GCM precipitation by quantile mapping: how well do methods preserve changes in quantiles and extremes?” <em>J. Clim.</em> 28 (17). American Meteorological Society: 6938–59. doi:<a href="https://doi.org/https://doi.org/10.1175/JCLI-D-14-00754.1">https://doi.org/10.1175/JCLI-D-14-00754.1</a>.</p>
 </div>
@@ -173,10 +187,10 @@ bc10 &lt;- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, 
 <p>Li, Chao, Eva Sinha, Daniel E. Horton, Noah S. Diffenbaugh, and Anna M. Michalak. 2014. “Joint Bias Correction of Temperature and Precipitation in Climate Model Simulations.” <em>J. Geophys. Res.-Atmos.</em> 119 (23): 13, 153–13, 162. doi:<a href="https://doi.org/10.1002/2014JD022514">10.1002/2014JD022514</a>.</p>
 </div>
 <div id="ref-raisanen2013">
-<p>Räisänen, Jouni, and Olle Räty. 2013. “Projections of Daily Mean Temperature Variability in the Future: Cross-Validation Tests with Ensembles Regional Climate Simulations.” <em>Clim. Dyn.</em> 41 (5): 1553–68. doi:<a href="https://doi.org/10.1007/s00382-012-1515-9">10.1007/s00382-012-1515-9</a>.</p>
+<p>Räisänen, Jouni, and Olle Räty. 2013. “Projections of Daily Mean Temperature Variability in the Future: Cross-Validation Tests with ENSEMBLES Regional Climate Simulations.” <em>Clim. Dyn.</em> 41 (5): 1553–68. doi:<a href="https://doi.org/10.1007/s00382-012-1515-9">10.1007/s00382-012-1515-9</a>.</p>
 </div>
 <div id="ref-raty2014">
-<p>Räty, Olle, Jouni Räisänen, and Jussi S. Ylhäisi. 2014. “Evaluation of Delta Change and Bias Correction Methods for Future Daily Precipitation: Intermodel Cross-Validation Using Ensembles Simulations.” <em>Clim. Dyn.</em> 42 (9): 2287–2303. doi:<a href="https://doi.org/10.1007/s00382-014-2130-8">10.1007/s00382-014-2130-8</a>.</p>
+<p>Räty, Olle, Jouni Räisänen, and Jussi S. Ylhäisi. 2014. “Evaluation of Delta Change and Bias Correction Methods for Future Daily Precipitation: Intermodel Cross-Validation Using ENSEMBLES Simulations.” <em>Clim. Dyn.</em> 42 (9): 2287–2303. doi:<a href="https://doi.org/10.1007/s00382-014-2130-8">10.1007/s00382-014-2130-8</a>.</p>
 </div>
 </div>
 </div>

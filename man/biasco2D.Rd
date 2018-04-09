@@ -36,7 +36,7 @@ library(BCUH)
 data("station_Jyvaskyla")
 data("ALADIN_Jyvaskyla")
 
-Adjust data for January using this method
+#Extract data for January
 ctrl <- c(1971,2000)
 scen <- c(2071,2100)
 ind.obs <- which(month(station_Jyvaskyla$date) == 1 &

@@ -1,22 +1,561 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>BCUH Documentation</title>
-    <meta http-equiv="refresh" content="0; URL='http://ratyO.github.io/BCUH/rd.html'" />
-    <style>
-      .fade-in {
-        animation: 0.5s 1s fadeIn;
-        animation-fill-mode: forwards;
-        visibility: hidden;
-      }
-      @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { visibility: visible; opacity: 1; }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>BCUH Documentation</h1>
-    <p>If not automatically redirected, please visit (<a href="http://ratyO.github.io/BCUH/rd.html">http://ratyO.github.io/BCUH/rd.html</a>).</p>
-  </body>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc" />
+
+    <meta name="author" content="Olle Räty" />
+  
+  
+  <title>BCUH Documentation</title>
+
+    <script src="rd_files/jquery-1.11.3/jquery.min.js"></script>
+  <link href="rd_files/bootstrap-3.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="rd_files/bootstrap-3.3.2/js/bootstrap.min.js"></script>
+  <script src="rd_files/bootstrap-3.3.2/shim/html5shiv.min.js"></script>
+  <script src="rd_files/bootstrap-3.3.2/shim/respond.min.js"></script>
+  <link href="rd_files/highlight-8.4/tomorrow.css" rel="stylesheet" />
+  <script src="rd_files/highlight-8.4/highlight.pack.js"></script>
+  <link href="rd_files/fontawesome-4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+  <script src="rd_files/stickykit-1.1.1/sticky-kit.min.js"></script>
+  <script src="rd_files/jqueryeasing-1.3/jquery.easing.min.js"></script>
+  <link href="rd_files/recliner-0.2.2/recliner.css" rel="stylesheet" />
+  <script src="rd_files/recliner-0.2.2/recliner.min.js"></script>
+  <script src="rd_files/recliner-0.2.2/onload.js"></script>
+  <link href="rd_files/packagedocs-0.0.1/pd.css" rel="stylesheet" />
+  <script src="rd_files/packagedocs-0.0.1/pd.js"></script>
+  <script src="rd_files/packagedocs-0.0.1/pd-sticky-toc.js"></script>
+  
+  
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+
+<body>
+
+  
+  <header class="navbar navbar-white navbar-fixed-top" role="banner" id="header">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+                <a href="index.html" class="navbar-brand page-scroll">
+        BCUH Documentation - University of Helsinki bias adjustment tools
+        </a>
+      </div>
+            <nav class="collapse navbar-collapse" role="navigation">
+        <ul class="nav nav-pills pull-right">
+<li>
+<a href='index.html'>Docs</a>
+</li>
+<li class="active">
+<a href='rd.html'>Package Ref</a>
+</li>
+<li>
+<a href='https://github.com/ratyO/BCUH'>Github <i class='fa fa-github'></i></a>
+</li>
+        </ul>
+      </nav>
+          </div>
+  </header>
+
+  <!-- Begin Body -->
+  <div class="container">
+    <div class="row">
+            <div class="col-md-3" id="sidebar-col">
+        <div id="toc">
+          <ul>
+          <li><a href="#datasets-available-by-data">Datasets available by data()</a><ul>
+          <li><a href="#aladin_jyvaskyla">ALADIN_Jyvaskyla</a></li>
+          <li><a href="#station_jyvaskyla">station_Jyvaskyla</a></li>
+          </ul></li>
+          <li><a href="#package-functions">Package Functions</a><ul>
+          <li><a href="#biasco">biasco</a></li>
+          <li><a href="#biasco2d">biasco2D</a></li>
+          </ul></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9" id="content-col">
+      
+<div id="content-top"></div>
+<h1>
+University of Helsinki bias adjustment tools
+</h1>
+<p>
+<strong>Authors:</strong>
+</p>
+<p>
+<strong>Version:</strong> 0.0-1
+</p>
+<p>
+<strong>License:</strong> GPL (&gt;= 3)
+</p>
+<h4>
+Description
+</h4>
+<p>
+A set of delta change and bias correction methods designed for bias adjusting absolute and ratio variables and a 2D method to adjust the intervariable structure of two variables. The implemented methods are described in more detail in “Räisänen and Räty (2013)”, “Räty et al. (2014)” and “Li et al. (2014)”.
+</p>
+<h4>
+Depends
+</h4>
+<p>
+R (&gt;= 3.1.0)
+</p>
+<h4>
+Imports
+</h4>
+<p>
+moments, MASS, fitdistrplus, copula, methods, Rdpack, lubridate
+</p>
+<h4>
+Suggests
+</h4>
+<p>
+testthat, knitr, rmarkdown, packagedocs
+</p>
+<div id="datasets-available-by-data" class="section level1">
+<h1>Datasets available by data()</h1>
+<div id="aladin_jyvaskyla" class="section level2">
+<h2>ALADIN_Jyvaskyla</h2>
+<a id="ALADIN_Jyvaskyla_alias"></a>
+<h3>
+ALADIN5.3 EURO-CORDEX 0.11 deg resolution.
+</h3>
+<p class="rd-p">
+A dataset containing the time series of 2m daily mean temperature and daily precipitation simulated with CNRM-ALADIN5.3 at 0.11 degree resolution using RCP4.5 emission scenario forcings in a grid box nearest to Jyväskylä airport (25.68 E, 62.40 N).
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>ALADIN_Jyvaskyla</div></code></pre>
+<h4>
+Format
+</h4>
+<p class="rd-p">
+A data frame with 54819 rows and 3 variables:
+<dl>
+</p>
+<p class="rd-p">
+<dt>
+date
+</dt>
+<dd>
+time stamps for each day
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+tas
+</dt>
+<dd>
+daily mean temperature in Celcius
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+pr
+</dt>
+<dd>
+daily precipitation in mm/d
+</dd>
+</p>
+<p class="rd-p">
+…
+</dl>
+</p>
+<h4>
+Source
+</h4>
+<p class="rd-p">
+<a href = https://esgf.llnl.gov/>https://esgf.llnl.gov/</a>
+</p>
+</div>
+<div id="station_jyvaskyla" class="section level2">
+<h2>station_Jyvaskyla</h2>
+<a id="station_Jyvaskyla_alias"></a>
+<h3>
+Temperature and precipitation in Jyväskylä between 1951-2017.
+</h3>
+<p class="rd-p">
+A data.frame containing the daily time series of daily mean temperature and daily precipitation measures in the Jyväskylä airport (25.68 E, 62.40 N) between 1951-2017. Missing values have been replaced with previous day’s values.
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>station_Jyvaskyla</div></code></pre>
+<h4>
+Format
+</h4>
+<p class="rd-p">
+A data frame with 24139 rows and 3 variables:
+<dl>
+</p>
+<p class="rd-p">
+<dt>
+date
+</dt>
+<dd>
+time stamps for each day
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+tas
+</dt>
+<dd>
+daily mean temperature in Celcius
+</dd>
+</p>
+<p class="rd-p">
+<dt>
+pr
+</dt>
+<dd>
+daily precipitation in mm/d
+</dd>
+</p>
+<p class="rd-p">
+…
+</dl>
+</p>
+<h4>
+Source
+</h4>
+<p class="rd-p">
+<a href = https://climexp.knmi.nl/>https://climexp.knmi.nl/</a>
+</p>
+</div>
+</div>
+<div id="package-functions" class="section level1">
+<h1>Package Functions</h1>
+<div id="biasco" class="section level2">
+<h2>biasco</h2>
+<a id="biasco_alias"></a>
+<h3>
+A wrapper function for univariate bias correction and delta changes methods.
+</h3>
+<p class="rd-p">
+<code>biasco</code> returns bias corrected data as an object of type <code>BiascoTimeSeries</code>. Several methods of different complexity are available in the package (see details).
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>biasco(obs.in, ctrl.in, scen.in, type&nbsp;=&nbsp;"abs", method&nbsp;=&nbsp;"M1", ...)</div></code></pre>
+<h4>
+Arguments
+</h4>
+<dl class="rd-dl">
+<dt>
+obs.in
+</dt>
+<dd class="rd-dd">
+A vector containing the reference data.
+</dd>
+<dt>
+ctrl.in
+</dt>
+<dd class="rd-dd">
+A vector of simulated data used to calibrate the method
+</dd>
+<dt>
+scen.in
+</dt>
+<dd class="rd-dd">
+A vector of data for the scenario period simulation
+</dd>
+<dt>
+type
+</dt>
+<dd class="rd-dd">
+String defining the type of adjustment. Currently <code>type</code> recognizes two values:
+<ul>
+<li>
+abs: Absolute scale is used. This approach is typically applied measured in the absolute scale (e.g temperature)
+</li>
+<li>
+ratio: The adjustment is made in ratio format. This approach is typically applied to non-continuous variables such as precipitation.
+</li>
+</ul>
+</dd>
+<dt>
+method
+</dt>
+<dd class="rd-dd">
+Method to be used to bias adjust <code>scen.in</code>. The following options are available:
+</dd>
+<dt>
+…
+</dt>
+<dd class="rd-dd">
+Additional parameters used to handle the behavior of specific bias correction methods.
+</dd>
+</dl>
+<h4>
+Value
+</h4>
+<p class="rd-p">
+<dl>
+An object of type <code>BiascoTimeSeries</code>, which contains the adjusted data and parameter values related to a particular method.
+</dl>
+</p>
+<h4>
+Details
+</h4>
+<p class="rd-p">
+The following univariate methods have curretnly been implemented in this package:
+<ul>
+<li>
+M1: Simple delta change scaling of time mean
+</li>
+<li>
+M2: Delta change scaling on mean and standard deviation. If <code>type</code> = ratio, then Engen-Skaugen algorithm is used.
+</li>
+<li>
+M3: Delta change scaling on mean, standard deviation and skewness. If <code>type</code> = ratio, M3 corresponds to delta change scaling of mean and standard deviation using.
+</li>
+<li>
+M4: Parametric quantile mapping applied in the delta change mode
+</li>
+<li>
+M5: Non-parametric quantile mapping applied in the delta change mode
+</li>
+<li>
+M6: As M1 but applied in the bias correction mode
+</li>
+<li>
+M7: As M2 but applied in the bias correction mode
+</li>
+<li>
+M8: As M3 but applied in the bias correction mode
+</li>
+<li>
+M9: As M4 but applied in the bias correction mode
+</li>
+<li>
+M10: As M5 but applied in the bias correction mode
+</li>
+</ul>
+</p>
+<p class="rd-p">
+</p>
+<h4>
+Examples
+</h4>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>library(copula)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;copula&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:lubridate&#39;:
+## 
+##     interval</code></pre>
+<pre class="r"><code>library(BCUH)
+
+data(&quot;station_Jyvaskyla&quot;)
+data(&quot;ALADIN_Jyvaskyla&quot;)
+
+ctrl &lt;- c(1971,2000)
+scen &lt;- c(2071,2100)
+
+#Extract data for January
+ind.obs &lt;- which(month(station_Jyvaskyla$date) == 1 &amp;
+                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.ctrl &lt;- which(month(ALADIN_Jyvaskyla$date) == 1 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.scen &lt;- which(month(ALADIN_Jyvaskyla$date) == 1 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
+
+obs.ctrl &lt;- station_Jyvaskyla[ind.obs,]
+rcm.ctrl &lt;- ALADIN_Jyvaskyla[ind.ctrl,]
+rcm.scen &lt;- ALADIN_Jyvaskyla[ind.scen,]
+
+#Create objects which contain the bias corrected data
+dc.object &lt;- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M1&quot;)
+bc.object &lt;- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = &quot;abs&quot;, method = &quot;M6&quot;)
+
+dc.object</code></pre>
+<pre><code>## *** Class BiascoTimeSeries, method show *** 
+## * method = [1] &quot;M1&quot;
+## * bc.attributes = list()
+## * adj@nvar = [1] 1
+## * adj@Dim = [1] 930
+## * adj@data (limited to first 100 values) = 
+##   [1] -9.668   -17.07   -3.168   -2.168   -18.27   -16.17   -1.968  
+##   [8] 5.732    5.132    8.332    8.932    3.432    -4.368   2.032   
+##  [15] 1.732    0.7319   -2.268   1.932    5.132    3.932    4.832   
+##  [22] 4.832    4.232    4.932    6.132    6.232    4.732    -2.568  
+##  [29] -7.268   -10.87   -6.868   4.432    -4.468   1.232    0.1319  
+##  [36] -11.07   -10.77   -1.968   -3.968   -2.068   -2.468   -4.168  
+##  [43] -16.07   -5.068   -4.668   -8.568   -6.368   -6.268   -10.27  
+##  [50] -16.17   -7.268   -2.568   -1.668   1.932    4.432    2.432   
+##  [57] -2.468   -16.97   -21.07   -22.47   -19.07   -10.17   5.632   
+##  [64] 3.232    4.832    -0.7681  7.432    5.632    0.5319   5.332   
+##  [71] -1.568   4.432    -0.3681  1.532    2.032    -4.268   0.7319  
+##  [78] 1.032    -0.5681  -2.568   -3.268   -8.268   -6.868   -5.068  
+##  [85] -2.568   -0.06815 5.732    5.832    3.932    -2.668   -5.968  
+##  [92] -5.368   -3.068   -0.8681  -8.168   2.032    3.332    3.932   
+##  [99] 3.032    0.5319  
+## ******* End Show (BiascoTimeSeries) *******</code></pre>
+<pre class="r"><code>#Visualise the results
+plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = &quot;l&quot;,
+    main=&quot;Quantile plot&quot;, xlab = &quot;%&quot;, ylab = &quot;Celcius&quot;, ylim = c(-30,10))
+lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
+lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = &quot;red&quot;)
+lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = &quot;blue&quot;)
+lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = &quot;blue&quot;, lty = 2)
+legend(&quot;topleft&quot;, c(&quot;M1&quot;,&quot;M6&quot;,&quot;Obs&quot;,&quot;Ctrl&quot;,&quot;Scen&quot;),
+      col = c(&quot;black&quot;,&quot;black&quot;,&quot;red&quot;,&quot;blue&quot;,&quot;blue&quot;), lty = c(1,2,1,1,2))</code></pre>
+<p><img src="rd_files/figure-html/biasco_id_3-1.png" width="624" /></p>
+<h4>
+See also
+</h4>
+<p><code>biasco2d</code> for two-dimensional bias correction of temperature and precipitation</p>
+</div>
+<div id="biasco2d" class="section level2">
+<h2>biasco2D</h2>
+<a id="biasco2D_alias"></a>
+<h3>
+Joint bias correction of temperature and precipitation.
+</h3>
+<p class="rd-p">
+A wrapper function for a copula-based bias correction method of temperature and precipitation
+</p>
+<h4>
+Usage
+</h4>
+<pre class="r"><code><div>biasco2D(obs.in, ctrl.in, scen.in, names&nbsp;=&nbsp;NULL, cond&nbsp;=&nbsp;"P", threshold&nbsp;=&nbsp;0.1, ...)</div></code></pre>
+<h4>
+Arguments
+</h4>
+<dl class="rd-dl">
+<dt>
+obs.in
+</dt>
+<dd class="rd-dd">
+Either a 2-column array, matrix or data.frame. of observed temperature and precipitation
+</dd>
+<dt>
+ctrl.in
+</dt>
+<dd class="rd-dd">
+Data used to calibrate the method given in the format as <code>obs.in</code>
+</dd>
+<dt>
+scen.in
+</dt>
+<dd class="rd-dd">
+Data for the scenario period simulation given in the format as <code>obs.in</code>
+</dd>
+<dt>
+cond
+</dt>
+<dd class="rd-dd">
+The conditioning order of temperature and precipitation. If <code>cond</code> = “P” then the precipitation marginal is adjusted first, while the adjustment of temperature is made conditionally on precipitation
+</dd>
+<dt>
+threshold
+</dt>
+<dd class="rd-dd">
+Threshold for wet day precipitation. Everything below <code>threshold</code> is handled as zero precipitation
+</dd>
+<dt>
+…
+</dt>
+<dd class="rd-dd">
+Method-specific parameters to be implemented
+</dd>
+</dl>
+<h4>
+Value
+</h4>
+<p class="rd-p">
+<dl>
+An object of type BiascoTimeSeriesPT which contains a matrix of bias adjusted temperature and precipitation and also additional information on the used parameter values
+</dl>
+</p>
+<h4>
+Examples
+</h4>
+<pre class="r"><code>library(lubridate)
+library(BCUH)
+#Load data
+data(&quot;station_Jyvaskyla&quot;)
+data(&quot;ALADIN_Jyvaskyla&quot;)
+
+#Extract data for January
+ctrl &lt;- c(1971,2000)
+scen &lt;- c(2071,2100)
+ind.obs &lt;- which(month(station_Jyvaskyla$date) == 1 &amp;
+                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.ctrl &lt;- which(month(ALADIN_Jyvaskyla$date) == 1 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
+ind.scen &lt;- which(month(ALADIN_Jyvaskyla$date) == 1 &amp;
+                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
+obs.ctrl &lt;- station_Jyvaskyla[ind.obs,2:3]
+rcm.ctrl &lt;- ALADIN_Jyvaskyla[ind.ctrl,2:3]
+rcm.scen &lt;- ALADIN_Jyvaskyla[ind.scen,2:3]
+biasco2d.object &lt;- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c(&quot;tas&quot;, &quot;pr&quot;))</code></pre>
+<pre><code>## Warning in .local(.Object, ...): Overwriting original colnames
+
+## Warning in .local(.Object, ...): Overwriting original colnames
+
+## Warning in .local(.Object, ...): Overwriting original colnames</code></pre>
+<pre><code>## Warning in sqrt(diag(vc)): NaNs produced</code></pre>
+<pre><code>## initial  value 3093.621400 
+## final  value 3093.621226 
+## converged
+## initial  value 3093.621226 
+## final  value 3093.621124 
+## stopped after 1 iterations
+## initial  value 2696.916265 
+## final  value 2696.824655 
+## converged
+## initial  value 2696.824655 
+## final  value 2696.567380 
+## stopped after 1 iterations
+## [1] &quot;P&quot;</code></pre>
+<pre class="r"><code>#Visualise the results:
+
+par(mfrow=c(1,2))
+plot(obs.ctrl)
+points(rcm.ctrl,col=&quot;red&quot;)
+legend(&quot;topleft&quot;,c(&quot;Obs&quot;,&quot;Ctrl&quot;),col=c(&quot;black&quot;,&quot;red&quot;),pch=c(1,1))
+plot(dat(adj(biasco2d.object)))
+points(rcm.scen,col=&quot;red&quot;)
+legend(&quot;topleft&quot;,c(&quot;Adj&quot;,&quot;Scen&quot;),col=c(&quot;black&quot;,&quot;red&quot;),pch=c(1,1))</code></pre>
+<p><img src="rd_files/figure-html/biasco2D_id_4-1.png" width="624" /></p>
+</div>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div class="container">
+      <div class="col-md-6">
+                <p>&copy; Olle Räty, 2018</p>
+              </div>
+      <div class="col-md-6">
+        <p class="pull-right">created with <a href="https://github.com/hafen/packagedocs">packagedocs</a>
+                  </p>
+      </div>
+    </div>
+  </div>
+
+  
+</body>
 </html>
