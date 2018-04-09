@@ -216,13 +216,14 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' data("station_Jyvaskyla")
 #' data("ALADIN_Jyvaskyla")
 #' 
+#' Adjust data for January using this method
 #' ctrl <- c(1971,2000)
 #' scen <- c(2071,2100)
-#' ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
+#' ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
 #'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#' ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+#' ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#' ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
+#' ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
 #'                    year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
 #' obs.ctrl <- station_Jyvaskyla[ind.obs,2:3]
 #' rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,2:3]
