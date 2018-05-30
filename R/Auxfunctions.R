@@ -199,10 +199,9 @@
 #' @param mean.target Traget value for the mean
 #' @param sd.target Target value for standard deviation
 #' @param tol Tolerance for the convergence
-#' @param max.iter Max. number of iterations. Used to stop the execution,
-#'   if the algorithm does not converge to the targer values.
+#' @param max.iter Max. number of iterations, after which the execution is stopped
 #'
-#' @return Adjusted time series for the ccenario period.
+#' @return Adjusted time series for the scenario period.
 #'
 #' @keywords internal
 #'
@@ -222,7 +221,7 @@
     sd.data <- sd(data)
     if(i == max.iter){
       warning("coefficient of variability not converging to the target value!")
-      data <- data*m.target/mean.data
+      data <- data*mean.target/mean.data
       return(data)
     }
     i <- i + 1

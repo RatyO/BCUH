@@ -55,6 +55,7 @@ setGeneric(name = "dat[",
 #' @description \code{method} returns the string stored in the slot method.
 #'
 #' @param object An object
+#' @param Name of the method
 #' @param ... Additional arguments
 #'
 #' @export

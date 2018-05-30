@@ -199,6 +199,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' @param scen.in Data for the scenario period simulation given in the format as \code{obs.in}
 #' @param cond The conditioning order of temperature and precipitation. If \code{cond} = "P" then the precipitation marginal
 #' is adjusted first, while the adjustment of temperature is made conditionally on precipitation
+#' @param names names of the variables at different columns
 #' @param threshold Threshold for wet day precipitation. Everything below \code{threshold} is handled as zero precipitation
 #' @param ... Method-specific parameters to be implemented
 #'

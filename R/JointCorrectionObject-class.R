@@ -162,28 +162,28 @@ setMethod(f = ".JBC",
             ctrl$margTW <- .fitMarginal(ctrl$T[ctrl$wet],type="norm")
             ctrl$margTD <- .fitMarginal(ctrl$T[ctrl$dry],type="norm")
 
-            fit.normO <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
+            fit.normO <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             obs$cpar1 <- fit.normO@copula@parameters
 
-            fit.normC <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
+            fit.normC <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             ctrl$cpar1 <- fit.normC@copula@parameters
 
-            fit.normF <- copula::fitCopula(normalCopula(dim=2),pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
+            fit.normF <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
 
             scen$cpar1 <- fit.normF@copula@parameters
 
-            mvd.o <- mvdc(copula = ellipCopula(family = "normal", param = 0),
+            mvd.o <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
                           margins = c("norm", "gamma"), 
                           paramMargins = list(list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2]),
                                               list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])))
             start <- as.vector(c(obs$margTW$estimate[1],obs$margTW$estimate[2],obs$margP$estimate[1],obs$margP$estimate[2],fit.normO@copula@parameters))
-            fit.mvdO <- suppressWarnings(fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "BFGS",
+            fit.mvdO <- suppressWarnings(copula::fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "BFGS",
                                                  start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=1000)))
             
             obs$cpar1 <- coef(fit.mvdO)[5]
@@ -192,12 +192,12 @@ setMethod(f = ".JBC",
             obs$margP$estimate[1] <- coef(fit.mvdO)[3]
             obs$margP$estimate[2] <- coef(fit.mvdO)[4]
             
-            mvd.c <- mvdc(copula = ellipCopula(family = "normal", param = 0),
+            mvd.c <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
                           margins = c("norm", "gamma"), 
                           paramMargins = list(list(mean = ctrl$margTW[1], sd = ctrl$margTW[2]),
                                               list(shape = ctrl$margP[1], rate = ctrl$margP[2])))
             start <- c(ctrl$margTW$estimate[1],ctrl$margTW$estimate[2],ctrl$margP$estimate[1],ctrl$margP$estimate[2],fit.normC@copula@parameters)
-            fit.mvdC <- suppressWarnings(fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "BFGS",
+            fit.mvdC <- suppressWarnings(copula::fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "BFGS",
                                                  start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=100)))
             
             ctrl$cpar1 <- coef(fit.mvdC)[5]
@@ -214,7 +214,7 @@ setMethod(f = ".JBC",
               adj <- .adjTP(obs,ctrl,scen)
             }
 
-            fit.normCor <- copula::fitCopula(normalCopula(dim=2),matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2),
+            fit.normCor <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2)),
                                      method="itau",start=NULL,lower=NULL,upper=NULL,
                                      optim.method="BFGS",optim.control=list(maxit=1000))
             

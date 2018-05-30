@@ -17,6 +17,11 @@
 
 #' @include GenericMethods.R Auxfunctions.R TimeSeries-class.R BiascoTimeSeries-class.R
 
+#' An S4 class for an object of type AbsCorrection
+#'
+#' @slot obs an object of type TimeSeries containing the observed data
+#' @slot ctrl an object of type TimeSeries containing the control period data for the simulation to be adjusted
+#' @slot scen an object of type TimeSeries containing the scenario period data for the simulation to be adjusted
 #' export BC.abs
 BC.abs <- setClass("AbsCorrection",
           contains = "BiascoTimeSeries",
@@ -24,7 +29,8 @@ BC.abs <- setClass("AbsCorrection",
 #          prototype = prototype(obs = new("TimeSeries"), ctrl = new("TimeSeries"), scen = new("TimeSeries"))
 )
 
-#initialize
+#' initialize
+#' @rdname initialize
 setMethod(f = "initialize",
           signature = "AbsCorrection",
           function(.Object, ..., obs = new("TimeSeries"), ctrl = new("TimeSeries"),
@@ -37,26 +43,32 @@ setMethod(f = "initialize",
             return(.Object)
           })
 
-#getters
+#' obs
+#' @rdname obs
 setMethod(f = "obs",
           signature = "AbsCorrection",
           definition = function(object){
             return(object@obs)
           })
 
+#' ctrl
+#' @rdname ctrl
 setMethod(f = "ctrl",
           signature = "AbsCorrection",
           definition = function(object){
             return(object@ctrl)
           })
 
+#' scen
+#' @rdname scen
 setMethod(f = "scen",
           signature = "AbsCorrection",
           definition = function(object){
             return(object@scen)
           })
 
-#Setters
+#' obs<-
+#' @rdname obs<-
 setMethod(f = "obs<-",
           signature = "AbsCorrection",
           definition = function(object, value){
@@ -65,6 +77,8 @@ setMethod(f = "obs<-",
             return(object)
           })
 
+#' ctrl<-
+#' @rdname ctrl<-
 setMethod(f = "ctrl<-",
           signature = "AbsCorrection",
           definition = function(object, value){
@@ -73,6 +87,8 @@ setMethod(f = "ctrl<-",
             return(object)
           })
 
+#' scen<-
+#' @rdname scen<-
 setMethod(f = "scen<-",
           signature = "AbsCorrection",
           definition = function(object, value){
@@ -81,6 +97,8 @@ setMethod(f = "scen<-",
             return(object)
           })
 
+#' show
+#' @rdname show
 setMethod(f = "show",
           signature = "AbsCorrection",
           definition = function(object){
@@ -114,7 +132,10 @@ setMethod(f = "show",
             cat("******* End Show (AbsCorrectionObject) ******* \n")
           })
 
+#' @rdname .DcMean
 setMethod(".DcMean","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @rdname .DcMean
 setMethod(".DcMean",
           signature = "AbsCorrection",
           definition = function(.Object){
@@ -128,7 +149,10 @@ setMethod(".DcMean",
             return(.Object)
           })
 
+#' @rdname .DcMeanSd
 setMethod(".DcMeanSd","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @rdname .DcMeanSd
 setMethod(".DcMeanSd",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -151,7 +175,10 @@ setMethod(".DcMeanSd",
             return(.Object)
           })
 
+#' @rdname .DcMeanSdSkew
 setMethod(".DcMeanSdSkew","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @rdname .DcMeanSdSkew
 setMethod(".DcMeanSdSkew",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -185,7 +212,10 @@ setMethod(".DcMeanSdSkew",
             return(.Object)
           })
 
+#' @rdname .DcQmParam
 setMethod(".DcQmParam","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @rdname .DcQmParam
 setMethod(".DcQmParam",
           signature = "AbsCorrection",
           definition = function(.Object, fit.type = "linear", eps = 1e-5){
@@ -225,7 +255,11 @@ setMethod(".DcQmParam",
           }
 )
 
+#' @rdname .DcQmEmpir
 setMethod(".DcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @title .BcMeanSdSkew
+#' @rdname .DcQmEmpir
 setMethod(".DcQmEmpir",
           signature = "AbsCorrection",
           definition = function(.Object, smooth = 0.05, pre.adj = F, post.adj = F, eps = 1e-5){
@@ -312,7 +346,12 @@ setMethod(".DcQmEmpir",
 #BC
 #-----------------------------------------
 
+#' title .BcMean
+#' @rdname .BcMean
 setMethod(".BcMean","ANY",function(.Object) print("Missing or wrong input"))
+
+#' title .BcMean
+#' @rdname .BcMean
 setMethod(".BcMean",
           signature = "AbsCorrection",
           definition = function(.Object){
@@ -326,7 +365,12 @@ setMethod(".BcMean",
             return(.Object)
           })
 
+#' @title .BcMeanSd
+#' @rdname .BcMeanSd
 setMethod(".BcMeanSd","ANY",function(.Object) print("Missing or wrong input"))
+
+#' title .BcMeanSd
+#' @rdname .BcMeanSd
 setMethod(".BcMeanSd",
           signature = "AbsCorrection",
           definition = function(.Object,nseq=1){
@@ -348,7 +392,12 @@ setMethod(".BcMeanSd",
             return(.Object)
           })
 
+#' @title .BcMeanSdSkew
+#' @rdname .BcMeanSdSkew
 setMethod(".BcMeanSdSkew","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @title .BcMeanSdSkew
+#' @rdname .BcMeanSdSkew
 setMethod(".BcMeanSdSkew",
           signature = "AbsCorrection",
           definition = function(.Object, nseq=1){
@@ -381,7 +430,12 @@ setMethod(".BcMeanSdSkew",
             return(.Object)
           })
 
+#' @title .BcQmParam
+#' @rdname .BcQmParam
 setMethod(".BcQmParam","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @title .BcQmParam
+#' @rdname .BcQmParam
 setMethod(".BcQmParam",
           signature = "AbsCorrection",
           definition = function(.Object, fit.type = "linear", eps = 1e-5){
@@ -419,7 +473,12 @@ setMethod(".BcQmParam",
           }
 )
 
+#' @title .BcQmEmpir
+#' @rdname .BcQmEmpir
 setMethod(".BcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
+
+#' @title .BcQmEmpir
+#' @rdname .BcQmEmpir
 setMethod(".BcQmEmpir",
           signature = "AbsCorrection",
           definition = function(.Object, smooth = 0.05, pre.adj = F, post.adj = F, eps = 1e-5){
