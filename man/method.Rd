@@ -10,6 +10,8 @@ method(object, value, ...)
 \item{object}{An object}
 
 \item{...}{Additional arguments}
+
+\item{Name}{of the method}
 }
 \description{
 \code{method} returns the string stored in the slot method.

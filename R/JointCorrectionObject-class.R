@@ -99,7 +99,7 @@ setMethod(f = "show",
 
 setMethod(f = ".JBC",
           signature = "JointCorrection",
-          definition = function(.Object, cond="P", threshold = 0.1, jittering = T, jitter.amount = 1e-5){
+          definition = function(.Object, cond="P", threshold = 0.1, jittering = T, jitter.amount = 1e-5, separate = F){
 
             #Create data frames for the data. Update these data frames whenever necessary.
             obs <- list(T=.Object@obs@data[,1],
@@ -121,11 +121,11 @@ setMethod(f = ".JBC",
             
             if(jittering){
               obs$T <- jitter(obs$T, amount = jitter.amount)
-              obs$P <- jitter(obs$P, amount = jitter.amount)
+              obs$P <- obs$P+runif(length(obs$P))*jitter.amount
               ctrl$T <- jitter(ctrl$T, amount = jitter.amount)
-              ctrl$P <- jitter(ctrl$P, amount = jitter.amount)
+              ctrl$P <- ctrl$P+runif(length(ctrl$P))*jitter.amount
               scen$T <- jitter(scen$T, amount = jitter.amount)
-              scen$P <- jitter(scen$P, amount = jitter.amount)
+              scen$P <- scen$P+runif(length(scen$P))*jitter.amount
             }
             
             tmp <- .ppRain(ref = obs$P, adj = ctrl$P, ref.threshold = threshold)
@@ -155,56 +155,68 @@ setMethod(f = ".JBC",
             scen$pwet <- length(scen$P[which(scen$P>0)])/length(scen$P)
             
             obs$margP <- .fitMarginal(obs$P[obs$wet],type="gamma")
-            obs$margTW <- .fitMarginal(obs$T[obs$wet],type="norm")
-            obs$margTD <- .fitMarginal(obs$T[obs$dry],type="norm")
-
             ctrl$margP <- .fitMarginal(ctrl$P[ctrl$wet],type="gamma")
-            ctrl$margTW <- .fitMarginal(ctrl$T[ctrl$wet],type="norm")
-            ctrl$margTD <- .fitMarginal(ctrl$T[ctrl$dry],type="norm")
+            scen$margP <- .fitMarginal(scen$P[scen$wet],type="gamma")
+            
+            if(separate){
+              obs$margTW <- .fitMarginal(obs$T[obs$wet],type="norm")
+              obs$margTD <- .fitMarginal(obs$T[obs$dry],type="norm")
+              
+              ctrl$margTW <- .fitMarginal(ctrl$T[ctrl$wet],type="norm")
+              ctrl$margTD <- .fitMarginal(ctrl$T[ctrl$dry],type="norm")
+            }else{
+              obs$margTW <- obs$margTD <- .fitMarginal(obs$T,type="norm")
+              ctrl$margTW <- ctrl$margTD <- .fitMarginal(ctrl$T,type="norm")
+            }
 
+            print(obs$margP)
+            print(ctrl$margP)
+            print(scen$margP)
+            
             fit.normO <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             obs$cpar1 <- fit.normO@copula@parameters
-
+            
             fit.normC <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
                                    optim.control=list(maxit=100))
             ctrl$cpar1 <- fit.normC@copula@parameters
 
-            fit.normF <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
-                                   method="itau",start=0,lower=NULL,upper=NULL,
-                                   optim.control=list(maxit=100))
-
-            scen$cpar1 <- fit.normF@copula@parameters
+            # fit.normF <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
+            #                        method="itau",start=0,lower=NULL,upper=NULL,
+            #                        optim.control=list(maxit=100))
+            # 
+            # scen$cpar1 <- fit.normF@copula@parameters
 
             mvd.o <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
                           margins = c("norm", "gamma"), 
                           paramMargins = list(list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2]),
                                               list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])))
             start <- as.vector(c(obs$margTW$estimate[1],obs$margTW$estimate[2],obs$margP$estimate[1],obs$margP$estimate[2],fit.normO@copula@parameters))
-            fit.mvdO <- suppressWarnings(copula::fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2),mvd.o, method = "BFGS",
-                                                 start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=1000)))
+            fit.mvdO <- suppressMessages(copula::fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2), mvd.o, method = "Nelder-Mead",
+                                                 start=start, optim.control=list(trace = 0, reltol = 1e-4, maxit=100),
+                                                 lower = c(-100,0,0,0,-1), upper = c(100,inf,inf,inf,1)))
             
-            obs$cpar1 <- coef(fit.mvdO)[5]
-            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
-            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
-            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
-            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
-            
+#            obs$cpar1 <- coef(fit.mvdO)[5]
+#            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
+#            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
+#            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
+#            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
+
             mvd.c <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
                           margins = c("norm", "gamma"), 
                           paramMargins = list(list(mean = ctrl$margTW[1], sd = ctrl$margTW[2]),
                                               list(shape = ctrl$margP[1], rate = ctrl$margP[2])))
             start <- c(ctrl$margTW$estimate[1],ctrl$margTW$estimate[2],ctrl$margP$estimate[1],ctrl$margP$estimate[2],fit.normC@copula@parameters)
-            fit.mvdC <- suppressWarnings(copula::fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "BFGS",
-                                                 start=start, optim.control=list(trace = -1, reltol = 1e-4, maxit=100)))
+            fit.mvdC <- suppressMessages(copula::fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "Nelder-Mead",
+                                                 start=start, optim.control=list(trace = 0, reltol = 1e-4, maxit=1000)))
             
-            ctrl$cpar1 <- coef(fit.mvdC)[5]
-            ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
-            ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
-            ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
-            ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
+            # ctrl$cpar1 <- coef(fit.mvdC)[5]
+            # ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
+            # ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
+            # ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
+            # ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
             
             if(cond=="P"){
               print(cond)
@@ -213,7 +225,6 @@ setMethod(f = ".JBC",
               print(cond)
               adj <- .adjTP(obs,ctrl,scen)
             }
-
             fit.normCor <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2)),
                                      method="itau",start=NULL,lower=NULL,upper=NULL,
                                      optim.method="BFGS",optim.control=list(maxit=1000))

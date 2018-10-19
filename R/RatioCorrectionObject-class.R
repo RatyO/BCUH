@@ -1,5 +1,27 @@
+# BCUH provides tools to bias adjust simulated time series with a number of uni- and multivariate methods.
+# Copyright (C) 2018 Olle Räty
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundataion, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 #' @include GenericMethods.R Auxfunctions.R TimeSeries-class.R BiascoTimeSeries-class.R
 
+#' An S4 class for an object of type RatioCorrection
+#'
+#' @slot obs an object of type TimeSeries containing the observed data
+#' @slot ctrl an object of type TimeSeries containing the control period data for the simulation to be adjusted
+#' @slot scen an object of type TimeSeries containing the scenario period data for the simulation to be adjusted
 #' export BC.ratio
 BC.ratio <- setClass("RatioCorrection",
          contains = "BiascoTimeSeries",
@@ -71,27 +93,27 @@ setMethod(f = "show",
             cat("* bc.attributes = "); print (object@bc.attributes)
             cat("* adj@nvar = "); print (object@adj@nvar)
             cat("* adj@Dim = "); print (object@adj@Dim)
-            cat("* adj@dat (limited to first 100 values) = \n")
-            if(length(object@adj@dat)!=0){
-              print(formatC(object@adj@dat[1:min(length(object@adj@dat),100)]),quote=FALSE)
+            cat("* adj@data (limited to first 100 values) = \n")
+            if(length(object@adj@data)!=0){
+              print(formatC(object@adj@data[1:min(length(object@adj@data),100)]),quote=FALSE)
             }else{}
             cat("* obs@nvar = "); print (object@obs@nvar)
             cat("* obs@Dim = "); print (object@obs@Dim)
-            cat("* obs@dat (limited to first 100 values) = \n")
-            if(length(object@obs@dat)!=0){
-              print(formatC(object@obs@dat[1:min(length(object@obs@dat),100)]),quote=FALSE)
+            cat("* obs@data (limited to first 100 values) = \n")
+            if(length(object@obs@data)!=0){
+              print(formatC(object@obs@data[1:min(length(object@obs@data),100)]),quote=FALSE)
             }else{}
             cat("* ctrl@nvar = "); print (object@ctrl@nvar)
             cat("* ctrl@Dim = "); print (object@ctrl@Dim)
-            cat("* ctrl@dat (limited to first 100 values) = \n")
-            if(length(object@ctrl@dat)!=0){
-              print(formatC(object@ctrl@dat[1:min(length(object@ctrl@dat),100)]),quote=FALSE)
+            cat("* ctrl@data (limited to first 100 values) = \n")
+            if(length(object@ctrl@data)!=0){
+              print(formatC(object@ctrl@data[1:min(length(object@ctrl@data),100)]),quote=FALSE)
             }else{}
             cat("* scen@nvar = "); print (object@scen@nvar)
             cat("* scen@Dim = "); print (object@scen@Dim)
-            cat("* scen@dat (limited to first 100 values) = \n")
-            if(length(object@scen@dat)!=0){
-              print(formatC(object@scen@dat[1:min(length(object@scen@dat),100)]),quote=FALSE)
+            cat("* scen@data (limited to first 100 values) = \n")
+            if(length(object@scen@data)!=0){
+              print(formatC(object@scen@data[1:min(length(object@scen@data),100)]),quote=FALSE)
             }else{}
             cat("******* End Show (BiascoTimeSeries) ******* \n")
           })
@@ -101,14 +123,14 @@ setMethod(".DcMean",
           signature = "RatioCorrection",
           definition = function(.Object, ratio.max = 5){
 
-            mean.obs <- mean(.Object@obs@dat)
-            mean.ctrl <- mean(.Object@ctrl@dat)
-            mean.scen <- mean(.Object@scen@dat)
+#            mean.obs <- mean(.Object@obs@data)
+#            mean.ctrl <- mean(.Object@ctrl@data)
+#            mean.scen <- mean(.Object@scen@data)
 
-            a <- min(mean(.Object@scen@dat,na.rm = T)/mean(.Object@ctrl@dat,na.rm = T), ratio.max)
+            a <- min(mean(.Object@scen@data,na.rm = T)/mean(.Object@ctrl@data,na.rm = T), ratio.max)
 
-            .Object@adj@dat <- .Object@obs@dat*a
-            .Object@adj@Dim <- length(.Object@adj@dat)
+            .Object@adj@data <- .Object@obs@data*a
+            .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
             return(.Object)
@@ -119,19 +141,19 @@ setMethod(".DcMeanSd1",
           signature = "RatioCorrection",
           definition = function(.Object, nseq = 1, ratio.max = 5){
 
-            m.obs <- mean(.Object@obs@dat)
-            m.ctrl <- mean(.Object@ctrl@dat)
-            m.scen <- mean(.Object@scen@dat)
+            m.obs <- mean(.Object@obs@data)
+            m.ctrl <- mean(.Object@ctrl@data)
+            m.scen <- mean(.Object@scen@data)
 
-            sd.obs <- sd(.Object@obs@dat)
-            sd.ctrl <- sd(.Object@ctrl@dat)
-            sd.scen <- sd(.Object@scen@dat)
+            sd.obs <- sd(.Object@obs@data)
+            sd.ctrl <- sd(.Object@ctrl@data)
+            sd.scen <- sd(.Object@scen@data)
 
             m.target <- m.obs*min(m.scen/m.ctrl, ratio.max)
             sd.target <- sd.obs*min(sd.scen/sd.ctrl, ratio.max)
 
-            .Object@adj@dat <- .adjustEs(.Object@obs@dat, m.target, sd.target)
-            .Object@adj@Dim <- length(.Object@adj@dat)
+            .Object@adj@data <- .adjustEs(.Object@obs@data, m.target, sd.target)
+            .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("nseq" = nseq, "ratio.max" = ratio.max)
             validObject(.Object)
             return(.Object)
@@ -143,19 +165,19 @@ setMethod(".DcMeanSd2",
           signature = "RatioCorrection",
           definition = function(.Object, ratio.max = 5){
 
-          m.obs <- mean(.Object@obs@dat)
-          m.ctrl <- mean(.Object@ctrl@dat)
-          m.scen <- mean(.Object@scen@dat)
+          m.obs <- mean(.Object@obs@data)
+          m.ctrl <- mean(.Object@ctrl@data)
+          m.scen <- mean(.Object@scen@data)
 
-          sd.obs <- sd(.Object@obs@dat)
-          sd.ctrl <- sd(.Object@ctrl@dat)
-          sd.scen <- sd(.Object@scen@dat)
+          sd.obs <- sd(.Object@obs@data)
+          sd.ctrl <- sd(.Object@ctrl@data)
+          sd.scen <- sd(.Object@scen@data)
 
           m.targ <- m.obs*min(m.scen/m.ctrl, ratio.max)
           sd.targ <- sd.obs*min(sd.scen/sd.ctrl, ratio.max)
 
-          .Object@adj@dat <- .iterAb(.Object@obs@dat, m.targ, sd.targ)
-          .Object@adj@Dim <- length(.Object@adj@dat)
+          .Object@adj@data <- .iterAb(.Object@obs@data, m.targ, sd.targ)
+          .Object@adj@Dim <- length(.Object@adj@data)
           .Object@bc.attributes <- list("ratio.max" = ratio.max)
           validObject(.Object)
           return(.Object)
@@ -177,9 +199,9 @@ setMethod(".DcQmEmpir",
             PScenSmooth <- array(NA,dim=c(.Object@scen@Dim))
 
             #2. Insert random numbers to the time series
-            PScenSort <- .Object@scen@dat + eps*runif(.Object@scen@Dim,0,1)
-            PCtrlSort <- .Object@ctrl@dat + eps*runif(.Object@ctrl@Dim,0,1)
-            PObs2 <- .Object@obs@dat + eps*runif(.Object@obs@Dim,0,1)
+            PScenSort <- .Object@scen@data + eps*runif(.Object@scen@Dim,0,1)
+            PCtrlSort <- .Object@ctrl@data + eps*runif(.Object@ctrl@Dim,0,1)
+            PObs2 <- .Object@obs@data + eps*runif(.Object@obs@Dim,0,1)
 
             PObs2 <- .zeros(PObs2,eps)
 
@@ -197,20 +219,20 @@ setMethod(".DcQmEmpir",
             PCtrlSmooth <- .smoothQuantiles(PCtrlSort, smooth)
             PScenSmooth <- .smoothQuantiles(PScenSort, smooth)
 
-            .Object@adj@dat <- as.numeric(.quantMapP(PObs2,PCtrlSmooth,PScenSmooth))
-            .Object@adj@dat[which(.Object@adj@dat < eps)] <- 0.0
+            .Object@adj@data <- as.numeric(.quantMapP(PObs2,PCtrlSmooth,PScenSmooth))
+            .Object@adj@data[which(.Object@adj@data < eps)] <- 0.0
 
             if(post.adj){
-              m.ctrl <- mean(.Object@ctrl@dat)
-              m.scen <- mean(.Object@scen@dat)
+              m.ctrl <- mean(.Object@ctrl@data)
+              m.scen <- mean(.Object@scen@data)
               if(m.ctrl > 0){
                 Ratio1 <- m.scen/m.ctrl
               }
               else{
                 Ratio1 <- 1.
               }
-              m.adj <- mean(.Object@adj@dat)
-              m.obs <- mean(.Object@obs@dat)
+              m.adj <- mean(.Object@adj@data)
+              m.obs <- mean(.Object@obs@data)
               if(m.obs>0){
                 Ratio2 <- m.adj/m.obs
               }
@@ -218,7 +240,7 @@ setMethod(".DcQmEmpir",
                 Ratio2 <- 1.
               }
 
-              .Object@adj@dat <- .Object@adj@dat*Ratio1/Ratio2
+              .Object@adj@data <- .Object@adj@data*Ratio1/Ratio2
             }
             .Object@adj@Dim <- length(.Object@adj@Dim)
             .Object@bc.attributes <- list("smooth" = smooth, "pred.adj" = pre.adj, "post.adj" = post.adj)
@@ -235,14 +257,14 @@ setMethod(".BcMean",
           signature = "RatioCorrection",
           definition = function(.Object, ratio.max = 5){
 
-            mean.obs <- mean(.Object@obs@dat)
-            mean.ctrl <- mean(.Object@ctrl@dat)
-            mean.scen <- mean(.Object@scen@dat)
+            mean.obs <- mean(.Object@obs@data)
+            mean.ctrl <- mean(.Object@ctrl@data)
+            mean.scen <- mean(.Object@scen@data)
 
-            a <- min(mean(.Object@obs@dat,na.rm = T)/mean(.Object@ctrl@dat,na.rm = T), ratio.max)
+            a <- min(mean(.Object@obs@data,na.rm = T)/mean(.Object@ctrl@data,na.rm = T), ratio.max)
 
-            .Object@adj@dat <- .Object@scen@dat*a
-            .Object@adj@Dim <- length(.Object@adj@dat)
+            .Object@adj@data <- .Object@scen@data*a
+            .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
             return(.Object)
@@ -254,20 +276,20 @@ setMethod(".BcMeanSd1",
           signature = "RatioCorrection",
           definition = function(.Object, nseq = NULL, ratio.max = 5){
 
-            m.obs <- mean(.Object@obs@dat)
-            m.ctrl <- mean(.Object@ctrl@dat)
-            m.scen <- mean(.Object@scen@dat)
+            m.obs <- mean(.Object@obs@data)
+            m.ctrl <- mean(.Object@ctrl@data)
+            m.scen <- mean(.Object@scen@data)
 
-            sd.obs <- sd(.Object@obs@dat)
-            sd.ctrl <- sd(.Object@ctrl@dat)
-            sd.scen <- sd(.Object@scen@dat)
+            sd.obs <- sd(.Object@obs@data)
+            sd.ctrl <- sd(.Object@ctrl@data)
+            sd.scen <- sd(.Object@scen@data)
 
             m.target <- m.scen*min(m.obs/m.ctrl, ratio.max)
             sd.target <- sd.scen*min(sd.obs/sd.ctrl, ratio.max)
 
-            .Object@adj@dat <- .adjustEs(.Object@scen@dat, m.target, sd.target)
+            .Object@adj@data <- .adjustEs(.Object@scen@data, m.target, sd.target)
 
-            .Object@adj@Dim <- length(.Object@adj@dat)
+            .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
             return(.Object)
@@ -279,19 +301,19 @@ setMethod(".BcMeanSd2",
           signature = "RatioCorrection",
           definition = function(.Object, ratio.max = 5){
 
-            m.obs <- mean(.Object@obs@dat)
-            m.ctrl <- mean(.Object@ctrl@dat)
-            m.scen <- mean(.Object@scen@dat)
+            m.obs <- mean(.Object@obs@data)
+            m.ctrl <- mean(.Object@ctrl@data)
+            m.scen <- mean(.Object@scen@data)
 
-            sd.obs <- sd(.Object@obs@dat)
-            sd.ctrl <- sd(.Object@ctrl@dat)
-            sd.scen <- sd(.Object@scen@dat)
+            sd.obs <- sd(.Object@obs@data)
+            sd.ctrl <- sd(.Object@ctrl@data)
+            sd.scen <- sd(.Object@scen@data)
 
             m.targ <- m.scen*min(m.obs/m.ctrl, ratio.max)
             sd.targ <- sd.scen*min(sd.obs/sd.ctrl, ratio.max)
 
-            .Object@adj@dat <- .iterAb(.Object@scen@dat, m.targ, sd.targ)
-            .Object@adj@Dim <- length(.Object@adj@dat)
+            .Object@adj@data <- .iterAb(.Object@scen@data, m.targ, sd.targ)
+            .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
             return(.Object)
@@ -303,13 +325,13 @@ setMethod(".BcQmParam",
           definition = function(.Object, q.point = 0.95, threshold = 0.1){
 
   eps <- 1e-10
-  obs <- list(P=.Object@obs@dat,
+  obs <- list(P=.Object@obs@data,
               margT=NA,margP=NA,pwet=NA,
               wet=NA,dry=NA)
-  ctrl <- list(P=.Object@ctrl@dat,
+  ctrl <- list(P=.Object@ctrl@data,
                margT=NA,margP=NA,pwet=NA,
                wet=NA,dry=NA)
-  scen <- list(P=.Object@scen@dat,
+  scen <- list(P=.Object@scen@data,
                margT=NA,margP=NA,pwet=NA,
                wet=NA,dry=NA)
   adj <- list(P=array(NA,dim=c(length(scen$P))),
@@ -349,7 +371,7 @@ setMethod(".BcQmParam",
   adj$P[scen$wet] <- qgamma(p1,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
   adj$P[scen$dry] <- 0.0
 
-  .Object@adj@dat <- as.numeric(adj$P)
+  .Object@adj@data <- as.numeric(adj$P)
   .Object@bc.attributes <- list("threshold" = threshold)
   return(.Object)
 
@@ -371,9 +393,9 @@ setMethod(".BcQmEmpir",
   PObsSmooth <- array(NA,dim=c(.Object@obs@Dim))
 
   #2. Insert random numbers to the time series
-  PObsSort <- .Object@obs@dat + eps*runif(.Object@obs@Dim,0,1)
-  PCtrlSort <- .Object@ctrl@dat + eps*runif(.Object@ctrl@Dim,0,1)
-  PScen2 <- .Object@scen@dat + eps*runif(.Object@scen@Dim,0,1)
+  PObsSort <- .Object@obs@data + eps*runif(.Object@obs@Dim,0,1)
+  PCtrlSort <- .Object@ctrl@data + eps*runif(.Object@ctrl@Dim,0,1)
+  PScen2 <- .Object@scen@data + eps*runif(.Object@scen@Dim,0,1)
 
   PScen2 <- .zeros(PScen2,eps)
 
@@ -392,20 +414,20 @@ setMethod(".BcQmEmpir",
   PCtrlSmooth <- .smoothQuantiles(PCtrlSort, smooth)
   PObsSmooth <- .smoothQuantiles(PObsSort, smooth)
 
-  .Object@adj@dat <- as.numeric(.quantMapP(PScen2,PCtrlSmooth,PObsSmooth))
-  .Object@adj@dat[which(.Object@adj@dat < eps)] <- 0.0
+  .Object@adj@data <- as.numeric(.quantMapP(PScen2,PCtrlSmooth,PObsSmooth))
+  .Object@adj@data[which(.Object@adj@data < eps)] <- 0.0
 
   if(post.adj){
-    m.ctrl <- mean(.Object@ctrl@dat)
-    m.scen <- mean(.Object@scen@dat)
+    m.ctrl <- mean(.Object@ctrl@data)
+    m.scen <- mean(.Object@scen@data)
     if(m.ctrl > 0){
       Ratio1 <- m.scen/m.ctrl
     }
     else{
       Ratio1 <- 1.
     }
-    m.adj <- mean(.Object@adj@dat)
-    m.obs <- mean(.Object@obs@dat)
+    m.adj <- mean(.Object@adj@data)
+    m.obs <- mean(.Object@obs@data)
     if(m.obs>0){
       Ratio2 <- m.adj/m.obs
     }
@@ -413,7 +435,7 @@ setMethod(".BcQmEmpir",
       Ratio2 <- 1.
     }
 
-    .Object@adj@dat <- .Object@adj@dat*Ratio1/Ratio2
+    .Object@adj@data <- .Object@adj@data*Ratio1/Ratio2
   }
   .Object@adj@Dim <- length(.Object@adj@Dim)
   .Object@bc.attributes <- list("smooth" = smooth, "pred.adj" = pre.adj, "post.adj" = post.adj)

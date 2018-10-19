@@ -31,7 +31,7 @@ Collate:
     'RatioCorrectionObject-class.R'
     'biasco.R'
     'data.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: testthat,
     knitr,
     rmarkdown,

@@ -14,7 +14,7 @@
 #'
 .iterSkewness <- function(data, skew.target, nseq = 1, tol = 1e-3, a.lim = c(1,9), iter.max = 100){
 
-  if(length(a.lim)<2)stop("Missing one or both limits for the skewness scaling factor")
+  if(length(a.lim) < 2)stop("Missing one or both limits for the skewness scaling factor")
 
   skew.data <- moments::skewness(data)
 
@@ -30,10 +30,11 @@
   }
 
   i <- 1
+  data.scaled <- data
   while(abs(skew.data-skew.target)>tol){
     a <- sum(a.lim)/2
     data.scaled <- data^a
-    skew.data <- skewness(data.scaled)
+    skew.data <- moments::skewness(data.scaled)
 #    cat("skew.data: ",skew.data,"skew.target: ",skew.target,"a: ",a,"\n")
     if(skew.data<skew.target){
       a.lim[1] <- a
@@ -46,7 +47,7 @@
     }
     i <- i + 1
   }
-
+  
   data <- b + data.scaled*sign
   return(data)
 }
@@ -458,10 +459,14 @@
 # }
 
 .adjPT <- function(obs,ctrl,scen,eps=1e-5){
-
+  
   adj <- list(T=array(NA,dim=c(length(scen$T))),
               P=array(NA,dim=c(length(scen$P))))
 
+  
+  print(ctrl$margP$estimate)
+  print(obs$margP$estimate)
+  
   p2 <- p1 <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
   p2[which(p2==1)] <- p2[which(p2==1)]-eps
   adj$P[scen$wet] <- qgamma(p2,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
@@ -553,7 +558,10 @@
               wet=NA,
               dry=NA,
               cpar1=NA)
-
+  
+  print(ctrl$margP$estimate)
+  print(obs$margP$estimate)
+  
   pw <- pmax(pmin(pnorm(scen$T[scen$wet],mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2]),1-eps),eps)
   pd <- pmax(pmin(pnorm(scen$T[scen$dry],mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2]),1-eps),eps)
 

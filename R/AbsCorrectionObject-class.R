@@ -223,8 +223,8 @@ setMethod(".DcQmParam",
 #            obs.rand <- sort(.Object@obs@data + runif(.Object@obs@Dim)*eps)
             #To cope with different lengths of ctrl and scen, the linear model
             #is fitted to the empirical quantiles instead of raw values
-            ctrl.rand <- quantile(.Object@ctrl@data + runif(.Object@ctrl@Dim)*eps,seq(0,1,1/1000),method=7)
-            scen.rand <- quantile(.Object@scen@data + runif(.Object@scen@Dim)*eps,seq(0,1,1/1000),method=7)
+            ctrl.rand <- quantile(.Object@ctrl@data + runif(.Object@ctrl@Dim)*eps,seq(0,1,1/1000), method = 7)
+            scen.rand <- quantile(.Object@scen@data + runif(.Object@scen@Dim)*eps,seq(0,1,1/1000), method = 7)
 
             data <- data.frame(y=scen.rand,x=ctrl.rand)
 
@@ -258,7 +258,6 @@ setMethod(".DcQmParam",
 #' @rdname .DcQmEmpir
 setMethod(".DcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
 
-#' @title .BcMeanSdSkew
 #' @rdname .DcQmEmpir
 setMethod(".DcQmEmpir",
           signature = "AbsCorrection",
@@ -320,7 +319,7 @@ setMethod(".DcQmEmpir",
 
             .Object@adj@data <- as.numeric(.quantMapT(TObs2,TCtrlSmooth,TScenSmooth))
 
-            #  6. Scale the scenario distrubution, so that the change in
+            #  6. Scale the scenario distribution, so that the change in
             #  the time mean temperature will be 'right', ie. corresponding
             #  to the simulated time mean temperature change between the
             #  baseline and scenario periods.

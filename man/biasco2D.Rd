@@ -5,7 +5,7 @@
 \title{Joint bias correction of temperature and precipitation.}
 \usage{
 biasco2D(obs.in, ctrl.in, scen.in, names = NULL, cond = "P",
-  threshold = 0.1, ...)
+  separate = F, threshold = 0.1, ...)
 }
 \arguments{
 \item{obs.in}{Either a 2-column array, matrix or data.frame. of observed temperature and precipitation}
@@ -13,6 +13,8 @@ biasco2D(obs.in, ctrl.in, scen.in, names = NULL, cond = "P",
 \item{ctrl.in}{Data used to calibrate the method given in the format as \code{obs.in}}
 
 \item{scen.in}{Data for the scenario period simulation given in the format as \code{obs.in}}
+
+\item{names}{names of the variables at different columns}
 
 \item{cond}{The conditioning order of temperature and precipitation. If \code{cond} = "P" then the precipitation marginal
 is adjusted first, while the adjustment of temperature is made conditionally on precipitation}

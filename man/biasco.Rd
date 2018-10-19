@@ -32,13 +32,13 @@ An object of type \code{BiascoTimeSeries},
 Several methods of different complexity are available in the package (see details).
 }
 \details{
-The following univariate methods have curretnly been implemented in this package:
+The following univariate methods have currently been implemented in this package:
  \itemize{
  \item{M1: Simple delta change scaling of time mean}
  \item{M2: Delta change scaling on mean and standard deviation. If \code{type} = ratio, then Engen-Skaugen algorithm is used.}{}
  \item{M3: Delta change scaling on mean, standard deviation and skewness.  If \code{type} = ratio, M3 corresponds to delta change scaling of mean and standard deviation using.}
- \item{M4: Parametric quantile mapping applied in the delta change mode}
- \item{M5: Non-parametric quantile mapping applied in the delta change mode}
+ \item{M4: Non-parametric quantile mapping applied in the delta change mode}
+ \item{M5: Parametric quantile mapping applied in the delta change mode}
  \item{M6: As M1 but applied in the bias correction mode}
  \item{M7: As M2 but applied in the bias correction mode}
  \item{M8: As M3 but applied in the bias correction mode}
@@ -49,7 +49,6 @@ The following univariate methods have curretnly been implemented in this package
 \examples{
 
 library(lubridate)
-library(copula)
 library(BCUH)
 
 data("station_Jyvaskyla")

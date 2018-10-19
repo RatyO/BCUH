@@ -32,13 +32,13 @@
 #' }
 #' @param method Method to be used to bias adjust \code{scen.in}. The following options are available:
 #'
-#' @details The following univariate methods have curretnly been implemented in this package:
+#' @details The following univariate methods have currently been implemented in this package:
 #'  \itemize{
 #'  \item{M1: Simple delta change scaling of time mean}
 #'  \item{M2: Delta change scaling on mean and standard deviation. If \code{type} = ratio, then Engen-Skaugen algorithm is used.}{}
 #'  \item{M3: Delta change scaling on mean, standard deviation and skewness.  If \code{type} = ratio, M3 corresponds to delta change scaling of mean and standard deviation using.}
-#'  \item{M4: Parametric quantile mapping applied in the delta change mode}
-#'  \item{M5: Non-parametric quantile mapping applied in the delta change mode}
+#'  \item{M4: Non-parametric quantile mapping applied in the delta change mode}
+#'  \item{M5: Parametric quantile mapping applied in the delta change mode}
 #'  \item{M6: As M1 but applied in the bias correction mode}
 #'  \item{M7: As M2 but applied in the bias correction mode}
 #'  \item{M8: As M3 but applied in the bias correction mode}
@@ -57,7 +57,6 @@
 #' @examples
 #' 
 #'library(lubridate)
-#'library(copula)
 #'library(BCUH)
 #'
 #'data("station_Jyvaskyla")
@@ -117,7 +116,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 
   switch(type,
          abs = {
-           BiascoObject <- BC.abs(adj=TS(), obs = obs, ctrl = ctrl, scen = scen, method = method)
+           BiascoObject <- BC.abs(adj = TS(), obs = obs, ctrl = ctrl, scen = scen, method = method)
            switch(method,
                   M1 = {
                     BiascoObject <- .DcMean(BiascoObject)
@@ -152,7 +151,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
          },
 
          ratio = {
-           BiascoObject <- BC.ratio(adj=TS(), obs = obs, ctrl = ctrl, scen = scen, method = method)
+           BiascoObject <- BC.ratio(adj = TS(), obs = obs, ctrl = ctrl, scen = scen, method = method)
            switch(method,
                   M1 = {
                     BiascoObject <- .DcMean(BiascoObject)
@@ -242,7 +241,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' points(rcm.scen,col="red")
 #' legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
 #' 
-biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", threshold = 0.1, ...){
+biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", separate = F, threshold = 0.1, ...){
 
   if(is.null(names)) names <- colnames(obs.in)
   
@@ -265,6 +264,6 @@ biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", thresho
   }
   
   biascoObject2D <- BC.joint(obs = obs, ctrl = ctrl, scen = scen)
-  biascoObject2D <- .JBC(biascoObject2D, cond = cond, threshold = threshold)
+  biascoObject2D <- .JBC(biascoObject2D, cond = cond, threshold = threshold, separate = separate)
   return(as(biascoObject2D,"BiascoTimeSeriesTP"))
 }
