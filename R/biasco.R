@@ -241,7 +241,7 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #' points(rcm.scen,col="red")
 #' legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
 #' 
-biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", separate = F, threshold = 0.1, ...){
+biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", separate = F, threshold = 0.1, jittering = F, ...){
 
   if(is.null(names)) names <- colnames(obs.in)
   
@@ -264,6 +264,6 @@ biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", separat
   }
   
   biascoObject2D <- BC.joint(obs = obs, ctrl = ctrl, scen = scen)
-  biascoObject2D <- .JBC(biascoObject2D, cond = cond, threshold = threshold, separate = separate)
+  biascoObject2D <- .JBC(biascoObject2D, cond = cond, threshold = threshold, separate = separate, jittering = jittering)
   return(as(biascoObject2D,"BiascoTimeSeriesTP"))
 }

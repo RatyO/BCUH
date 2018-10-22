@@ -22,7 +22,7 @@ setMethod(f = "initialize",
             if(!any(is.na(names)) & any(is.null(colnames(data)))){
               colnames(.Object@data) <- name
             }else{
-              if(!any(is.na(names))) warning("Overwriting original colnames")
+              if(!any(is.na(names))) message("Overwriting original colnames")
               colnames(.Object@data) <- colnames(data)
             }
             .Object <- callNextMethod(.Object, nvar = nvar, Dim = as.integer(d))

@@ -99,7 +99,7 @@ setMethod(f = "show",
 
 setMethod(f = ".JBC",
           signature = "JointCorrection",
-          definition = function(.Object, cond="P", threshold = 0.1, jittering = T, jitter.amount = 1e-5, separate = F){
+          definition = function(.Object, cond = "P", threshold = 0.01, jittering = T, jitter.amount = 1e-5, separate = F){
 
             #Create data frames for the data. Update these data frames whenever necessary.
             obs <- list(T=.Object@obs@data[,1],
@@ -168,10 +168,6 @@ setMethod(f = ".JBC",
               obs$margTW <- obs$margTD <- .fitMarginal(obs$T,type="norm")
               ctrl$margTW <- ctrl$margTD <- .fitMarginal(ctrl$T,type="norm")
             }
-
-            print(obs$margP)
-            print(ctrl$margP)
-            print(scen$margP)
             
             fit.normO <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
                                    method="itau",start=0,lower=NULL,upper=NULL,
@@ -189,34 +185,36 @@ setMethod(f = ".JBC",
             # 
             # scen$cpar1 <- fit.normF@copula@parameters
 
-            mvd.o <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
+            mvd.o <- copula::mvdc(normalCopula(fit.normO@copula@parameters),
                           margins = c("norm", "gamma"), 
                           paramMargins = list(list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2]),
                                               list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])))
             start <- as.vector(c(obs$margTW$estimate[1],obs$margTW$estimate[2],obs$margP$estimate[1],obs$margP$estimate[2],fit.normO@copula@parameters))
-            fit.mvdO <- suppressMessages(copula::fitMvdc(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2), mvd.o, method = "Nelder-Mead",
-                                                 start=start, optim.control=list(trace = 0, reltol = 1e-4, maxit=100),
-                                                 lower = c(-100,0,0,0,-1), upper = c(100,inf,inf,inf,1)))
+            fit.mvdO <- copula::fitMvdc(matrix(cbind(obs$T[obs$wet],obs$P[obs$wet]),ncol=2), mvd.o, method = "BFGS",
+                                                 start=start, optim.control=list(trace = 1, reltol = 1e-4, maxit=100),
+                                                 lower = c(-100,0,0,0,-1), upper = c(100,"inf","inf","inf",1))
             
-#            obs$cpar1 <- coef(fit.mvdO)[5]
-#            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
-#            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
-#            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
-#            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
+            print(fit.mvdO)
+            obs$cpar1 <- coef(fit.mvdO)[5]
+            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
+            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
+            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
+            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
 
-            mvd.c <- copula::mvdc(copula = copula::ellipCopula(family = "normal", param = 0),
+            mvd.c <- copula::mvdc(normalCopula(fit.normC@copula@parameters),
                           margins = c("norm", "gamma"), 
-                          paramMargins = list(list(mean = ctrl$margTW[1], sd = ctrl$margTW[2]),
-                                              list(shape = ctrl$margP[1], rate = ctrl$margP[2])))
+                          paramMargins = list(list(mean = ctrl$margTW$estimate[1], sd = ctrl$margTW$estimate[2]),
+                                              list(shape = ctrl$margP$estimate[1], rate = ctrl$margP$estimate[2])))
             start <- c(ctrl$margTW$estimate[1],ctrl$margTW$estimate[2],ctrl$margP$estimate[1],ctrl$margP$estimate[2],fit.normC@copula@parameters)
-            fit.mvdC <- suppressMessages(copula::fitMvdc(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "Nelder-Mead",
-                                                 start=start, optim.control=list(trace = 0, reltol = 1e-4, maxit=1000)))
-            
-            # ctrl$cpar1 <- coef(fit.mvdC)[5]
-            # ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
-            # ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
-            # ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
-            # ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
+            fit.mvdC <- copula::fitMvdc(matrix(cbind(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "BFGS",
+                                                 start=start, optim.control=list(trace = 1, reltol = 1e-4, maxit=1000),
+                                                 lower = c(-100,0,0,0,-1), upper = c(100,"inf","inf","inf",1))
+            print(fit.mvdC)
+            ctrl$cpar1 <- coef(fit.mvdC)[5]
+            ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
+            ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
+            ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
+            ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
             
             if(cond=="P"){
               print(cond)
