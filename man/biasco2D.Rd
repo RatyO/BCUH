@@ -5,7 +5,7 @@
 \title{Joint bias correction of temperature and precipitation.}
 \usage{
 biasco2D(obs.in, ctrl.in, scen.in, names = NULL, cond = "P",
-  separate = F, threshold = 0.1, ...)
+  separate = F, threshold = 0.1, jittering = F, fit.skew = F, ...)
 }
 \arguments{
 \item{obs.in}{Either a 2-column array, matrix or data.frame. of observed temperature and precipitation}

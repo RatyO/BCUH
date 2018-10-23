@@ -12,7 +12,8 @@ Imports: moments,
 	 copula,
          methods,
          Rdpack,
-	 lubridate
+	 lubridate,
+	 sn
 RdMacros: Rdpack
 Description: A set of delta change and bias correction methods designed for bias adjusting absolute and ratio variables and a 2D method to adjust the intervariable structure of two variables. The implemented methods are described in more detail in "Räisänen and Räty (2013)", "Räty et al. (2014)" and "Li et al. (2014)". 
 Encoding: UTF-8

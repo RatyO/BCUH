@@ -296,7 +296,7 @@
 #'
 .ppRain <- function(ref, adj, ref.threshold = 0.1){
   n.ref0 <- length(which(ref <= ref.threshold))
-  n.adj0 <- ceiling(length(adj)*n.ref0/length(ref))
+  n.adj0 <- ceiling(length(adj)*(n.ref0/length(ref)))
 
   adj.sort.index <- sort(adj, index.return = TRUE)$ix
   adj.sort <- sort(adj)
@@ -315,11 +315,13 @@
       }
 
       if(length(unique(ref.sort[(n.ref0 + 1):ind.ref])) < 6){
-        adj.sort[(n.adj0 + 1):ind.ref] <- sort(runif(ind.adj - n.adj0, min = ref.sort[(n.ref0 + 1)], max = ref.sort[ind.ref]))
-      }else{
+        jit.fact <- min(abs(diff(ref))[abs(diff(ref))>0])/2
+        adj.sort[(n.adj0 + 1):ind.ref] <- runif(n=(ind.adj - n.adj0), min = ref.sort[(n.ref0 + 1)], max = ref.sort[ind.ref]) + runif(n=(ind.adj - n.adj0), min = 0, max = jit.fact)
+
+        }else{
         ref.fit <- ref.sort[(n.ref0 + 1):ind.ref]
         gamma.fit <- MASS::fitdistr(ref.fit, "gamma")
-        adj.sort[(n.adj0 + 1):ind.ref] <- sort(rgamma(ind.adj - n.adj0, gamma.fit$estimate[1], rate = gamma.fit$estimate[2]))
+        adj.sort[(n.adj0 + 1):ind.ref] <- rgamma(ind.adj - n.adj0, gamma.fit$estimate[1], rate = gamma.fit$estimate[2])
       }
 
     }
@@ -458,11 +460,15 @@
 #   return(adj)
 # }
 
-.adjPT <- function(obs,ctrl,scen,eps=1e-15){
+.adjPT <- function(obs,ctrl,scen,fit.skew,eps=1e-15){
   
-  adj <- list(T=array(NA,dim=c(length(scen$T))),
-              P=array(NA,dim=c(length(scen$P))))
-
+  adj <- list(T = array(NA, dim = c(length(scen$T))),
+              P = array(NA, dim = c(length(scen$P))),
+              pwet = NA,
+              wet = NA,
+              dry = NA,
+              cpar1 = NA)
+  
   p2 <- p1 <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
   p2[which(p2==1)] <- p2[which(p2==1)]-eps
   adj$P[scen$wet] <- qgamma(p2,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
@@ -478,9 +484,13 @@
 
   Fp[scen$wet] <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
   Fp[scen$dry] <- scen$P[scen$dry]
-
-  Ft[scen$wet] <- pnorm(scen$T[scen$wet],mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2])
-  Ft[scen$dry] <- pnorm(scen$T[scen$dry],mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2])
+  if(fit.skew){
+    Ft[scen$wet] <- psn(scen$T[scen$wet],xi=ctrl$margTW$estimate[1],omega=ctrl$margTW$estimate[2],alpha=ctrl$margTW$estimate[3])
+    Ft[scen$dry] <- psn(scen$T[scen$dry],xi=ctrl$margTD$estimate[1],omega=ctrl$margTD$estimate[2],alpha=ctrl$margTD$estimate[3])
+  }else{
+    Ft[scen$wet] <- pnorm(scen$T[scen$wet],mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2])
+    Ft[scen$dry] <- pnorm(scen$T[scen$dry],mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2])
+  }
 
   h <- pmax(pmin(pnorm((qnorm(Ft[scen$wet])-ctrl$cpar1*qnorm(Fp[scen$wet]))/sqrt(1-ctrl$cpar1^2)),(1-eps)),eps)
   p3[scen$wet] <- unlist(h)
@@ -491,11 +501,17 @@
   u1 <- pgamma(adj$P[scen$wet],shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
   u1[which(u1==1)] <- 1-eps
   u2 <- p3[scen$wet]
-
+  
   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
+  
+  if(fit.skew){
+    adj$T[scen$wet] <- qsn(tmp, xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha =obs$margTW$estimate[3])
+    adj$T[scen$dry] <- qsn(p3[scen$dry], xi = obs$margTD$estimate[1], omega = obs$margTD$estimate[2], alpha = obs$margTD$estimate[3])
+  }else{
+    adj$T[scen$wet] <- qnorm(tmp,mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
+    adj$T[scen$dry] <- qnorm(p3[scen$dry],mean=obs$margTD$estimate[1],sd=obs$margTD$estimate[2])
+  }
   #  tmp[which(tmp==1)] <- tmp[which(tmp==1)]-1e-5
-  adj$T[scen$wet] <- qnorm(tmp,mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
-  adj$T[scen$dry] <- qnorm(p3[scen$dry],mean=obs$margTD$estimate[1],sd=obs$margTD$estimate[2])
 
   return(adj)
 }
@@ -546,7 +562,7 @@
 # }
 
 
-.adjTP <- function(obs,ctrl,scen,eps=1e-15){
+.adjTP <- function(obs,ctrl,scen,fit.skew,eps=1e-15){
 
   adj <- list(T = array(NA, dim = c(length(scen$T))),
               P = array(NA, dim = c(length(scen$P))),
@@ -555,14 +571,28 @@
               dry = NA,
               cpar1 = NA)
   
-  pw <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$estimate[1], sd = ctrl$margTW$estimate[2]), (1-eps)), eps)
-  pd <- pmax(pmin(pnorm(scen$T[scen$dry], mean = ctrl$margTD$estimate[1], sd = ctrl$margTD$estimate[2]), (1-eps)), eps)
-
-  adj$T[scen$wet] <- qnorm(pw, mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2])
-  adj$T[scen$dry] <- qnorm(pd, mean = obs$margTD$estimate[1], sd = obs$margTD$estimate[2])
-
+  if(fit.skew){
+    pw <- pmax(pmin(psn(scen$T[scen$wet], xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], alpha = ctrl$margTW$estimate[3]), (1-eps)), eps)
+    pd <- pmax(pmin(psn(scen$T[scen$dry], xi = ctrl$margTD$estimate[1], omega = ctrl$margTD$estimate[2], alpha = ctrl$margTD$estimate[3]), (1-eps)), eps)
+    
+    adj$T[scen$wet] <- qsn(pw, xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha = obs$margTW$estimate[3])
+    adj$T[scen$dry] <- qsn(pd, xi = obs$margTD$estimate[1], omega = obs$margTD$estimate[2], alpha = obs$margTD$estimate[3])
+  }else{
+    pw <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$mean, sd = ctrl$margTW$sd), (1-eps)), eps)
+    pd <- pmax(pmin(pnorm(scen$T[scen$dry], mean = ctrl$margTD$mean, sd = ctrl$sd), (1-eps)), eps)
+    
+    adj$T[scen$wet] <- qnorm(pw, mean = obs$margTW$mean, sd = obs$margTW$sd)
+    adj$T[scen$dry] <- qnorm(pd, mean = obs$margTD$mean, sd = obs$margTD$sd)
+  }
+  
   Fp <- pmin(pgamma(scen$P[scen$wet], shape = ctrl$margP$estimate[1], rate = ctrl$margP$estimate[2]), (1-eps))
-  Ft <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$estimate[1], sd = ctrl$margTW$estimate[2]), (1-eps)), eps)
+  
+  if(fit.skew){
+    Ft <- pmax(pmin(psn(scen$T[scen$wet], xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], alpha = ctrl$margTW$estimate[3]), (1-eps)), eps)
+  }else{
+    Ft <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$mean, sd = ctrl$margTW$sd), (1-eps)), eps)
+  }
+  
   p3 <- u2 <- h <- pnorm((qnorm(Fp) - ctrl$cpar1*qnorm(Ft))/sqrt(1 - ctrl$cpar1^2))
 
   adj$wet <- scen$wet
@@ -571,7 +601,11 @@
   #Finally, calculate the bias corrected precipitation, conditioned on temperature
   #with the observed depence structure.
   #  u2 <- p3[adj$wet]
-  u1 <- pnorm(adj$T[adj$wet], mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2])
+  if(fit.skew){
+    u1 <- psn(adj$T[adj$wet], xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha = obs$margTW$estimate[3])
+  }else{
+    u1 <- pnorm(adj$T[adj$wet], mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2])
+  }
 
   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
   adj$P[adj$wet] <- qgamma(tmp, shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])
