@@ -121,15 +121,17 @@ setMethod(f = "show",
 setMethod(".DcMean","ANY",function(.Object, ...) print("Missing or wrong input"))
 setMethod(".DcMean",
           signature = "RatioCorrection",
-          definition = function(.Object, ratio.max = 5){
+          definition = function(.Object, ratio.max = 5, threshold = 0.1){
 
 #            mean.obs <- mean(.Object@obs@data)
 #            mean.ctrl <- mean(.Object@ctrl@data)
 #            mean.scen <- mean(.Object@scen@data)
 
             a <- min(mean(.Object@scen@data,na.rm = T)/mean(.Object@ctrl@data,na.rm = T), ratio.max)
-
+            
             .Object@adj@data <- .Object@obs@data*a
+            .Object@adj@data[.Object@adj@data<threshold] <- 0.
+            .Object@adj@data <- .Object@adj@data*a
             .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
@@ -264,6 +266,8 @@ setMethod(".BcMean",
             a <- min(mean(.Object@obs@data,na.rm = T)/mean(.Object@ctrl@data,na.rm = T), ratio.max)
 
             .Object@adj@data <- .Object@scen@data*a
+            .Object@adj@data[.Object@adj@data<threshold] <- 0.
+            .Object@adj@data <- .Object@adj@data*a
             .Object@adj@Dim <- length(.Object@adj@data)
             .Object@bc.attributes <- list("ratio.max" = ratio.max)
             validObject(.Object)
