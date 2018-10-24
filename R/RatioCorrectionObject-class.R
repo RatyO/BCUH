@@ -257,7 +257,7 @@ setMethod(".DcQmEmpir",
 setMethod(".BcMean","ANY",function(.Object, ...) print("Missing or wrong input"))
 setMethod(".BcMean",
           signature = "RatioCorrection",
-          definition = function(.Object, ratio.max = 5){
+          definition = function(.Object, ratio.max = 5, threshold = 0.1){
 
             mean.obs <- mean(.Object@obs@data)
             mean.ctrl <- mean(.Object@ctrl@data)
