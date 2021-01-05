@@ -56,42 +56,26 @@
 #' @export
 #' @examples
 #' 
-#'library(lubridate)
-#'library(BCUH)
-#'
-#'data("station_Jyvaskyla")
-#'data("ALADIN_Jyvaskyla")
-#'
-#'ctrl <- c(1971,2000)
-#'scen <- c(2071,2100)
-#'
-#'#Extract data for January
-#'ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
-#'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#'ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-#'                    year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#'ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-#'                    year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
-#'
-#'obs.ctrl <- station_Jyvaskyla[ind.obs,]
-#'rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,]
-#'rcm.scen <- ALADIN_Jyvaskyla[ind.scen,]
-#'
-#'#Create objects which contain the bias corrected data
-#'dc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M1")
-#'bc.object <- biasco(obs.ctrl$tas, rcm.ctrl$tas, rcm.scen$tas, type = "abs", method = "M6")
-#'
-#'dc.object
-#'
-#'#Visualise the results
-#'plot(quantile(dat(adj(bc.object)), seq(0,1,0.01)), type = "l",
-#'     main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(-30,10))
-#'lines(quantile(dat(adj(dc.object)), seq(0,1,0.01)), lty = 2)
-#'lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = "red")
-#'lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
-#'lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
-#'legend("topleft", c("M1","M6","Obs","Ctrl","Scen"),
-#'       col = c("black","black","red","blue","blue"), lty = c(1,2,1,1,2))
+#' library(lubridate)
+#' library(BCUH)
+#' 
+#' data("obs_data")
+#' data("model_data")
+#' 
+#' #Create objects which contain the bias corrected data
+#' bc6 <- biasco(varsO[,"temp"], varsC[,"temp"], varsC[,"temp"], type = "abs", method = "M6")
+#' bc9 <- biasco(varsO[,"temp"], varsC[,"temp"], varsC[,"temp"], type = "abs", method = "M9")
+# 
+#' #Visualise the results
+#' plot(quantile(dat(adj(bc6)), seq(0,1,0.01)), type = "l",
+#'      main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(10,30))
+#' lines(quantile(dat(adj(bc9)), seq(0,1,0.01)), col = "black",lty=2)
+#' lines(quantile(varsO[,"temp"], seq(0,1,0.01)), col = "red")
+#' lines(quantile(varsC[,"temp"], seq(0,1,0.01)), col = "blue")
+#' lines(quantile(varsC[,"temp"], seq(0,1,0.01)), col = "blue", lty = 2)
+#' legend("topleft", c("M6","M9","Obs","Ctrl","Scen"),
+#'        col = c("black","black","red","blue","blue"), lty = c(1,2,1,1,2))
+#' 
 #'
 #'
 biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
@@ -211,36 +195,25 @@ biasco <- function(obs.in, ctrl.in, scen.in, type = "abs", method = "M1", ...){
 #'
 #' library(lubridate)
 #' library(BCUH)
-
-#' #Load data
-#' data("station_Jyvaskyla")
-#' data("ALADIN_Jyvaskyla")
+#' library(copula)
 #' 
-#' #Extract data for January
-#' ctrl <- c(1971,2000)
-#' scen <- c(2071,2100)
-#' ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
-#'                   year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#' ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-#'                    year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-#' ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-#'                    year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
-#' obs.ctrl <- station_Jyvaskyla[ind.obs,2:3]
-#' rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,2:3]
-#' rcm.scen <- ALADIN_Jyvaskyla[ind.scen,2:3]
-#' biasco2d.object <- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c("tas", "pr"))
+#' data("obs_data")
+#' data("model_data")
+#' biasco2d.object <- biasco2D(varsO,varsC,varsC,cond="P",
+#'                             names = c("temp", "prec"), 
+#'                             threshold=0.1)
 #' 
 #' #Visualise the results:
 #' 
 #' par(mfrow=c(1,2))
-#' plot(obs.ctrl)
-#' points(rcm.ctrl,col="red")
+#' plot(varsO)
+#' points(varsC,col="red")
 #' legend("topleft",c("Obs","Ctrl"),col=c("black","red"),pch=c(1,1))
-
-#' plot(dat(adj(biasco2d.object)))
-#' points(rcm.scen,col="red")
-#' legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
 #' 
+#' plot(dat(adj(biasco2d.object)))
+#' points(varsO,col="red")
+#' legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
+
 biasco2D <- function(obs.in, ctrl.in, scen.in, names = NULL, cond = "P", separate = F, threshold = 0.1, jittering = F, fit.skew= F, ...){
 
   if(is.null(names)) names <- colnames(obs.in)

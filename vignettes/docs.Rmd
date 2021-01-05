@@ -3,10 +3,7 @@ title: "BCUH"
 subtitle: "University of Helsinki bias adjustment tools"
 author: "Olle Räty"
 copyright: "Olle Räty"
-output:
-  packagedocs::package_docs:
-    toc: true
-    toc_collapse: false
+output: rmarkdown::html_vignette
 redirect: http://ratyO.github.io/BCUH
 vignette: |
   %\VignetteIndexEntry{BCUH Documentation}
@@ -54,51 +51,48 @@ code{BCUH} depends on several other packages, most notably \code{copula}, which 
 
 The current version of \code{BCUH} contains a total of 20 univariate methods. Ten of these methods have originally been designed for daily mean temperature, while the rest ten ten methods were designed to construct future projections of daily precipitation. Furthermore, these methods can be divided into two groups based on the projection strategy. Five methods for both variables are so-called delta change methods, which add simulated changes to the reference time series in different ways. The rest of the methods directly bias correct the scenario period data based on biases between the reference and control data in the calibration period. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes, which return the input data and parameters as a customised S4 object. However, to make the application to these methods easier, the package also contains a wrapper function \code{biasco}, which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a \code{BiascoTimeSeries} object. The different elements of this object can be accessed using the class methods provided in the package.
 
-We will next give a simple example how to use the wrapper function to obtain adjusted time series for both temperature and precipitation. The example is based on observed time series for  Jyväskylä station downloaded from Climate Explorer (\url{https://climexp.knmi.nl/}) and the grid-box time series for a regional climate model obtained from ESGF nodes (\url{https://esgf.llnl.gov/}).
+We will next demonstrate how to use the wrapper functions using synthetic data. The package contains two data sets which emulate the behavior of daily mean temperature and precipitation. The first data set corresponds to observations which could have been collect at single site, while the second data mimics simulated temperature and precipitation with differing statistical properties for the time series.
 
 ```
 library(BCUH)
 
-data("station_Jyvaskyla")
-data("ALADIN_Jyvaskyla")
+data("obs")
+data("model")
 ```
 
-We use data for December from both data sets to construct temperature and precipitation projections for years 2061-2100 using years 1971-2000 for calibration. 
+In the first example, We illustrate how to use the package to construct projections of temperature. Here we only demonstrate the bias correction methods.
 
 ```
-ctrl <- c(1971,2000)
-scen <- c(2071,2100)
-
-ind.obs <- which(month(station_Jyvaskyla$date) == 12 &
-                  year(station_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 12 &
-                   year(ALADIN_Jyvaskyla$date) %in% seq(ctrl[1],ctrl[2]))
-ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 12 &
-                   year(ALADIN_Jyvaskyla$date) %in% seq(scen[1],scen[2]))
-
-obs.ctrl <- station_Jyvaskyla[ind.obs,]
-rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,]
-rcm.scen <- ALADIN_Jyvaskyla[ind.scen,]
+bc6 <- biasco(obs = varsO[,'temp'], ctrl = varsC[,'temp'], scen = varsC[,'temp'], type = "abs", method = "M6")
+bc9 <- biasco(obs = varsO[,'temp'], ctrl = varsC[,'temp'], scen = varsC[,'temp'], type = "abs", method = "M9")
 
 ```
-
-In the first example, We illustrate how to use the package to construct projections of temperature. First, let us apply simple time mean delta change and bias correction:
-
-```
-dc.object <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "abs", method = "M1")
-bc.object <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "abs", method = "M6")
-```
-Note that \code{type = "abs"} has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field \code{type} is used to select the method (M1-M10). Biasco creates an object of type \code{BiascoTimeSeries}, which contains the adjusted data and also some additional information related to the used data and projection method. For example, \code{dc.object} looks something like:
+Note that \code{type = "abs"} has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field \code{type} is used to select the method (M1-M10). Biasco creates an object of type \code{BiascoTimeSeries}, which contains the adjusted data and also some additional information related to the used data and projection method. For example, \code{bc.object} looks something like:
 
 ```
-dc.object
+bc.object
 ```
 
-In the second example, we construct future projections for precipitation. To access proper methods, the \code{type = "ratio"} has to be selected.
+Next, we visualise the quantile distributions for the adjusted time series:
 
 ```
-dc1 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "ratio", method = "M1")
-bc6 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "ratio", method = "M6")
+plot(quantile(dat(adj(dc1)), seq(0,1,0.01)), type = "l",
+    main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(-30,10))
+lines(quantile(dat(adj(bc6)), seq(0,1,0.01)), lty = 2, col="orange")
+lines(quantile(dat(adj(bc9)), seq(0,1,0.01)), lty = 1, col="orange")
+lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = "red")
+lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
+lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
+legend("topleft", c("M1","M6","M9","Obs","Ctrl","Scen"),
+      col = c("black","black","orange","red","blue","blue"), lty = c(1,1,2,1,1,2))
+```
+Some parameters available for M5 and M10 require special attention. The most i
+
+In the second example, we adjust the precipitation time series. To access proper methods, the \code{type = "ratio"} has to be selected.
+
+```
+dc1 <- biasco(obs = varsO[,'prec'], ctrl = varsC[,'prec'], scen = varsC[,'prec'] type = "ratio", method = "M1")
+bc6 <- biasco(obs = varsO[,'prec'], ctrl = varsC[,'prec'], scen = varsC[,'prec'], type = "ratio", method = "M6")
 ```
 
 Methods M4-M5 and M9-M10 are the delta change and bias correction forms of parametric and non-parametric quantile mapping, which aim to adjust the full marginal distribution. 
@@ -108,7 +102,7 @@ dc5 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type
 bc10 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "ratio", method = "M10")
 ```
 
-Quantile distributions of the adjusted time series look like something like this:
+Next, we visualise the quantile distributions for the adjusted time series:
 
 ```
 plot(quantile(dat(adj(dc1)), seq(0,1,0.01)), type = "l",
@@ -124,7 +118,7 @@ legend("topleft", c("M1","M6","M5","M10","Obs","Ctrl","Scen"),
 ```
 Some parameters available for M5 and M10 require special attention. The most important one is \code{smooth}, which defines the strength of smoothing of quantile distributions of \code{obs} and \code{ctrl} for bias correction methods and \code{ctrl} and \code{scen} for delta change methods. The default values have been chose according to @raisanen2013 and @raty2014 (0.05 \code{type = "abs"} and 0.02 for \code{type = "ratio"}). In addition, methods M5 and M10 do not preserve changes in the mean values between \code{ctrl} and \code{scen}. However, this can be done by selecting \code{post.adj = T}.
 
-For precipitation an option to pre-adjust \code{ctrl} and \code{scen} based on the mean squared error (MSE) between \code{obs} and \code{ctrl} is available. To switch this on set \code{pre.adj=T} When this option is selected, both \code{ctrl} and \code{scen} are shifted "closer" to \code{obs} before applying quantile mapping.
+For precipitation an option to pre-adjust \code{ctrl} and \code{scen} based on the mean squared error (MSE) between \code{obs} and \code{ctrl} is available. To switch this on set \code{pre.adj=T}. When this option is selected, both \code{ctrl} and \code{scen} are shifted "closer" to \code{obs} before applying quantile mapping.
 
 #Multivariate methods
 

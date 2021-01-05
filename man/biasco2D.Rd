@@ -4,8 +4,18 @@
 \alias{biasco2D}
 \title{Joint bias correction of temperature and precipitation.}
 \usage{
-biasco2D(obs.in, ctrl.in, scen.in, names = NULL, cond = "P",
-  separate = F, threshold = 0.1, jittering = F, fit.skew = F, ...)
+biasco2D(
+  obs.in,
+  ctrl.in,
+  scen.in,
+  names = NULL,
+  cond = "P",
+  separate = F,
+  threshold = 0.1,
+  jittering = F,
+  fit.skew = F,
+  ...
+)
 }
 \arguments{
 \item{obs.in}{Either a 2-column array, matrix or data.frame. of observed temperature and precipitation}
@@ -34,32 +44,22 @@ A wrapper function for a copula-based bias correction method of temperature and 
 
 library(lubridate)
 library(BCUH)
-#Load data
-data("station_Jyvaskyla")
-data("ALADIN_Jyvaskyla")
+library(copula)
 
-#Extract data for January
-ctrl <- c(1971,2000)
-scen <- c(2071,2100)
-ind.obs <- which(month(station_Jyvaskyla$date) == 1 &
-                  year(station_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
-ind.ctrl <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-                   year(ALADIN_Jyvaskyla$date) \%in\% seq(ctrl[1],ctrl[2]))
-ind.scen <- which(month(ALADIN_Jyvaskyla$date) == 1 &
-                   year(ALADIN_Jyvaskyla$date) \%in\% seq(scen[1],scen[2]))
-obs.ctrl <- station_Jyvaskyla[ind.obs,2:3]
-rcm.ctrl <- ALADIN_Jyvaskyla[ind.ctrl,2:3]
-rcm.scen <- ALADIN_Jyvaskyla[ind.scen,2:3]
-biasco2d.object <- biasco2D(obs.ctrl,rcm.ctrl,rcm.scen, names = c("tas", "pr"))
+data("obs_data")
+data("model_data")
+biasco2d.object <- biasco2D(varsO,varsC,varsC,cond="P",
+                            names = c("temp", "prec"), 
+                            threshold=0.1)
 
 #Visualise the results:
 
 par(mfrow=c(1,2))
-plot(obs.ctrl)
-points(rcm.ctrl,col="red")
+plot(varsO)
+points(varsC,col="red")
 legend("topleft",c("Obs","Ctrl"),col=c("black","red"),pch=c(1,1))
-plot(dat(adj(biasco2d.object)))
-points(rcm.scen,col="red")
-legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
 
+plot(dat(adj(biasco2d.object)))
+points(varsO,col="red")
+legend("topleft",c("Adj","Scen"),col=c("black","red"),pch=c(1,1))
 }

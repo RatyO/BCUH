@@ -192,6 +192,7 @@ setGeneric(name = "is.TS2D",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(".DcMean",
           def = function(.Object, ...){
              standardGeneric(".DcMean")
@@ -207,6 +208,7 @@ setGeneric(".DcMean",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcMeanSd",
            def = function(.Object, ...){
              standardGeneric(".DcMeanSd")
@@ -222,6 +224,7 @@ setGeneric(name = ".DcMeanSd",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcMeanSd1",
            def = function(.Object, ...){
              standardGeneric(".DcMeanSd1")
@@ -237,6 +240,7 @@ setGeneric(name = ".DcMeanSd1",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcMeanSd2",
            def = function(.Object, ...){
              standardGeneric(".DcMeanSd2")
@@ -252,6 +256,7 @@ setGeneric(name = ".DcMeanSd2",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcMeanSdSkew",
            def = function(.Object, ...){
              standardGeneric(".DcMeanSdSkew")
@@ -267,6 +272,7 @@ setGeneric(name = ".DcMeanSdSkew",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcQmEmpir",
            def = function(.Object, ...){
              standardGeneric(".DcQmEmpir")
@@ -282,6 +288,7 @@ setGeneric(name = ".DcQmEmpir",
 #' @return Delta change adjusted time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".DcQmParam",
            def = function(.Object, ...){
              standardGeneric(".DcQmParam")
@@ -298,6 +305,7 @@ setGeneric(name = ".DcQmParam",
 #' @return Bias corrected time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(".BcMean",
            def = function(.Object, ...){
              standardGeneric(".BcMean")
@@ -313,6 +321,7 @@ setGeneric(".BcMean",
 #' @return Bias corrected time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".BcMeanSd",
            def = function(.Object, ...){
              standardGeneric(".BcMeanSd")
@@ -328,6 +337,7 @@ setGeneric(name = ".BcMeanSd",
 #' @return Bias corrected time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".BcMeanSd1",
            def = function(.Object, ...){
              standardGeneric(".BcMeanSd1")
@@ -343,6 +353,7 @@ setGeneric(name = ".BcMeanSd1",
 #' @return Bias corrected time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".BcMeanSd2",
            def = function(.Object, ...){
              standardGeneric(".BcMeanSd2")
@@ -358,6 +369,7 @@ setGeneric(name = ".BcMeanSd2",
 #' @return Bias corrected time series
 #'
 #' @examples Needs to be written
+#' @keywords internal
 setGeneric(name = ".BcMeanSdSkew",
            def = function(.Object, ...){
              standardGeneric(".BcMeanSdSkew")
@@ -372,7 +384,7 @@ setGeneric(name = ".BcMeanSdSkew",
 #' @param ... Additional parameters required by a specific implementation
 #'
 #' @return Bias corrected time series
-#'
+#' @keywords internal
 setGeneric(name = ".BcQmEmpir",
            def = function(.Object, ...){
              standardGeneric(".BcQmEmpir")
@@ -386,7 +398,7 @@ setGeneric(name = ".BcQmEmpir",
 #' @param ... Additional parameters required by a specific implementation
 #'
 #' @return Bias corrected time series
-#'
+#' @keywords internal
 setGeneric(name = ".BcQmParam",
            def = function(.Object, ...){
              standardGeneric(".BcQmParam")
@@ -403,7 +415,7 @@ setGeneric(name = ".BcQmParam",
 #' @param ... Additional parameters required by a specific implementation of \code{JBC}.
 #'
 #' @return Bias corrected time series of both temperature and precipitation.
-#'
+#' @keywords internal
 setGeneric(name = ".JBC",
            def = function(.Object, cond, threshold, ...){
              standardGeneric(".JBC")

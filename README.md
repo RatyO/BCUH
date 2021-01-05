@@ -1,6 +1,6 @@
 ## BCUH
 
-BCUH provides statistical methods to post-process climate model simulations for impact study purposes. A tutorial (unfinished) is available [here](https://RatyO.github.io/BCUH)
+BCUH provides statistical methods to post-process climate model simulations for impact study purposes. A tutorial is available as an article.
 
 ## Features
 
@@ -39,7 +39,4 @@ For copula-based joint bias correction method, use
 ```r
   BCUH::biasco2D()
 ```
-
-
-A more detailed description is available at the package's [documentation](https://RatyO.github.io/BCUH/rd.html)
 
