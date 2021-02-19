@@ -143,7 +143,7 @@ setMethod(".DcMean",
             a <- mean(.Object@scen@data,na.rm=T) - mean(.Object@ctrl@data,na.rm=T)
 
             .Object@adj@data <- .Object@obs@data + a
-            .Object@bc.attributes <- list()
+            .Object@bc.attributes <- list("mean.factor"=a)
             .Object@adj@Dim <- length(.Object@adj@data)
             validObject(.Object)
             return(.Object)
@@ -170,7 +170,9 @@ setMethod(".DcMeanSd",
 
             .Object@adj@data <- m.obs + a + (.Object@obs@data-m.obs)*b
             .Object@adj@Dim <- length(.Object@adj@data)
-            .Object@bc.attributes <- list("nseq"=nseq)
+            .Object@bc.attributes <- list("mean.factor"=a,
+                                          "sd.facor"=b,
+                                          "nseq"=nseq)
             .Object@adj@Dim <- length(.Object@adj@data)
             return(.Object)
           })
@@ -235,20 +237,34 @@ setMethod(".DcQmParam",
               tmp <- array(NA,dim=length(.Object@adj@data))
               smaller <- which(.Object@obs@data < min(.Object@ctrl@data))
               larger <- which(.Object@obs@data > max(.Object@ctrl@data))
-              other <- seq(1,.Object@obs@Dim)[-c(smaller,larger)]
-              tmp[smaller] <- a0 + a1*min(.Object@ctrl@data) + .Object@obs@data[smaller] - min(.Object@ctrl@data)
-              tmp[larger] <- a0 + a1*max(.Object@ctrl@data) + .Object@obs@data[larger] - max(.Object@ctrl@data)
+              other <- seq(1,.Object@obs@Dim)
+              
+              if(length(smaller) != 0){
+                tmp[smaller] <- a0 + (a1-1)*min(.Object@ctrl@data) + .Object@obs@data[smaller]
+              }
+              
+              if(length(larger) != 0){
+                tmp[larger] <- a0 + (a1-1)*max(.Object@ctrl@data) + .Object@obs@data[larger]              
+              }
+              
+              if(length(c(smaller,larger)) != 0) other <- other[-c(larger,smaller)]
               tmp[other] <- a0 + a1*.Object@obs@data[other]
+              
               .Object@adj@data <- as.numeric(tmp)
+              .Object@bc.attributes <- list("fit.type"=fit.type,
+                                            fit.parameters=list(fit=lm.model))
             }else if(fit.type == "normal"){ #Parametric fit
               ctrl.param <- MASS::fitdistr(ctrl.rand,"normal")
               scen.param <- MASS::fitdistr(scen.rand,"normal")
-              .Object@adj@data <- qnorm(pnorm(.Object@obs@data,ctrl.param$estimate[1],ctrl.param$estimate[2]),scen.param$estimate[1],scen.param$estimate[2])
+              .Object@adj@data <- qnorm(pnorm(.Object@obs@data,ctrl.param$estimate[1],
+                                              ctrl.param$estimate[2]),
+                                        scen.param$estimate[1],scen.param$estimate[2])
+              .Object@bc.attributes <- list("fit.type"=fit.type,
+                                            fit.parameters=list(ctrl.param=ctrl.param,
+                                                                scen.param=scen.param))
             }else{
               stop("Wrong parametric fit")
             }
-            .Object@adj@Dim <- length(.Object@adj@data)
-            .Object@bc.attributes <- list("fit.type"=fit.type)
             .Object@adj@Dim <- length(.Object@adj@data)
             validObject(.Object)
             return(.Object)
@@ -345,11 +361,9 @@ setMethod(".DcQmEmpir",
 #BC
 #-----------------------------------------
 
-#' title .BcMean
 #' @rdname .BcMean
 setMethod(".BcMean","ANY",function(.Object) print("Missing or wrong input"))
 
-#' title .BcMean
 #' @rdname .BcMean
 setMethod(".BcMean",
           signature = "AbsCorrection",
@@ -364,11 +378,9 @@ setMethod(".BcMean",
             return(.Object)
           })
 
-#' @title .BcMeanSd
 #' @rdname .BcMeanSd
 setMethod(".BcMeanSd","ANY",function(.Object) print("Missing or wrong input"))
 
-#' title .BcMeanSd
 #' @rdname .BcMeanSd
 setMethod(".BcMeanSd",
           signature = "AbsCorrection",
@@ -391,11 +403,9 @@ setMethod(".BcMeanSd",
             return(.Object)
           })
 
-#' @title .BcMeanSdSkew
 #' @rdname .BcMeanSdSkew
 setMethod(".BcMeanSdSkew","ANY",function(.Object) print("Missing or wrong input"))
 
-#' @title .BcMeanSdSkew
 #' @rdname .BcMeanSdSkew
 setMethod(".BcMeanSdSkew",
           signature = "AbsCorrection",
@@ -429,11 +439,9 @@ setMethod(".BcMeanSdSkew",
             return(.Object)
           })
 
-#' @title .BcQmParam
 #' @rdname .BcQmParam
 setMethod(".BcQmParam","ANY",function(.Object) print("Missing or wrong input"))
 
-#' @title .BcQmParam
 #' @rdname .BcQmParam
 setMethod(".BcQmParam",
           signature = "AbsCorrection",
@@ -453,30 +461,43 @@ setMethod(".BcQmParam",
               tmp <- array(NA,dim=length(.Object@adj@data))
               smaller <- which(.Object@scen@data < min(.Object@ctrl@data))
               larger <- which(.Object@scen@data > max(.Object@ctrl@data))
-              other <- seq(1,.Object@scen@Dim)[-c(smaller,larger)]
-              tmp[smaller] <- a0 + a1*min(.Object@ctrl@data) + .Object@scen@data[smaller] - min(.Object@ctrl@data)
-              tmp[larger] <- a0 + a1*max(.Object@ctrl@data) + .Object@scen@data[larger] - max(.Object@ctrl@data)
+              other <- seq(1,.Object@scen@Dim)
+              
+              if(length(smaller) != 0){
+#                other <- other[-c(smaller)]
+                tmp[smaller] <- a0 + (a1-1)*min(.Object@ctrl@data) + .Object@scen@data[smaller]
+              }
+              
+              if(length(larger) != 0){
+#                other <- other[-c(larger)]
+                tmp[larger] <- a0 + (a1-1)*max(.Object@ctrl@data) + .Object@scen@data[larger]
+              }
+              
+              if(length(c(smaller,larger) != 0)) other <- other[-c(smaller,larger)]
               tmp[other] <- a0 + a1*.Object@scen@data[other]
               .Object@adj@data <- as.numeric(tmp)
+              .Object@bc.attributes <- list("fit.type"=fit.type,
+                                            fit.parameters=list(fit=lm.model))
             }else if(fit.type == "normal"){#Parametric fit
               ctrl.param <- MASS::fitdistr(ctrl.rand,"normal")
               obs.param <- MASS::fitdistr(obs.rand,"normal")
-              .Object@adj@data <- qnorm(pnorm(.Object@scen@data,ctrl.param$estimate[1],ctrl.param$estimate[2]),obs.param$estimate[1],obs.param$estimate[2])
+              .Object@adj@data <- qnorm(pnorm(.Object@scen@data,ctrl.param$estimate[1],ctrl.param$estimate[2]),
+                                        obs.param$estimate[1],obs.param$estimate[2])
+              .Object@bc.attributes <- list("fit.type"=fit.type,
+                                            fit.parameters=list(ctrl.param=ctrl.param,
+                                                                scen.param=scen.param))
             }else{
               stop("Wrong parametric fit")
             }
             .Object@adj@Dim <- length(.Object@adj@data)
-            .Object@bc.attributes <- list("fit.type"=fit.type)
             validObject(.Object)
             return(.Object)
           }
 )
 
-#' @title .BcQmEmpir
 #' @rdname .BcQmEmpir
 setMethod(".BcQmEmpir","ANY",function(.Object) print("Missing or wrong input"))
 
-#' @title .BcQmEmpir
 #' @rdname .BcQmEmpir
 setMethod(".BcQmEmpir",
           signature = "AbsCorrection",
@@ -530,7 +551,9 @@ setMethod(".BcQmEmpir",
             }
 
             .Object@adj@Dim <- length(.Object@adj@data)
-            .Object@bc.attributes <- list("smooth" = smooth, "pre.adj" = pre.adj, "post.adj" = post.adj)
+            .Object@bc.attributes <- list("smooth" = smooth, 
+                                          "pre.adj" = pre.adj, 
+                                          "post.adj" = post.adj)
             validObject(.Object)
             return(.Object)
           })
