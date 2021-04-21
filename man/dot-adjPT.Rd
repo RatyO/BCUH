@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.adjPT}
 \alias{.adjPT}
-\title{Conditional adjustment of temperature with respect to precipitation (internal).}
+\title{.adjPT}
 \usage{
 .adjPT(obs, ctrl, scen, fit.skew, eps = 1e-15)
 }

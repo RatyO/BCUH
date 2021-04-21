@@ -14,7 +14,7 @@ while "P" is selected the adjustment of temperature is conditioned on precipitat
 
 \item{threshold}{The value used to divide precipitation time series to wet and dry days.}
 
-\item{...}{Additional parameters required by a specific implementation of \code{JBC}.}
+\item{...}{Additional parameters required by the specific implementation of \code{JBC}.}
 }
 \value{
 Bias corrected time series of both temperature and precipitation.

@@ -5,3 +5,6 @@
 demoPkg
 inst/doc
 _gh-pages
+docs
+data/ALADIN_Jyvaskyla.rda
+data/station_Jyvaskyla.rda

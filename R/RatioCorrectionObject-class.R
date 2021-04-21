@@ -328,7 +328,7 @@ setMethod(".BcQmParam",
           signature = "RatioCorrection",
           definition = function(.Object, q.point = 0.95, threshold = 0.1){
 
-  eps <- 1e-10
+  eps <- 1e-8
   obs <- list(P=.Object@obs@data,
               margT=NA,margP=NA,pwet=NA,
               wet=NA,dry=NA)
@@ -363,9 +363,13 @@ setMethod(".BcQmParam",
 
   scen$wet <- which(scen$P>0)
   scen$dry <- which(scen$P==0)
-
-  ctrl$pwet <- length(ctrl$P[which(ctrl$P>0)])/length(ctrl$P)
-  scen$pwet <- length(scen$P[which(scen$P>0)])/length(scen$P)
+  
+  tmp <- .minimizeMSE(obs$P,ctrl$P,scen$P)
+  ctrl$P <- tmp$cal
+  scen$P <- tmp$val
+    
+  ctrl$pwet <- length(ctrl$wet)/length(ctrl$P)
+  scen$pwet <- length(scen$wet)/length(scen$P)
 
   obs$margP <- .fitMarginal(obs$P[obs$wet],type="gamma")
   ctrl$margP <- .fitMarginal(ctrl$P[ctrl$wet],type="gamma")
@@ -409,12 +413,12 @@ setMethod(".BcQmEmpir",
   PScenSort <- sort(PScen2)
 
   if(pre.adj){
-    .minimizeMSE(PObsSort,PCtrlSort,PScenSort)
+    mse.min <- .minimizeMSE(PObsSort,PCtrlSort,PScenSort)
     PCtrlSort <- mse.min$cal
     PScenSort <- mse.min$val
   }
 
-  #6. Smoothing the time series
+  #4. Smoothing the time series
   PCtrlSmooth <- .smoothQuantiles(PCtrlSort, smooth)
   PObsSmooth <- .smoothQuantiles(PObsSort, smooth)
 

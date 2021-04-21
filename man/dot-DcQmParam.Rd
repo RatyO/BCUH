@@ -17,7 +17,4 @@ Delta change adjusted time series
 \description{
 A generic for quantile mapping applied in the delta change mode.
 }
-\examples{
-Needs to be written
-}
 \keyword{internal}

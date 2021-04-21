@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.quantMapT}
 \alias{.quantMapT}
-\title{Quantile mapping algorithm (internal)}
+\title{.quantMapT}
 \usage{
 .quantMapT(Scen, Ctrl, Obs)
 }
@@ -17,6 +17,9 @@
 Bias adjusted time series
 }
 \description{
+Quantile mapping algorithm (internal)
+}
+\details{
 Determine the future temperatures (ScenCor) that
 }
 \keyword{internal}

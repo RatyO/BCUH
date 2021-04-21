@@ -21,18 +21,21 @@ setMethod(f = "initialize",
 
 #getters
 
+#' @rdname obs
 setMethod(f = "obs",
           signature = "JointCorrection",
           definition = function(object){
             return(object@obs)
           })
 
+#' @rdname ctrl
 setMethod(f = "ctrl",
           signature = "JointCorrection",
           definition = function(object){
             return(object@ctrl)
           })
 
+#' @rdname scen
 setMethod(f = "scen",
           signature = "JointCorrection",
           definition = function(object){
@@ -41,6 +44,7 @@ setMethod(f = "scen",
 
 #Setters
 
+#' @rdname obs<-
 setMethod(f = "obs<-",
           signature = "JointCorrection",
           definition = function(object, value){
@@ -49,6 +53,7 @@ setMethod(f = "obs<-",
             return(object)
           })
 
+#' @rdname ctrl<-
 setMethod(f = "ctrl<-",
           signature = "JointCorrection",
           definition = function(object, value){
@@ -57,6 +62,7 @@ setMethod(f = "ctrl<-",
             return(object)
           })
 
+#' @rdname scen<-
 setMethod(f = "scen<-",
           signature = "JointCorrection",
           definition = function(object, value){
@@ -65,6 +71,7 @@ setMethod(f = "scen<-",
             return(object)
           })
 
+#' @rdname show
 setMethod(f = "show",
           signature = "JointCorrection",
           definition = function(object){
@@ -98,9 +105,12 @@ setMethod(f = "show",
             cat("******* End Show (JointCorrectionObject) ******* \n")
           })
 
+#' @rdname .JBC
 setMethod(f = ".JBC",
           signature = "JointCorrection",
-          definition = function(.Object, cond = "P", threshold = 0.01, jittering = T, jitter.amount = 1e-5, separate = F, fit.skew = T){
+          definition = function(.Object, cond = "P", threshold = 0.01, 
+                                jittering = T, jitter.amount = 1e-5, 
+                                separate = F, fit.skew = T){
 
 #            if(fit.skew)print("using skew-normal distribution")
             #Create data frames for the data. Update these data frames whenever necessary.
@@ -156,26 +166,26 @@ setMethod(f = ".JBC",
             ctrl$pwet <- length(ctrl$P[which(ctrl$P>0)])/length(ctrl$P)
             scen$pwet <- length(scen$P[which(scen$P>0)])/length(scen$P)
             
-            obs$margP <- .fitMarginal(as.numeric(obs$P[obs$wet]),type="gamma")
-            ctrl$margP <- .fitMarginal(as.numeric(ctrl$P[ctrl$wet]),type="gamma")
-            scen$margP <- .fitMarginal(as.numeric(scen$P[scen$wet]),type="gamma")
+            obs$margP <- .fitMarginal(as.numeric(obs$P[obs$wet]), type="gamma")
+            ctrl$margP <- .fitMarginal(as.numeric(ctrl$P[ctrl$wet]), type="gamma")
+            scen$margP <- .fitMarginal(as.numeric(scen$P[scen$wet]), type="gamma")
             
             if(separate){
               
               if(fit.skew){
                 obs$margTW <- suppressWarnings(fitdistrplus::fitdist(as.numeric(obs$T[obs$wet]),"sn",
-                                                    method="mle",start=list(xi=0,omega=1,alpha=1),
-                                                    lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf")))
+                                                    method="mle", start=list(xi=0,omega=1,alpha=1),
+                                                    lower=c("-inf",0,"-inf"), upper=c("inf","inf","inf")))
                 obs$margTD <- suppressWarnings(fitdistrplus::fitdist(as.numeric(obs$T[obs$dry]),"sn",
-                                                    method="mle",start=list(xi=1,omega=1,alpha=1),
-                                                    lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf")))
+                                                    method="mle", start=list(xi=1,omega=1,alpha=1),
+                                                    lower=c("-inf",0,"-inf"), upper=c("inf","inf","inf")))
                 
                 ctrl$margTW <- suppressWarnings(fitdistrplus::fitdist(as.numeric(ctrl$T[ctrl$wet]),"sn",
-                                                     method="mle",start=list(xi=1,omega=1,alpha=1),
-                                                     lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf")))
+                                                     method="mle", start=list(xi=1,omega=1,alpha=1),
+                                                     lower=c("-inf",0,"-inf"), upper=c("inf","inf","inf")))
                 ctrl$margTD <- suppressWarnings(fitdistrplus::fitdist(as.numeric(ctrl$T[ctrl$dry]),"sn",
-                                                     method="mle",start=list(xi=1,omega=1,alpha=1),
-                                                     lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf")))
+                                                     method="mle", start=list(xi=1,omega=1,alpha=1),
+                                                     lower=c("-inf",0,"-inf"), upper=c("inf","inf","inf")))
               }else{
                 obs$margTW <- .fitMarginal(as.numeric(obs$T[obs$wet]),type="norm")
                 obs$margTD <- .fitMarginal(as.numeric(obs$T[obs$dry]),type="norm")
@@ -188,103 +198,55 @@ setMethod(f = ".JBC",
               if(fit.skew){
                 obs$margTW <- obs$margTD <- suppressWarnings(fitdistrplus::fitdist(as.numeric(obs$T),"sn",
                                                                   method="mle",start=list(xi=0,omega=1,alpha=1),
-                                                                  lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf"))) #sn.mple(obs$T[obs$wet])
+                                                                  lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf"))) 
                 ctrl$margTW <- ctrl$margTD <- suppressWarnings(fitdistrplus::fitdist(as.numeric(ctrl$T),"sn",
                                                                     method="mle",start=list(xi=1,omega=1,alpha=1),
-                                                                    lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf"))) #sn.mple(obs$T[obs$wet])
+                                                                    lower=c("-inf",0,"-inf"),upper=c("inf","inf","inf"))) 
               }else{
-                obs$margTW <- obs$margTD <- .fitMarginal(as.numeric(obs$T),type="norm")
-                ctrl$margTW <- ctrl$margTD <- .fitMarginal(as.numeric(ctrl$T),type="norm")
+                obs$margTW <- obs$margTD <- .fitMarginal(as.numeric(obs$T), type="norm")
+                ctrl$margTW <- ctrl$margTD <- .fitMarginal(as.numeric(ctrl$T), type="norm")
               }
             }
-#            print(obs$margTW)
-            # fit.normO <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(obs$T[obs$wet],obs$P[obs$wet]),ncol=2)),
-            #                        method="itau",start=0,lower=NULL,upper=NULL,
-            #                        optim.control=list(maxit=100))
-            # obs$cpar1 <- fit.normO@copula@parameters
-            # 
-            # fit.normC <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2)),
-            #                        method="itau",start=0,lower=NULL,upper=NULL,
-            #                        optim.control=list(maxit=100))
-            # ctrl$cpar1 <- fit.normC@copula@parameters
-
-            # fit.normF <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(scen$T[scen$wet],scen$P[scen$wet]),ncol=2)),
-            #                        method="itau",start=0,lower=NULL,upper=NULL,
-            #                        optim.control=list(maxit=100))
-            # 
-            # scen$cpar1 <- fit.normF@copula@parameters
             
             if(fit.skew){
-              margin.names <- c("norm","sn")
-              marg1.obs <- list(xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha = obs$margTW$estimate[3])
+              margin.names <- c("sn","gamma")
+              marg1.obs <- list(xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], 
+                                alpha = obs$margTW$estimate[3])
               marg2.obs <- list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])
-              marg1.ctrl <- list(xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], alpha = ctrl$margTW$estimate[3])
+              marg1.ctrl <- list(xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], 
+                                 alpha = ctrl$margTW$estimate[3])
               marg2.ctrl <- list(shape = ctrl$margP$estimate[1], rate = ctrl$margP$estimate[2])
               
             }else{
-              marg1.obs <- list(mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2])
-              marg2.obs <- list(shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])
-              marg1.ctrl <- list(mean = ctrl$margTW$estimate[1], sd = ctrl$margTW$estimate[2])
-              marg2.ctrl <- list(shape = ctrl$margP$estimate[1], rate = ctrl$margP$estimate[2])
+              marg1.obs <- list(mean=obs$margTW$estimate[1], sd=obs$margTW$estimate[2])
+              marg2.obs <- list(shape=obs$margP$estimate[1], rate=obs$margP$estimate[2])
+              marg1.ctrl <- list(mean=ctrl$margTW$estimate[1], sd=ctrl$margTW$estimate[2])
+              marg2.ctrl <- list(shape=ctrl$margP$estimate[1], rate=ctrl$margP$estimate[2])
               margin.names <- c("norm","gamma")
             }
             
             if(fit.skew){
-              U1 = cbind(psn(x = obs$T[obs$wet], xi = marg1.obs$xi, omega = marg1.obs$omega, alpha = marg1.obs$alpha),
-                       pgamma(obs$P[obs$wet], shape = marg2.obs$shape, rate = marg2.obs$rate))
-              #U1 <- pobs(cbind(obs$T[obs$wet],obs$P[obs$wet]))
-              obs$cpar1 <- coef(fitCopula(normalCopula(dim=2), data = U1,method="ml"))
+              U1 <- cbind(psn(x=obs$T[obs$wet], xi=marg1.obs$xi, omega=marg1.obs$omega, 
+                             alpha=marg1.obs$alpha),
+                       pgamma(obs$P[obs$wet], shape=marg2.obs$shape, rate=marg2.obs$rate))
+              obs$cpar1 <- coef(fitCopula(normalCopula(dim=2), data=U1, method="ml"))
               
-              U2 = cbind(psn(x = ctrl$T[ctrl$wet], xi = marg1.ctrl$xi, omega = marg1.ctrl$omega, alpha = marg1.ctrl$alpha),
-                       pgamma(ctrl$P[ctrl$wet], shape = marg2.ctrl$shape, rate = marg2.ctrl$rate))
-              #U2 <- pobs(cbind(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]))
+              U2 <- cbind(psn(x=ctrl$T[ctrl$wet], xi=marg1.ctrl$xi, omega=marg1.ctrl$omega, 
+                             alpha=marg1.ctrl$alpha),
+                       pgamma(ctrl$P[ctrl$wet], shape=marg2.ctrl$shape, rate=marg2.ctrl$rate))
               par(mfrow=c(1,2))
               
-              ctrl$cpar1 <- coef(fitCopula(normalCopula(dim=2), data = U2,method="ml"))
+              ctrl$cpar1 <- coef(fitCopula(normalCopula(dim=2), data=U2, method="ml"))
             } else{
-               U1 = cbind(pnorm(obs$T[obs$wet], mean = marg1.obs$mean, sd = marg1.obs$sd),
-                       pgamma(obs$P[obs$wet], shape = marg2.obs$shape, rate = marg2.obs$rate))
-#              U1 <- pobs(cbind(obs$T[obs$wet],obs$P[obs$wet]))
+              U1 <- cbind(pnorm(obs$T[obs$wet], mean=marg1.obs$mean, sd=marg1.obs$sd),
+                       pgamma(obs$P[obs$wet], shape=marg2.obs$shape, rate=marg2.obs$rate))
               
-              obs$cpar1 <- coef(fitCopula(normalCopula(dim=2), data = U1,method="ml"))
+              obs$cpar1 <- coef(fitCopula(normalCopula(dim=2), data=U1, method="ml"))
               
-              U2 = cbind(pnorm(ctrl$T[ctrl$wet], mean = marg1.ctrl$mean, sd = marg1.ctrl$sd),
-                       pgamma(ctrl$P[ctrl$wet], shape = marg2.ctrl$shape, rate = marg2.ctrl$rate))
-              #U2 <- pobs(cbind(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]))
-              ctrl$cpar1 <- coef(fitCopula(normalCopula(dim=2), data = U2,method="ml"))
+              U2 <- cbind(pnorm(ctrl$T[ctrl$wet], mean=marg1.ctrl$mean, sd=marg1.ctrl$sd),
+                       pgamma(ctrl$P[ctrl$wet], shape=marg2.ctrl$shape, rate=marg2.ctrl$rate))
+              ctrl$cpar1 <- coef(fitCopula(normalCopula(dim=2), data=U2, method="ml"))
             }
-            
-#            print(obs$cpar1)
-#            print(ctrl$cpar1)
-            
-            # mvd.o <- copula::mvdc(normalCopula(fit.normO@copula@parameters),
-            #               margins = margin.names, 
-            #               paramMargins = list(marg1.obs,marg2.obs))
-            # start <- as.vector(c(unlist(marg1.obs),unlist(marg2.obs),fit.normO@copula@parameters))
-            # fit.mvdO <- copula::fitMvdc(matrix(cbind(obs$T[obs$wet],obs$P[obs$wet]),ncol=2), mvd.o, method = "SANN",
-            #                                      start=start, optim.control=list(trace = 1, reltol = 1e-8, maxit=100),
-            #                                      lower = c("-inf",0,"-inf",0.001,0.001,-1), upper = c("inf","inf","inf","inf","inf",1))
-            # 
-            # print(fit.mvdO)
-            # obs$cpar1 <- coef(fit.mvdO)[5]
-#            obs$margTW$estimate[1] <- coef(fit.mvdO)[1]
-#            obs$margTW$estimate[2] <- coef(fit.mvdO)[2]
-#            obs$margP$estimate[1] <- coef(fit.mvdO)[3]
-#            obs$margP$estimate[2] <- coef(fit.mvdO)[4]
-
-            # mvd.c <- copula::mvdc(normalCopula(fit.normC@copula@parameters),
-            #               margins = margin.names, 
-            #               paramMargins = list(marg1.ctrl,marg2.ctrl))
-            # start <- c(unlist(marg1.ctrl),unlist(marg2.ctrl),fit.normC@copula@parameters)
-            # fit.mvdC <- copula::fitMvdc(matrix(cbind(ctrl$T[ctrl$wet],ctrl$P[ctrl$wet]),ncol=2), mvd.c, method = "SANN",
-            #                                      start=start, optim.control=list(trace = 1, reltol = 1e-8, maxit=100),
-            #                                      lower = c(-100,0,"-inf",0.001,0.001,-1), upper = c(100,"inf","inf","inf","inf",1))
-            # print(fit.mvdC)
-            # ctrl$cpar1 <- coef(fit.mvdC)[5]
-#            ctrl$margTW$estimate[1] <- coef(fit.mvdC)[1]
-#            ctrl$margTW$estimate[2] <- coef(fit.mvdC)[2]
-#            ctrl$margP$estimate[1] <- coef(fit.mvdC)[3]
-#            ctrl$margP$estimate[2] <- coef(fit.mvdC)[4]
             
             if(cond=="P"){
               print(cond)
@@ -293,9 +255,10 @@ setMethod(f = ".JBC",
               print(cond)
               adj <- .adjTP(obs, ctrl, scen, fit.skew)
             }
-            fit.normCor <- copula::fitCopula(copula::normalCopula(dim=2),copula::pobs(matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2)),
-                                     method="itau",start=NULL,lower=NULL,upper=NULL,
-                                     optim.method="BFGS",optim.control=list(maxit=100))
+            fit.normCor <- copula::fitCopula(copula::normalCopula(dim=2),
+                                             copula::pobs(matrix(c(adj$T[scen$wet],adj$P[scen$wet]),ncol=2)),
+                                             method="itau",start=NULL,lower=NULL,upper=NULL,
+                                             optim.method="BFGS",optim.control=list(maxit=100))
             
             adj$cpar1 <- fit.normCor@copula@parameters
             .Object@adj@data[,1] <- adj$T

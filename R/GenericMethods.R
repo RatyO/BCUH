@@ -144,7 +144,6 @@ setGeneric(name = "type<-",
              standardGeneric("type<-")
            })
 
-
 setGeneric(name = "method<-",
            def = function(object, value){
              standardGeneric("method<-")
@@ -191,7 +190,6 @@ setGeneric(name = "is.TS2D",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(".DcMean",
           def = function(.Object, ...){
@@ -207,7 +205,6 @@ setGeneric(".DcMean",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcMeanSd",
            def = function(.Object, ...){
@@ -223,7 +220,6 @@ setGeneric(name = ".DcMeanSd",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcMeanSd1",
            def = function(.Object, ...){
@@ -239,7 +235,6 @@ setGeneric(name = ".DcMeanSd1",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcMeanSd2",
            def = function(.Object, ...){
@@ -255,7 +250,6 @@ setGeneric(name = ".DcMeanSd2",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcMeanSdSkew",
            def = function(.Object, ...){
@@ -271,7 +265,6 @@ setGeneric(name = ".DcMeanSdSkew",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcQmEmpir",
            def = function(.Object, ...){
@@ -287,7 +280,6 @@ setGeneric(name = ".DcQmEmpir",
 #'
 #' @return Delta change adjusted time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".DcQmParam",
            def = function(.Object, ...){
@@ -304,7 +296,6 @@ setGeneric(name = ".DcQmParam",
 #'
 #' @return Bias corrected time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(".BcMean",
            def = function(.Object, ...){
@@ -320,7 +311,6 @@ setGeneric(".BcMean",
 #'
 #' @return Bias corrected time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".BcMeanSd",
            def = function(.Object, ...){
@@ -336,7 +326,6 @@ setGeneric(name = ".BcMeanSd",
 #'
 #' @return Bias corrected time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".BcMeanSd1",
            def = function(.Object, ...){
@@ -350,9 +339,6 @@ setGeneric(name = ".BcMeanSd1",
 #' @param .Object An object
 #' @param ...  Additional parameters required by a specific implementation
 #'
-#' @return Bias corrected time series
-#'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".BcMeanSd2",
            def = function(.Object, ...){
@@ -368,7 +354,6 @@ setGeneric(name = ".BcMeanSd2",
 #'
 #' @return Bias corrected time series
 #'
-#' @examples Needs to be written
 #' @keywords internal
 setGeneric(name = ".BcMeanSdSkew",
            def = function(.Object, ...){
@@ -412,7 +397,7 @@ setGeneric(name = ".BcQmParam",
 #' @param cond character flag indicating the order of conditioning. If value "T" is given temperature is bias corrected first,
 #' while "P" is selected the adjustment of temperature is conditioned on precipitation.
 #' @param threshold The value used to divide precipitation time series to wet and dry days.
-#' @param ... Additional parameters required by a specific implementation of \code{JBC}.
+#' @param ... Additional parameters required by the specific implementation of \code{JBC}.
 #'
 #' @return Bias corrected time series of both temperature and precipitation.
 #' @keywords internal

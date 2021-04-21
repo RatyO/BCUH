@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.quantMapP}
 \alias{.quantMapP}
-\title{Quantile mapping algorithm for precipitation (internal)}
+\title{.quantMapP}
 \usage{
 .quantMapP(Scen, Ctrl, Obs)
 }
@@ -17,6 +17,9 @@
 Adjusted time series for the Scenario period
 }
 \description{
+Quantile mapping algorithm for precipitation (internal)
+}
+\details{
 Determine the future temperatures (ScenCor) that
 }
 \keyword{internal}

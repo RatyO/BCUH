@@ -1,5 +1,5 @@
 ---
-title: "BCUH"
+title: "BCUH Documentation"
 subtitle: "University of Helsinki bias adjustment tools"
 author: "Olle Räty"
 copyright: "Olle Räty"
@@ -7,7 +7,7 @@ output: rmarkdown::html_vignette
 redirect: http://ratyO.github.io/BCUH
 vignette: |
   %\VignetteIndexEntry{BCUH Documentation}
-  %\VignetteEngine{packagedocs::redirect}
+  %\VignetteEngine{knitr::rmarkdown}
 navpills: |
   <li class="active"><a href='index.html'>Docs</a></li>
   <li><a href='rd.html'>Package Ref</a></li>
@@ -17,10 +17,7 @@ bibliography: bibliography.bib
 
 ```{r global_options, include=FALSE}
 # R output pre blocks are styled by default to indicate output
-knitr::opts_chunk$set(comment = NA)
-
-# shorthand for rd_link() - see ?packagedocs::rd_link for more information
-rdl <- function(x) packagedocs::rd_link(deparse(substitute(x)))
+knitr::opts_chunk$set(comment=NA)
 ```
 
 # BCUH
@@ -31,7 +28,7 @@ BCUH is a collection of simple univariate and bi-variate methods, which have bee
 
 This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following @raisanen2013 and @raty2014. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on @li2014 with modifications from @gennaretti2015. These methods have become de facto standard in climate impact studies due to the need to take biases in climate model simulations with respect to the observed climate into account. An overview of the package structure is given together with a set of examples, which illustrate the use of the package. Also, the limitations of the implemented methods are discussed. Finally, we give a brief overview of other existing R tools, which have been built for similar purposes as BCUH. 
 
-#Installation
+# Installation
 
 To install BCUH, the R package \code{devtools} needs to be installed on your operating system:
 
@@ -47,27 +44,28 @@ devtools::install_github(RatyO/BCUH)
 
 code{BCUH} depends on several other packages, most notably \code{copula}, which is used in the copula-based bias correction method. These packages should be automatically installed along \code{BCUH}.
 
-#Univariate method
+# Univariate method
 
-The current version of \code{BCUH} contains a total of 20 univariate methods. Ten of these methods have originally been designed for daily mean temperature, while the rest ten ten methods were designed to construct future projections of daily precipitation. Furthermore, these methods can be divided into two groups based on the projection strategy. Five methods for both variables are so-called delta change methods, which add simulated changes to the reference time series in different ways. The rest of the methods directly bias correct the scenario period data based on biases between the reference and control data in the calibration period. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes, which return the input data and parameters as a customised S4 object. However, to make the application to these methods easier, the package also contains a wrapper function \code{biasco}, which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a \code{BiascoTimeSeries} object. The different elements of this object can be accessed using the class methods provided in the package.
+The current version of \code{BCUH} contains a total of 20 univariate methods. Ten of these methods have originally been designed for daily mean temperature, while the rest ten methods were designed to construct future projections of daily precipitation. Furthermore, these methods can be divided into two groups based on the projection strategy. Five methods for both variables are so-called delta change methods, which add simulated changes to the reference time series in different ways. The rest of the methods directly bias correct the scenario period data based on biases between the reference and control data in the calibration period. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes, which return the input data and parameters as a customised S4 object. However, to make the application to these methods easier, the package also contains a wrapper function \code{biasco}, which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a \code{BiascoTimeSeries} object. The different elements of this object can be accessed using the class methods provided in the package.
 
 We will next demonstrate how to use the wrapper functions using synthetic data. The package contains two data sets which emulate the behavior of daily mean temperature and precipitation. The first data set corresponds to observations which could have been collect at single site, while the second data mimics simulated temperature and precipitation with differing statistical properties for the time series.
 
-```
+```{r}
 library(BCUH)
 
 data("obs")
 data("model")
 ```
 
-In the first example, We illustrate how to use the package to construct projections of temperature. Here we only demonstrate the bias correction methods.
+In the first example, We illustrate how to use the package to construct projections for daily mean temperature. In this demonstration, we use two bias correction methods, which adjust either the distribution mean (M6) or the distribution quantiles (M10).
+
+
+```{r}
+bc6 <- biasco(obs=varsO[,'temp'], ctrl=varsC[,'temp'], scen=varsC[,'temp'], type="abs", method="M6")
+bc9 <- biasco(obs=varsO[,'temp'], ctrl=varsC[,'temp'], scen=varsC[,'temp'], type="abs", method="M9")
 
 ```
-bc6 <- biasco(obs = varsO[,'temp'], ctrl = varsC[,'temp'], scen = varsC[,'temp'], type = "abs", method = "M6")
-bc9 <- biasco(obs = varsO[,'temp'], ctrl = varsC[,'temp'], scen = varsC[,'temp'], type = "abs", method = "M9")
-
-```
-Note that \code{type = "abs"} has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field \code{type} is used to select the method (M1-M10). Biasco creates an object of type \code{BiascoTimeSeries}, which contains the adjusted data and also some additional information related to the used data and projection method. For example, \code{bc.object} looks something like:
+Note that \code{type="abs"} has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field \code{type} is used to select the method (M1-M10). Biasco creates an object of type \code{BiascoTimeSeries}, which contains the adjusted data and also some additional information related to the used data and projection method. For example, \code{bc.object} looks something like:
 
 ```
 bc.object
@@ -75,70 +73,65 @@ bc.object
 
 Next, we visualise the quantile distributions for the adjusted time series:
 
-```
-plot(quantile(dat(adj(dc1)), seq(0,1,0.01)), type = "l",
-    main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(-30,10))
-lines(quantile(dat(adj(bc6)), seq(0,1,0.01)), lty = 2, col="orange")
-lines(quantile(dat(adj(bc9)), seq(0,1,0.01)), lty = 1, col="orange")
-lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = "red")
-lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
-lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
-legend("topleft", c("M1","M6","M9","Obs","Ctrl","Scen"),
-      col = c("black","black","orange","red","blue","blue"), lty = c(1,1,2,1,1,2))
+```{r}
+plot(quantile(varsO[,'temp'], seq(0,1,0.01)), type="l",
+    main="Quantile plot", xlab="%", ylab="Celcius", ylim=c(-30,10))
+lines(quantile(dat(adj(bc6)), seq(0,1,0.01)), lty=1, col="orange")
+lines(quantile(dat(adj(bc9)), seq(0,1,0.01)), lty=2, col="orange")
+lines(quantile(varsC[,'temp'], seq(0,1,0.01)), col="blue")
+legend("topleft", c("Obs","M6","M9","Ctrl"),
+      col=c("black","orange","orange","blue"), lty=c(1,1,2,1))
 ```
 Some parameters available for M5 and M10 require special attention. The most i
 
-In the second example, we adjust the precipitation time series. To access proper methods, the \code{type = "ratio"} has to be selected.
+In the second example, we adjust the precipitation time series. To access proper methods, the \code{type="ratio"} has to be selected. We use the same methods although tailored specifically for precipitation.
 
-```
-dc1 <- biasco(obs = varsO[,'prec'], ctrl = varsC[,'prec'], scen = varsC[,'prec'] type = "ratio", method = "M1")
-bc6 <- biasco(obs = varsO[,'prec'], ctrl = varsC[,'prec'], scen = varsC[,'prec'], type = "ratio", method = "M6")
-```
-
-Methods M4-M5 and M9-M10 are the delta change and bias correction forms of parametric and non-parametric quantile mapping, which aim to adjust the full marginal distribution. 
-
-```
-dc5 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "ratio", method = "M5", smooth)
-bc10 <- biasco(obs = obs.ctrl$tas, ctrl = rcm.ctrl$tas, scen = rcm.scen$tas, type = "ratio", method = "M10")
+```{r}
+bc6 <- biasco(obs=varsO[,'prec'], ctrl=varsC[,'prec'], scen=varsC[,'prec'], type="ratio", method="M6")
+bc9 <- biasco(obs=varsO[,'prec'], ctrl=varsC[,'prec'], scen=varsC[,'prec'], type="ratio", method="M9")
 ```
 
-Next, we visualise the quantile distributions for the adjusted time series:
+To get a brief idea how the adjustment performs, we visualise the quantile distributions for the adjusted time series:
 
+```{r}
+plot(quantile(varsO[,'temp'], seq(0,1,0.01)), type="l",
+    main="Quantile plot", xlab="%", ylab="mm/d", ylim=c(-30,10))
+lines(quantile(dat(adj(bc6)), seq(0,1,0.01)), lty=1, col="orange")
+lines(quantile(dat(adj(bc9)), seq(0,1,0.01)), lty=2, col="orange")
+lines(quantile(varsC[,'temp'], seq(0,1,0.01)), col="blue")
+legend("topleft", c("Obs","M6","M9","Ctrl"),
+      col=c("black","orange","orange","blue"), lty=c(1,1,2,1))
 ```
-plot(quantile(dat(adj(dc1)), seq(0,1,0.01)), type = "l",
-    main="Quantile plot", xlab = "%", ylab = "Celcius", ylim = c(-30,10))
-lines(quantile(dat(adj(bc1)), seq(0,1,0.01)), lty = 2)
-lines(quantile(dat(adj(dc5)), seq(0,1,0.01)), lty = 1, col="orange")
-lines(quantile(dat(adj(bc10)), seq(0,1,0.01)), lty = 2, col="orange")
-lines(quantile(obs.ctrl$tas, seq(0,1,0.01)), col = "red")
-lines(quantile(rcm.ctrl$tas, seq(0,1,0.01)), col = "blue")
-lines(quantile(rcm.scen$tas, seq(0,1,0.01)), col = "blue", lty = 2)
-legend("topleft", c("M1","M6","M5","M10","Obs","Ctrl","Scen"),
-      col = c("black","black","orange","orange","red","blue","blue"), lty = c(1,2,1,1,2))
-```
-Some parameters available for M5 and M10 require special attention. The most important one is \code{smooth}, which defines the strength of smoothing of quantile distributions of \code{obs} and \code{ctrl} for bias correction methods and \code{ctrl} and \code{scen} for delta change methods. The default values have been chose according to @raisanen2013 and @raty2014 (0.05 \code{type = "abs"} and 0.02 for \code{type = "ratio"}). In addition, methods M5 and M10 do not preserve changes in the mean values between \code{ctrl} and \code{scen}. However, this can be done by selecting \code{post.adj = T}.
+Some parameters available for M5 and M10 require special attention. The most important one is \code{smooth}, which defines the strength of smoothing of quantile distributions of \code{obs} and \code{ctrl} for bias correction methods and \code{ctrl} and \code{scen} for delta change methods. The default values have been chose according to @raisanen2013 and @raty2014 (0.05 \code{type="abs"} and 0.02 for \code{type="ratio"}). In addition, methods M5 and M10 do not preserve changes in the mean values between \code{ctrl} and \code{scen}. However, this can be done by selecting \code{post.adj=T}.
 
 For precipitation an option to pre-adjust \code{ctrl} and \code{scen} based on the mean squared error (MSE) between \code{obs} and \code{ctrl} is available. To switch this on set \code{pre.adj=T}. When this option is selected, both \code{ctrl} and \code{scen} are shifted "closer" to \code{obs} before applying quantile mapping.
 
-#Multivariate methods
+# Multivariate methods
 
-In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by Li et al. (2014) and further developed in @gennaretti2015. In this method the joint distribution of temperature and precipitation by first decomposing the joint distribution into separate marginal distributions.
+In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by @li2014 and further developed in @gennaretti2015. In this method the joint distribution of temperature and precipitation is described with parametric marginal distributions, while the dependence between the marginal distributions is modeled using Gaussian copula. 
 
-#Limitations
+```{r}
+#test <- biasco2D(obs.in=varsO, ctrl.in=varsC, scen.in=varsC, cond = "T")
+#plot(dat(adj(test)))
+#points(varsO,col="red")
+```
+
+
+# Limitations
 
 As with all statistical methods, care should be taken, when applying BCUH methods in actual work. First, the implemented methods have not been designed for directly downscaling climate model simulations to higher resolutions @maraun2013 discussed some of the potential issues with such approach, which are particularly severe for precipitation. The main. Furthermore, spatial averages of data downscaled this way tend to exhibit overestimation of precipitation extremes and the fraction of wet days is also overestimated due to overcorrection of the drizzle effect. For temperature, these issues are less severe, as its values change more smoothly in space. 
 
 Another issue, which is currently under devate is whether the statistical bias correction methods should preserve the simulated trends. In the traditional form, quantile mapping can alter the simulated changes, which . While this issue has not fully been taken into account in the package, an option to force changes in the mean of the adjusted time series to the simulated change has been included (see the example above). Alternatively delta change methods could be applied, since these methods does not suffer the aforementioned issues, as they adjust the observed time series based on model simulated changes. However, a major limitation of delta change approach is that different correlation structures follow directly the observed ones in the constructed projections. Other more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability
 
-#Other R packages
+# Other R packages
 
 \code{BCUH} is just one of the possible R packages available to statistically adjust model simulations to biases in climate model simulationswith respect to the observed climate. For the sake of completeness, we give a brief overview of other existing packages, which the reader might find useful. One of the most comprehensive packages written in \code{R} has been developed in Santander (\url{https://github.com/SantanderMetGroup/downscaleR}). The package contains a set of bias correction methods partly similar to the ones available in \code{BCUH} and also methods designed for downscaling coarse resolution model simulations for impact study purposes. \code{downscaleR} is a part of \code{climate4R} bundle, which has additional tools for downloading, pre-processing and visualising the bias corrected / downscaled climate data. Several other packages are also available. \code{qmap} contains implementations of different types of quantile mapping methods as described in Gudmunsson et al. (2012). Another method used to downscale the cumulative distribution function of a coarse resolution model simulation with respect to a local scale cumulative distribution function has been implemented in \code{CDFt} package. 
 
 \code{MBC} is one of the few packages, which contains implementations of three multivariate bias correction methods as described in @cannon2016 and @cannon2017. These methods adjust different intervariable correlations. In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in @cannon2015. In principle, the package allows to use also other methods to adjust the marginal distributions, as a posterior adjustment is made to them in order to retain correct marginals.  A more detailed description of the methods is available in the package documentation \url{}.
 
-#Conclusions
+# Conclusions
 
-This tutorial gives a brief overview of BCUH-package, which contains. It is hoped that researchers find this package useful in their studies.
+This tutorial gives a brief overview of BCUH package, which contains a number of bias adjustment methods described in @raisanen2013 and @raty2014 as well as one bi-variate method documented in @li2014 and @gennaretti2015.
 
 #References
 

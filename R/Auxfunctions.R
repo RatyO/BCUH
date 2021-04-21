@@ -1,4 +1,5 @@
 #' Find correct skewness iteratively (internal)
+#' @title .iterSkewness
 #'
 #' @param data data to be adjusted
 #' @param skew.target target skewness
@@ -12,44 +13,45 @@
 #' @return Bias adjusted time series
 #' @keywords internal
 #'
-.iterSkewness <- function(data, skew.target, nseq = 1, tol = 1e-3, a.lim = c(1,9), iter.max = 100){
+.iterSkewness <- function(source, skew.target, nseq = 1, tol = 1e-3, 
+                          a.lim = c(0.5,9), iter.max = 100){
 
   if(length(a.lim) < 2)stop("Missing one or both limits for the skewness scaling factor")
+#  print(source)
+  skew.source <- moments::skewness(source)
 
-  skew.data <- moments::skewness(data)
-
-  if(skew.data<skew.target){
-    b <- min(data)
-    data <- data-b
+  if(skew.source < skew.target){
+    b <- min(source)
+    source <- source-b
     sign <- 1
   }else{
     skew.target <- -skew.target
-    b <- max(data)
-    data <- -(data-b)
+    b <- max(source)
+    source <- -(source-b)
     sign <- -1
   }
 
   i <- 1
-  data.scaled <- data
-  while(abs(skew.data-skew.target)>tol){
+  source.scaled <- source
+  while(abs(skew.source-skew.target)>tol){
     a <- sum(a.lim)/2
-    data.scaled <- data^a
-    skew.data <- moments::skewness(data.scaled)
-#    cat("skew.data: ",skew.data,"skew.target: ",skew.target,"a: ",a,"\n")
-    if(skew.data<skew.target){
+    source.scaled <- source^a
+    skew.source <- moments::skewness(source.scaled)
+#    cat("skew.source: ",skew.source,"skew.target: ",skew.target,"a: ",a,"\n")
+    if(skew.source<skew.target){
       a.lim[1] <- a
     }else{
       a.lim[2] <- a
     }
     if(i == iter.max){
-      warning(paste("Skewness(",skew.data,") not converging to the target (",skew.target,")"))
-      return(data.scaled)
+      warning(paste("Skewness(",skew.source,") not converging to the target (",skew.target,")"))
+      return(source.scaled)
     }
     i <- i + 1
   }
   
-  data <- b + data.scaled*sign
-  return(data)
+  source <- b + source.scaled*sign
+  return(source)
 }
 
 
@@ -65,6 +67,7 @@
 #  Nevertheless, it is cleanest to use baseline and scenario
 #  time series of the same length.
 #'
+#' @title .quantMapT
 #' @param Scen scenario period time series
 #' @param Ctrl control period time series
 #' @param Obs control period observations
@@ -111,6 +114,7 @@
 
 #' Handle zero values (internal)
 #'
+#' @title .zeros
 #' @param Data Time series to be adjusted
 #' @param eps small value used to adjust the zero values
 #'
@@ -146,6 +150,7 @@
 #  Nevertheless, it is cleanest to use baseline and scenario
 #  time series of the same length.
 #'
+#' @title .quantMapP
 #' @param Scen scenario period time series
 #' @param Ctrl control period time series
 #' @param Obs control period observations
@@ -196,6 +201,7 @@
 #'
 #' Adjust the cv interatively using the Engen-Skaugen algorithm.
 #'
+#' @title .adjustEs
 #' @param data Data to be adjusted
 #' @param mean.target Traget value for the mean
 #' @param sd.target Target value for standard deviation
@@ -234,15 +240,16 @@
 #'
 #' Find iteratively the correct exponent in the power transformation of a ratio variable.
 #'
+#' @title .iterAb
 #' @param data Input data
 #' @param mean.target Target values for the mean
 #' @param sd.target Target value for standard deviations
 #' @param b.lim Limits for the exponent value
 #' @param tol Tolerance for the convergence
 #' @param max.iter  Max. number of iterations. Used to stop the execution,
-#'   if the algorithm does not converge to the targer values.
+#'   if the algorithm does not converge to the target values.
 #'
-#' @return Adjusted time series for the ccenario period.
+#' @return Adjusted time series for the scenario period.
 #'
 #' @keywords internal
 #'
@@ -285,65 +292,45 @@
 
 #' Pre-process precipitation data for parametric quantile mapping.
 #'
+#' @title .ppRain
 #' @param ref Reference data
 #' @param adj Data to be adjusted
 #' @param ref.threshold Threshold for wet-day values.
 #'
 #' @return A list containing the number of dry days both in the reference and calibration data sets.
 #'
-#' @importFrom MASS fitdistr
 #' @keywords internal
 #'
+
 .ppRain <- function(ref, adj, ref.threshold = 0.1){
-  n.ref0 <- length(which(ref <= ref.threshold))
-  n.adj0 <- ceiling(length(adj)*(n.ref0/length(ref)))
-
-  adj.sort.index <- sort(adj, index.return = TRUE)$ix
-  adj.sort <- sort(adj)
-  adj.threshold <- adj.sort[n.adj0 + 1] #everything smaller than adj.threshold is considered to be dry days
-
-  if(n.ref0 < length(ref)){ # Common cases, where precipitation exists
-    if(adj.threshold < ref.threshold){ #Add rainy days if the number of them is underestimated in adj
-      ref.sort <- sort(ref)
-
-      if(!any(adj.sort > ref.threshold)){ # All values are smaller than the reference threshold
-        ind.adj <- length(adj.sort)
-        ind.ref <- length(ref)
-      }else{ #Need to add some rainy days to adj
-        ind.adj <- min(which(adj.sort > ref.threshold))
-        ind.ref <- ceiling(length(ref.sort)*ind.adj/length(adj.sort))
-      }
-
-      if(length(unique(ref.sort[(n.ref0 + 1):ind.ref])) < 6){
-        jit.fact <- min(abs(diff(ref))[abs(diff(ref))>0])/2
-        adj.sort[(n.adj0 + 1):ind.ref] <- runif(n=(ind.adj - n.adj0), min = ref.sort[(n.ref0 + 1)], max = ref.sort[ind.ref]) + runif(n=(ind.adj - n.adj0), min = 0, max = jit.fact)
-
-        }else{
-        ref.fit <- ref.sort[(n.ref0 + 1):ind.ref]
-        gamma.fit <- MASS::fitdistr(ref.fit, "gamma")
-        adj.sort[(n.adj0 + 1):ind.ref] <- rgamma(ind.adj - n.adj0, gamma.fit$estimate[1], rate = gamma.fit$estimate[2])
-      }
-
-    }
-
-    if(n.ref0 > 0){
-      zero <- min(n.adj0,length(adj))
-      adj.sort[1:zero] <- 0
-    }
-
-    adj[adj.sort.index] <- adj.sort
-  }else{ # All refernce values are zero
-    adj.threshold <- adj.sort[n.adj0]
-    zero <- min(n.adj0,length(adj))
-    adj.sort[1:zero] <- 0
-    adj[adj.sort.index] <- adj.sort
+  er <- ecdf(ref)
+  ea <- ecdf(adj)
+  pr <- er(0.1)
+  pa <- ea(0.1)
+  rdry <- ceiling(length(ref)*pr)
+  adry <- ceiling(length(adj)*pr)
+  adj.sorted <- sort(adj)
+  adj.sorted.index <- sort(adj, index.return = TRUE)$ix
+  ath <- adj.sorted[adry]
+  if(pa>pr & !all(ref <= ref.threshold)){
+    ref.sorted <- sort(ref)
+    start <- ceiling(length(adj)*pr)
+    end <- ceiling(length(adj)*pa)
+    adj.sorted[start:end] <- runif(n=(end-start+1),
+                                   min=ref.threshold,
+                                   max=ref.sorted[end])
   }
-
-  return(list("nDry" = c(n.ref0, n.adj0), "adj.threshold" = adj.threshold, "adj" = adj))
+  if(pa<pr) adj.sorted[1:ceiling(length(adj)*pr)] <- 0
+  adj[adj.sorted.index] <- adj.sorted
+  
+  return(list("nDry" = c(rdry, adry), 
+              "adj.threshold" = ath, "adj" = adj))
 }
+
 
 #' Minimize MSE between the reference and simulated time series (internal)
 #'
+#' @title .minimizeMSE
 #' @param ref Reference data
 #' @param cal Calibration data
 #' @param val Scenario data
@@ -364,7 +351,7 @@
 
   cal <- cal*omsum/m2sum
   val <- val*omsum/m2sum
-  return(list(cal,val))
+  return(list(cal=cal,val=val))
 }
 
 .smoothQuantiles <- function(data, smooth) {
@@ -387,9 +374,10 @@
 #' Fit parametric marginal distribution to the data (internal)
 #'
 #'#Two options are possible:
-# -gaussian marginal for temperature
-# -gamma marginal for precipitation
-#
+#' -gaussian marginal for temperature
+#' -gamma marginal for precipitation
+#'
+#' @title .fitMarginal
 #' @param data Data used to fit the selected distribution
 #' @param type Type of distribution to be fitted
 #'
@@ -400,15 +388,18 @@
 .fitMarginal <- function(data,type){
 #  require("fitdistrplus")
   if(type=="gamma"){
-    params <- fitdistrplus::fitdist(data, type)
+    params <- fitdistrplus::fitdist(data, type, method="mle", 
+                                    optim.method="Nelder-Mead")
   } else {
-    params <- fitdistrplus::fitdist(data, type)
+    params <- fitdistrplus::fitdist(data, type, method="mle", 
+                                    optim.method="Nelder-Mead")
   }
   return(params)
 }
 
 #' Conditional adjustment of temperature with respect to precipitation (internal).
 #'
+#' @title .adjPT
 #' @param obs Observed time series.
 #' @param ctrl Control period time series.
 #' @param scen Scenario period time series.
@@ -463,15 +454,14 @@
 .adjPT <- function(obs,ctrl,scen,fit.skew,eps=1e-15){
   
   adj <- list(T = array(NA, dim = c(length(scen$T))),
-              P = array(NA, dim = c(length(scen$P))),
-              pwet = NA,
-              wet = NA,
-              dry = NA,
-              cpar1 = NA)
+              P = array(NA, dim = c(length(scen$P))))
   
-  p2 <- p1 <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
+  p2 <- pgamma(scen$P[scen$wet], shape=ctrl$margP$estimate[1], 
+               rate=ctrl$margP$estimate[2])
   p2[which(p2==1)] <- p2[which(p2==1)]-eps
-  adj$P[scen$wet] <- qgamma(p2,shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
+  
+  adj$P[scen$wet] <- qgamma(p2, shape=obs$margP$estimate[1], 
+                            rate=obs$margP$estimate[2])
   adj$P[scen$dry] <- 0.0
 
   # Calculate conditional probability of temperature given precipitation
@@ -482,34 +472,45 @@
 
   p3 <- Ft
 
-  Fp[scen$wet] <- pgamma(scen$P[scen$wet],shape=ctrl$margP$estimate[1],rate=ctrl$margP$estimate[2])
-  Fp[scen$dry] <- scen$P[scen$dry]
+  Fp[scen$wet] <- pgamma(scen$P[scen$wet], shape=ctrl$margP$estimate[1], 
+                         rate=ctrl$margP$estimate[2])
+  Fp[scen$dry] <- NA
   if(fit.skew){
-    Ft[scen$wet] <- psn(scen$T[scen$wet],xi=ctrl$margTW$estimate[1],omega=ctrl$margTW$estimate[2],alpha=ctrl$margTW$estimate[3])
-    Ft[scen$dry] <- psn(scen$T[scen$dry],xi=ctrl$margTD$estimate[1],omega=ctrl$margTD$estimate[2],alpha=ctrl$margTD$estimate[3])
+    Ft[scen$wet] <- psn(scen$T[scen$wet], xi=ctrl$margTW$estimate[1], 
+                        omega=ctrl$margTW$estimate[2], 
+                        alpha=ctrl$margTW$estimate[3])
+    Ft[scen$dry] <- psn(scen$T[scen$dry], xi=ctrl$margTD$estimate[1], 
+                        omega=ctrl$margTD$estimate[2], 
+                        alpha=ctrl$margTD$estimate[3])
   }else{
-    Ft[scen$wet] <- pnorm(scen$T[scen$wet],mean=ctrl$margTW$estimate[1],sd=ctrl$margTW$estimate[2])
-    Ft[scen$dry] <- pnorm(scen$T[scen$dry],mean=ctrl$margTD$estimate[1],sd=ctrl$margTD$estimate[2])
+    Ft[scen$wet] <- pnorm(scen$T[scen$wet], mean=ctrl$margTW$estimate[1],
+                          sd=ctrl$margTW$estimate[2])
+    Ft[scen$dry] <- pnorm(scen$T[scen$dry], mean=ctrl$margTD$estimate[1],
+                          sd=ctrl$margTD$estimate[2])
   }
 
   h <- pmax(pmin(pnorm((qnorm(Ft[scen$wet])-ctrl$cpar1*qnorm(Fp[scen$wet]))/sqrt(1-ctrl$cpar1^2)),(1-eps)),eps)
-  p3[scen$wet] <- unlist(h)
-  p3[scen$dry] <- Ft[scen$dry]
+  plot(qnorm(Ft[scen$wet])-ctrl$cpar1*qnorm(Fp[scen$wet]))
+#  p3[scen$wet] <- unlist(h)
+#  p3[scen$dry] <- Ft[scen$dry]
 
   #Finally, calculate the bias corrected temperature, conditioned on precipitation
   #with the observed dependence structure
-  u1 <- pgamma(adj$P[scen$wet],shape=obs$margP$estimate[1],rate=obs$margP$estimate[2])
+  u1 <- pgamma(adj$P[scen$wet], shape=obs$margP$estimate[1], 
+               rate=obs$margP$estimate[2])
   u1[which(u1==1)] <- 1-eps
-  u2 <- p3[scen$wet]
+  u2 <- unlist(h) #p3[scen$wet]
   
   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
-  
+  plot(tmp)
   if(fit.skew){
-    adj$T[scen$wet] <- qsn(tmp, xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha =obs$margTW$estimate[3])
-    adj$T[scen$dry] <- qsn(p3[scen$dry], xi = obs$margTD$estimate[1], omega = obs$margTD$estimate[2], alpha = obs$margTD$estimate[3])
+    adj$T[scen$wet] <- qsn(tmp, xi=obs$margTW$estimate[1], omega=obs$margTW$estimate[2], 
+                           alpha=obs$margTW$estimate[3])
+    adj$T[scen$dry] <- qsn(Ft[scen$dry], xi=obs$margTD$estimate[1], omega=obs$margTD$estimate[2], 
+                           alpha=obs$margTD$estimate[3])
   }else{
-    adj$T[scen$wet] <- qnorm(tmp,mean=obs$margTW$estimate[1],sd=obs$margTW$estimate[2])
-    adj$T[scen$dry] <- qnorm(p3[scen$dry],mean=obs$margTD$estimate[1],sd=obs$margTD$estimate[2])
+    adj$T[scen$wet] <- qnorm(tmp, mean=obs$margTW$estimate[1], sd=obs$margTW$estimate[2])
+    adj$T[scen$dry] <- qnorm(Ft[scen$dry], mean=obs$margTD$estimate[1], sd=obs$margTD$estimate[2])
   }
   #  tmp[which(tmp==1)] <- tmp[which(tmp==1)]-1e-5
 
@@ -518,6 +519,7 @@
 
 #' Conditional adjustment of precipitation with respect to temperature (internal).
 #'
+#' @title .adjTP
 #' @param obs A list containing the observed time series of temperature and precipitation.
 #' @param ctrl A list containing the simulated time series of temperature and precipitation in the control period.
 #' @param scen A list containing the simulated time series of temperature and precipitation in the scenario period.
@@ -565,51 +567,71 @@
 .adjTP <- function(obs,ctrl,scen,fit.skew,eps=1e-15){
 
   adj <- list(T = array(NA, dim = c(length(scen$T))),
-              P = array(NA, dim = c(length(scen$P))),
-              pwet = NA,
-              wet = NA,
-              dry = NA,
-              cpar1 = NA)
+              P = array(NA, dim = c(length(scen$P))))
   
   if(fit.skew){
-    pw <- pmax(pmin(psn(scen$T[scen$wet], xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], alpha = ctrl$margTW$estimate[3]), (1-eps)), eps)
-    pd <- pmax(pmin(psn(scen$T[scen$dry], xi = ctrl$margTD$estimate[1], omega = ctrl$margTD$estimate[2], alpha = ctrl$margTD$estimate[3]), (1-eps)), eps)
+    pw <- pmax(pmin(psn(scen$T[scen$wet], xi = ctrl$margTW$estimate[1], 
+                        omega = ctrl$margTW$estimate[2], 
+                        alpha = ctrl$margTW$estimate[3]), (1-eps)), eps)
+    pd <- pmax(pmin(psn(scen$T[scen$dry], xi = ctrl$margTD$estimate[1], 
+                        omega = ctrl$margTD$estimate[2], 
+                        alpha = ctrl$margTD$estimate[3]), (1-eps)), eps)
     
-    adj$T[scen$wet] <- qsn(pw, xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha = obs$margTW$estimate[3])
-    adj$T[scen$dry] <- qsn(pd, xi = obs$margTD$estimate[1], omega = obs$margTD$estimate[2], alpha = obs$margTD$estimate[3])
+    adj$T[scen$wet] <- qsn(pw, xi=obs$margTW$estimate[1], 
+                           omega=obs$margTW$estimate[2], 
+                           alpha=obs$margTW$estimate[3])
+    adj$T[scen$dry] <- qsn(pd, xi=obs$margTD$estimate[1], 
+                           omega=obs$margTD$estimate[2], 
+                           alpha=obs$margTD$estimate[3])
   }else{
-    pw <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$mean, sd = ctrl$margTW$sd), (1-eps)), eps)
-    pd <- pmax(pmin(pnorm(scen$T[scen$dry], mean = ctrl$margTD$mean, sd = ctrl$sd), (1-eps)), eps)
+    pw <- pnorm(scen$T[scen$wet], mean=ctrl$margTW$estimate[1], 
+                          sd=ctrl$margTW$estimate[2])
+    pd <- pnorm(scen$T[scen$dry], mean=ctrl$margTD$estimate[1], 
+                          sd=ctrl$margTD$estimate[2])
     
-    adj$T[scen$wet] <- qnorm(pw, mean = obs$margTW$mean, sd = obs$margTW$sd)
-    adj$T[scen$dry] <- qnorm(pd, mean = obs$margTD$mean, sd = obs$margTD$sd)
+    adj$T[scen$wet] <- qnorm(pw, mean=obs$margTW$estimate[1], 
+                             sd=obs$margTW$estimate[2])
+    adj$T[scen$dry] <- qnorm(pd, mean=obs$margTD$estimate[1], 
+                             sd=obs$margTD$estimate[2])
   }
   
-  Fp <- pmin(pgamma(scen$P[scen$wet], shape = ctrl$margP$estimate[1], rate = ctrl$margP$estimate[2]), (1-eps))
+  Fp <- array(NA,dim=c(length(scen$P)))
+  Ft <- array(NA,dim=c(length(scen$T)))
+  
+  Fp[scen$wet] <- pmin(pgamma(scen$P[scen$wet], shape=ctrl$margP$estimate[1], 
+                    rate=ctrl$margP$estimate[2]), (1-eps))
+  
+#  p3 <- Fp
   
   if(fit.skew){
-    Ft <- pmax(pmin(psn(scen$T[scen$wet], xi = ctrl$margTW$estimate[1], omega = ctrl$margTW$estimate[2], alpha = ctrl$margTW$estimate[3]), (1-eps)), eps)
+    Ft <- pmax(pmin(psn(scen$T[scen$wet], xi=ctrl$margTW$estimate[1], 
+                        omega=ctrl$margTW$estimate[2], 
+                        alpha=ctrl$margTW$estimate[3]), (1-eps)), eps)
   }else{
-    Ft <- pmax(pmin(pnorm(scen$T[scen$wet], mean = ctrl$margTW$mean, sd = ctrl$margTW$sd), (1-eps)), eps)
+    Ft[scen$wet] <- pnorm(scen$T[scen$wet], mean=ctrl$margTW$estimate[1], 
+                          sd=ctrl$margTW$estimate[2])
   }
   
-  p3 <- u2 <- h <- pnorm((qnorm(Fp) - ctrl$cpar1*qnorm(Ft))/sqrt(1 - ctrl$cpar1^2))
-
-  adj$wet <- scen$wet
-  adj$dry <- scen$dry
-
+  h <- pnorm((qnorm(Fp[scen$wet]) - ctrl$cpar1*qnorm(Ft[scen$wet]))/sqrt(1 - ctrl$cpar1^2))
+  
+#  p3[scen$wet] <- unlist(h)
+#  p3[scen$dry] <- Fp[scen$dry]
+  
   #Finally, calculate the bias corrected precipitation, conditioned on temperature
-  #with the observed depence structure.
-  #  u2 <- p3[adj$wet]
+  #with the observed dependence structure.
+  u2 <- unlist(h)#p3[adj$wet]
   if(fit.skew){
-    u1 <- psn(adj$T[adj$wet], xi = obs$margTW$estimate[1], omega = obs$margTW$estimate[2], alpha = obs$margTW$estimate[3])
+    u1 <- psn(adj$T[scen$wet], xi=obs$margTW$estimate[1], 
+              omega=obs$margTW$estimate[2], 
+              alpha=obs$margTW$estimate[3])
   }else{
-    u1 <- pnorm(adj$T[adj$wet], mean = obs$margTW$estimate[1], sd = obs$margTW$estimate[2])
+    u1 <- pnorm(adj$T[scen$wet], mean=obs$margTW$estimate[1], 
+                sd=obs$margTW$estimate[2])
   }
-
   tmp <- pnorm(qnorm(u2)*sqrt(1-obs$cpar1^2)+obs$cpar1*qnorm(u1))
-  adj$P[adj$wet] <- qgamma(tmp, shape = obs$margP$estimate[1], rate = obs$margP$estimate[2])
-  adj$P[adj$dry] <- 0.0
-
+  adj$P[scen$wet] <- qgamma(tmp, shape=obs$margP$estimate[1], 
+                           rate=obs$margP$estimate[2])
+  adj$P[scen$dry] <- 0.0
+  
   return(adj)
 }

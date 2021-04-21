@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.ppRain}
 \alias{.ppRain}
-\title{Pre-process precipitation data for parametric quantile mapping.}
+\title{.ppRain}
 \usage{
 .ppRain(ref, adj, ref.threshold = 0.1)
 }

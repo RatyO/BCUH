@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.iterAb}
 \alias{.iterAb}
-\title{Power transformation algorithm (internal)}
+\title{.iterAb}
 \usage{
 .iterAb(
   data,
@@ -31,6 +31,9 @@ if the algorithm does not converge to the target values.}
 Adjusted time series for the scenario period.
 }
 \description{
+Power transformation algorithm (internal)
+}
+\details{
 Find iteratively the correct exponent in the power transformation of a ratio variable.
 }
 \keyword{internal}

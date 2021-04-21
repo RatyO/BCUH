@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.minimizeMSE}
 \alias{.minimizeMSE}
-\title{Minimize MSE between the reference and simulated time series (internal)}
+\title{.minimizeMSE}
 \usage{
 .minimizeMSE(ref, cal, val)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.fitMarginal}
 \alias{.fitMarginal}
-\title{Fit parametric marginal distribution to the data (internal)}
+\title{.fitMarginal}
 \usage{
 .fitMarginal(data, type)
 }
@@ -15,6 +15,11 @@
 Parameters of the fitted distribution
 }
 \description{
+Fit parametric marginal distribution to the data (internal)
+}
+\details{
 #Two options are possible:
+-gaussian marginal for temperature
+-gamma marginal for precipitation
 }
 \keyword{internal}

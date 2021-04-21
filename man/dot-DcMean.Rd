@@ -17,7 +17,4 @@ Delta change adjusted time series
 \description{
 A generic for mean delta change scaling
 }
-\examples{
-Needs to be written
-}
 \keyword{internal}

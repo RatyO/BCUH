@@ -17,7 +17,4 @@ Bias corrected time series
 \description{
 A generic for bias correction of mean, stardard deviation and skewness
 }
-\examples{
-Needs to be written
-}
 \keyword{internal}

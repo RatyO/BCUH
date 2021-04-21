@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.adjustEs}
 \alias{.adjustEs}
-\title{Engen-Skaugen algorithm (internal)}
+\title{.adjustEs}
 \usage{
 .adjustEs(data, mean.target, sd.target, tol = 0.001, max.iter = 100)
 }
@@ -21,6 +21,9 @@
 Adjusted time series for the scenario period.
 }
 \description{
+Engen-Skaugen algorithm (internal)
+}
+\details{
 Adjust the cv interatively using the Engen-Skaugen algorithm.
 }
 \keyword{internal}

@@ -2,20 +2,18 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.iterSkewness}
 \alias{.iterSkewness}
-\title{Find correct skewness iteratively (internal)}
+\title{.iterSkewness}
 \usage{
 .iterSkewness(
-  data,
+  source,
   skew.target,
   nseq = 1,
   tol = 0.001,
-  a.lim = c(1, 9),
+  a.lim = c(0.5, 9),
   iter.max = 100
 )
 }
 \arguments{
-\item{data}{data to be adjusted}
-
 \item{skew.target}{target skewness}
 
 \item{nseq}{data set is divided into nseq chunks on which the skewness is adjusted separately}
@@ -25,6 +23,8 @@
 \item{a.lim}{limits for the exponent used to adjust the skewness}
 
 \item{iter.max}{max. number of iterations}
+
+\item{data}{data to be adjusted}
 }
 \value{
 Bias adjusted time series

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Auxfunctions.R
 \name{.zeros}
 \alias{.zeros}
-\title{Handle zero values (internal)}
+\title{.zeros}
 \usage{
 .zeros(Data, eps)
 }

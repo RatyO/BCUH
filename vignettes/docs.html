@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Olle Räty" />
+
+
+<title>BCUH Documentation</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">BCUH Documentation</h1>
+<h3 class="subtitle">University of Helsinki bias adjustment tools</h3>
+<h4 class="author">Olle Räty</h4>
+
+
+
+<div id="bcuh" class="section level1">
+<h1>BCUH</h1>
+<p>BCUH is a collection of simple univariate and bi-variate methods, which have been developed to combine information obtained from observation together with climate model simulations when constructing future temperature and precipitation projections.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This tutorial illustrates the use of R package BCUH in which several bias correction and delta change methods have been implemented following <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span>. In addition, a copula-based joint bias correction method designed for temperature and precipitation is available. The implementation of the copula-based algorithm is partially based on <span class="citation">Li et al. (2014)</span> with modifications from <span class="citation">Gennaretti, Sangelantoni, and Grenier (2015)</span>. These methods have become de facto standard in climate impact studies due to the need to take biases in climate model simulations with respect to the observed climate into account. An overview of the package structure is given together with a set of examples, which illustrate the use of the package. Also, the limitations of the implemented methods are discussed. Finally, we give a brief overview of other existing R tools, which have been built for similar purposes as BCUH.</p>
+</div>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>To install BCUH, the R package  needs to be installed on your operating system:</p>
+<pre><code>install.packages(&quot;devtools&quot;)</code></pre>
+<p>With  the installation of  should be straightforward:</p>
+<pre><code>devtools::install_github(RatyO/BCUH)</code></pre>
+<p>code{BCUH} depends on several other packages, most notably , which is used in the copula-based bias correction method. These packages should be automatically installed along .</p>
+</div>
+<div id="univariate-method" class="section level1">
+<h1>Univariate method</h1>
+<p>The current version of  contains a total of 20 univariate methods. Ten of these methods have originally been designed for daily mean temperature, while the rest ten methods were designed to construct future projections of daily precipitation. Furthermore, these methods can be divided into two groups based on the projection strategy. Five methods for both variables are so-called delta change methods, which add simulated changes to the reference time series in different ways. The rest of the methods directly bias correct the scenario period data based on biases between the reference and control data in the calibration period. These methods range from simple time mean adjustment to more sophisticated parametric and non-parametric quantile mapping methods. All of these have been encapsulated in two S4 classes, which return the input data and parameters as a customised S4 object. However, to make the application to these methods easier, the package also contains a wrapper function , which automatically builds the correct objects and returns the adjusted data and the relevant meta data as a  object. The different elements of this object can be accessed using the class methods provided in the package.</p>
+<p>We will next demonstrate how to use the wrapper functions using synthetic data. The package contains two data sets which emulate the behavior of daily mean temperature and precipitation. The first data set corresponds to observations which could have been collect at single site, while the second data mimics simulated temperature and precipitation with differing statistical properties for the time series.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(BCUH)</span></code></pre></div>
+<pre><code>Warning: replacing previous import &#39;lubridate::dst&#39; by &#39;sn::dst&#39; when loading
+&#39;BCUH&#39;</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">data</span>(<span class="st">&quot;obs&quot;</span>)</span></code></pre></div>
+<pre><code>Warning in data(&quot;obs&quot;): data set &#39;obs&#39; not found</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">data</span>(<span class="st">&quot;model&quot;</span>)</span></code></pre></div>
+<pre><code>Warning in data(&quot;model&quot;): data set &#39;model&#39; not found</code></pre>
+<p>In the first example, We illustrate how to use the package to construct projections for daily mean temperature. In this demonstration, we use two bias correction methods, which adjust either the distribution mean (M6) or the distribution quantiles (M10).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>bc6 &lt;-<span class="st"> </span><span class="kw">biasco</span>(<span class="dt">obs=</span>varsO[,<span class="st">&#39;temp&#39;</span>], <span class="dt">ctrl=</span>varsC[,<span class="st">&#39;temp&#39;</span>], <span class="dt">scen=</span>varsC[,<span class="st">&#39;temp&#39;</span>], <span class="dt">type=</span><span class="st">&quot;abs&quot;</span>, <span class="dt">method=</span><span class="st">&quot;M6&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>bc9 &lt;-<span class="st"> </span><span class="kw">biasco</span>(<span class="dt">obs=</span>varsO[,<span class="st">&#39;temp&#39;</span>], <span class="dt">ctrl=</span>varsC[,<span class="st">&#39;temp&#39;</span>], <span class="dt">scen=</span>varsC[,<span class="st">&#39;temp&#39;</span>], <span class="dt">type=</span><span class="st">&quot;abs&quot;</span>, <span class="dt">method=</span><span class="st">&quot;M9&quot;</span>)</span></code></pre></div>
+<p>Note that  has been selected, which indicates that the adjustment is not bounded as is the case for precipitation. Field  is used to select the method (M1-M10). Biasco creates an object of type , which contains the adjusted data and also some additional information related to the used data and projection method. For example,  looks something like:</p>
+<pre><code>bc.object</code></pre>
+<p>Next, we visualise the quantile distributions for the adjusted time series:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">plot</span>(<span class="kw">quantile</span>(varsO[,<span class="st">&#39;temp&#39;</span>], <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">type=</span><span class="st">&quot;l&quot;</span>,</span>
+<span id="cb11-2"><a href="#cb11-2"></a>    <span class="dt">main=</span><span class="st">&quot;Quantile plot&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;%&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Celcius&quot;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">30</span>,<span class="dv">10</span>))</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(<span class="kw">dat</span>(<span class="kw">adj</span>(bc6)), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">lty=</span><span class="dv">1</span>, <span class="dt">col=</span><span class="st">&quot;orange&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(<span class="kw">dat</span>(<span class="kw">adj</span>(bc9)), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">lty=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="st">&quot;orange&quot;</span>)</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(varsC[,<span class="st">&#39;temp&#39;</span>], <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="kw">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Obs&quot;</span>,<span class="st">&quot;M6&quot;</span>,<span class="st">&quot;M9&quot;</span>,<span class="st">&quot;Ctrl&quot;</span>),</span>
+<span id="cb11-7"><a href="#cb11-7"></a>      <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;orange&quot;</span>,<span class="st">&quot;orange&quot;</span>,<span class="st">&quot;blue&quot;</span>), <span class="dt">lty=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --> Some parameters available for M5 and M10 require special attention. The most i</p>
+<p>In the second example, we adjust the precipitation time series. To access proper methods, the  has to be selected. We use the same methods although tailored specifically for precipitation.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>bc6 &lt;-<span class="st"> </span><span class="kw">biasco</span>(<span class="dt">obs=</span>varsO[,<span class="st">&#39;prec&#39;</span>], <span class="dt">ctrl=</span>varsC[,<span class="st">&#39;prec&#39;</span>], <span class="dt">scen=</span>varsC[,<span class="st">&#39;prec&#39;</span>], <span class="dt">type=</span><span class="st">&quot;ratio&quot;</span>, <span class="dt">method=</span><span class="st">&quot;M6&quot;</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>bc9 &lt;-<span class="st"> </span><span class="kw">biasco</span>(<span class="dt">obs=</span>varsO[,<span class="st">&#39;prec&#39;</span>], <span class="dt">ctrl=</span>varsC[,<span class="st">&#39;prec&#39;</span>], <span class="dt">scen=</span>varsC[,<span class="st">&#39;prec&#39;</span>], <span class="dt">type=</span><span class="st">&quot;ratio&quot;</span>, <span class="dt">method=</span><span class="st">&quot;M9&quot;</span>)</span></code></pre></div>
+<p>To get a brief idea how the adjustment performs, we visualise the quantile distributions for the adjusted time series:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">plot</span>(<span class="kw">quantile</span>(varsO[,<span class="st">&#39;temp&#39;</span>], <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">type=</span><span class="st">&quot;l&quot;</span>,</span>
+<span id="cb13-2"><a href="#cb13-2"></a>    <span class="dt">main=</span><span class="st">&quot;Quantile plot&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;%&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;mm/d&quot;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">30</span>,<span class="dv">10</span>))</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(<span class="kw">dat</span>(<span class="kw">adj</span>(bc6)), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">lty=</span><span class="dv">1</span>, <span class="dt">col=</span><span class="st">&quot;orange&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(<span class="kw">dat</span>(<span class="kw">adj</span>(bc9)), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">lty=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="st">&quot;orange&quot;</span>)</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="kw">lines</span>(<span class="kw">quantile</span>(varsC[,<span class="st">&#39;temp&#39;</span>], <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.01</span>)), <span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="kw">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;Obs&quot;</span>,<span class="st">&quot;M6&quot;</span>,<span class="st">&quot;M9&quot;</span>,<span class="st">&quot;Ctrl&quot;</span>),</span>
+<span id="cb13-7"><a href="#cb13-7"></a>      <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;orange&quot;</span>,<span class="st">&quot;orange&quot;</span>,<span class="st">&quot;blue&quot;</span>), <span class="dt">lty=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --> Some parameters available for M5 and M10 require special attention. The most important one is , which defines the strength of smoothing of quantile distributions of  and  for bias correction methods and  and  for delta change methods. The default values have been chose according to <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span> (0.05  and 0.02 for ). In addition, methods M5 and M10 do not preserve changes in the mean values between  and . However, this can be done by selecting .</p>
+<p>For precipitation an option to pre-adjust  and  based on the mean squared error (MSE) between  and  is available. To switch this on set . When this option is selected, both  and  are shifted “closer” to  before applying quantile mapping.</p>
+</div>
+<div id="multivariate-methods" class="section level1">
+<h1>Multivariate methods</h1>
+<p>In the current version of BCUH, only one bi-variate method is available is restricted to the adjustment of the joint distribution of temperature and precipitation. In this method the joint distribution of temperature and precipitation is adjusted by first decomposing the reference and modeled distribution in the calibration period separate marginal distributions and the copula, which described the. So far, bias correction of the dependence structure using Gaussian copula is only available in the package. The methods was originally introduced by <span class="citation">Li et al. (2014)</span> and further developed in <span class="citation">Gennaretti, Sangelantoni, and Grenier (2015)</span>. In this method the joint distribution of temperature and precipitation is described with parametric marginal distributions, while the dependence between the marginal distributions is modeled using Gaussian copula.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co">#test &lt;- biasco2D(obs.in=varsO, ctrl.in=varsC, scen.in=varsC, cond = &quot;T&quot;)</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co">#plot(dat(adj(test)))</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="co">#points(varsO,col=&quot;red&quot;)</span></span></code></pre></div>
+</div>
+<div id="limitations" class="section level1">
+<h1>Limitations</h1>
+<p>As with all statistical methods, care should be taken, when applying BCUH methods in actual work. First, the implemented methods have not been designed for directly downscaling climate model simulations to higher resolutions <span class="citation">Maraun (2013)</span> discussed some of the potential issues with such approach, which are particularly severe for precipitation. The main. Furthermore, spatial averages of data downscaled this way tend to exhibit overestimation of precipitation extremes and the fraction of wet days is also overestimated due to overcorrection of the drizzle effect. For temperature, these issues are less severe, as its values change more smoothly in space.</p>
+<p>Another issue, which is currently under devate is whether the statistical bias correction methods should preserve the simulated trends. In the traditional form, quantile mapping can alter the simulated changes, which . While this issue has not fully been taken into account in the package, an option to force changes in the mean of the adjusted time series to the simulated change has been included (see the example above). Alternatively delta change methods could be applied, since these methods does not suffer the aforementioned issues, as they adjust the observed time series based on model simulated changes. However, a major limitation of delta change approach is that different correlation structures follow directly the observed ones in the constructed projections. Other more sophisticated methods, which pertain simulated changes at quantile level, while simultaneously pertain some of the advances of bias correction methods, i.e., the capability</p>
+</div>
+<div id="other-r-packages" class="section level1">
+<h1>Other R packages</h1>
+<p> is just one of the possible R packages available to statistically adjust model simulations to biases in climate model simulationswith respect to the observed climate. For the sake of completeness, we give a brief overview of other existing packages, which the reader might find useful. One of the most comprehensive packages written in  has been developed in Santander (). The package contains a set of bias correction methods partly similar to the ones available in  and also methods designed for downscaling coarse resolution model simulations for impact study purposes.  is a part of  bundle, which has additional tools for downloading, pre-processing and visualising the bias corrected / downscaled climate data. Several other packages are also available.  contains implementations of different types of quantile mapping methods as described in Gudmunsson et al. (2012). Another method used to downscale the cumulative distribution function of a coarse resolution model simulation with respect to a local scale cumulative distribution function has been implemented in  package.</p>
+<p> is one of the few packages, which contains implementations of three multivariate bias correction methods as described in <span class="citation">Cannon (2016)</span> and <span class="citation">Cannon (2017)</span>. These methods adjust different intervariable correlations. In all these methods, marginal distributions are adjusted using quantile delta mapping, which has been described in <span class="citation">Cannon, Sobie, and Murdock (2015)</span>. In principle, the package allows to use also other methods to adjust the marginal distributions, as a posterior adjustment is made to them in order to retain correct marginals. A more detailed description of the methods is available in the package documentation .</p>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>This tutorial gives a brief overview of BCUH package, which contains a number of bias adjustment methods described in <span class="citation">Räisänen and Räty (2013)</span> and <span class="citation">Räty, Räisänen, and Ylhäisi (2014)</span> as well as one bi-variate method documented in <span class="citation">Li et al. (2014)</span> and <span class="citation">Gennaretti, Sangelantoni, and Grenier (2015)</span>.</p>
+<p>#References</p>
+<div id="refs" class="references">
+<div id="ref-cannon2016">
+<p>Cannon, Alex J. 2016. “Multivariate bias correction of climate model output: matching marginal distributions and intervariable dependence structure.” <em>J. Clim.</em> 29 (19): 7045–64. <a href="https://doi.org/10.1175/JCLI-D-15-0679.1">https://doi.org/10.1175/JCLI-D-15-0679.1</a>.</p>
+</div>
+<div id="ref-cannon2017">
+<p>———. 2017. “Multivariate quantile mapping bias correction: an N-dimensional probability density function transform for climate model simulations of multiple variables.” <em>Clim. Dyn.</em>, 1–19. <a href="https://doi.org/10.1007/s00382-017-3580-6">https://doi.org/10.1007/s00382-017-3580-6</a>.</p>
+</div>
+<div id="ref-cannon2015">
+<p>Cannon, Alex J., Stephen R. Sobie, and Trevor Q. Murdock. 2015. “Bias correction of GCM precipitation by quantile mapping: how well do methods preserve changes in quantiles and extremes?” <em>J. Clim.</em> 28 (17): 6938–59. <a href="https://doi.org/10.1175/JCLI-D-14-00754.1">https://doi.org/10.1175/JCLI-D-14-00754.1</a>.</p>
+</div>
+<div id="ref-gennaretti2015">
+<p>Gennaretti, Fabio, Lorenzo Sangelantoni, and Patrick Grenier. 2015. “Toward Daily Climate Scenarios for Canadian Arctic Coastal Zones with More Realistic Temperature-Precipitation Interdependence.” <em>J. Geophys. Res.-Atmos.</em> 120 (23): 11, 862–11, 877. <a href="https://doi.org/10.1002/2015JD023890">https://doi.org/10.1002/2015JD023890</a>.</p>
+</div>
+<div id="ref-li2014">
+<p>Li, Chao, Eva Sinha, Daniel E. Horton, Noah S. Diffenbaugh, and Anna M. Michalak. 2014. “Joint Bias Correction of Temperature and Precipitation in Climate Model Simulations.” <em>J. Geophys. Res.-Atmos.</em> 119 (23): 13, 153–13, 162. <a href="https://doi.org/10.1002/2014JD022514">https://doi.org/10.1002/2014JD022514</a>.</p>
+</div>
+<div id="ref-maraun2013">
+<p>Maraun, Douglas. 2013. “Bias Correction, Quantile Mapping, and Downscaling: Revisiting the Inflation Issue.” <em>Journal of Climate</em> 26 (6): 2137–43.</p>
+</div>
+<div id="ref-raisanen2013">
+<p>Räisänen, Jouni, and Olle Räty. 2013. “Projections of Daily Mean Temperature Variability in the Future: Cross-Validation Tests with Ensembles Regional Climate Simulations.” <em>Clim. Dyn.</em> 41 (5): 1553–68. <a href="https://doi.org/10.1007/s00382-012-1515-9">https://doi.org/10.1007/s00382-012-1515-9</a>.</p>
+</div>
+<div id="ref-raty2014">
+<p>Räty, Olle, Jouni Räisänen, and Jussi S. Ylhäisi. 2014. “Evaluation of Delta Change and Bias Correction Methods for Future Daily Precipitation: Intermodel Cross-Validation Using Ensembles Simulations.” <em>Clim. Dyn.</em> 42 (9): 2287–2303. <a href="https://doi.org/10.1007/s00382-014-2130-8">https://doi.org/10.1007/s00382-014-2130-8</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
